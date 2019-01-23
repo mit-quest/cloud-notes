@@ -1,0 +1,20 @@
+#!/usr/bin/env perl
+
+# Python notebooks running with the --no-browser flag set
+# Will place anunuseable GUID in the URL output.
+# This script replaces the guid with a local host url in order
+# to paste the URL into a browser window.
+
+use strict;
+use warnings;
+use autodie; 
+use Term::ANSIColor;
+
+while (my $line = <>) {
+    if( $line =~ /(.*?)(https?:\/\/)(?:\([0-9a-f]+ or )(127\.0\.0\.1)(?:\))(:[0-9]+\/\?token=[0-9a-f]+)(.*$)/ ) {
+        print $1, color("green"), $2.$3.$4."\n", color("reset");
+    }
+    else {
+        print $line;
+    } 
+}
