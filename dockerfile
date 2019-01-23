@@ -35,7 +35,7 @@ RUN mkdir -p /$WORKSPACE \
         --uid $USER_ID \
         --system \
         $USERNAME \
-    && chown container /$WORKSPACE
+    && chown $USERNAME /$WORKSPACE
 
 USER $USERNAME
 WORKDIR /$WORKSPACE
