@@ -1,8 +1,13 @@
-def CreateRegistry():
+__all__ = ['execute']
+
+def provision_registry_():
     pass
 
-def CreateApplication():
+def provision_application_slot_():
     pass
 
-def DeployApp():
+def deploy_application_():
+    pass
+
+def execute():
     pass
