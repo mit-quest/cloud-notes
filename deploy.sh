@@ -13,6 +13,9 @@ trap finish SIGINT SIGTERM
 # dockerfile is expected to be in the same directory
 docker build . --build-arg USER_ID=$(id -u $USER) -t pynb-cloud
 
+# The docker image responsible for provisioning resources
+# will need to be built with the --network=host command
+
 # Need to determine how to push to a container registry within
 # each cloud platform using their CLI?
 
