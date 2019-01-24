@@ -21,6 +21,12 @@ docker build . --build-arg USER_ID=$(id -u $USER) -t pynb-cloud
 # After the container is deployed we launch a deployment for the app
 # using the container we just uploaded to the registry and it runs remotely.
 
+# e.g.
+# <cloud-cli> <create-registry>
+# docker login <cloud-registry>
+# docker tag pynb-cloud <cloud-registry>/pynb-server
+# docker push <cloud-registry>/pynb-server
+
 while IFS= read -r line; do
     echo "$line" | perl ./ipynb-url -
 done < <(docker run -i -p 8888:8888 pynb-cloud 2>&1)
