@@ -1,3 +1,5 @@
+#!/usr/env python3
+
 PLATFORMS = ['IBM', 'GCP', 'Azure', 'AWS']
 
 def main(platform):
