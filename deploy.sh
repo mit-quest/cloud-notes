@@ -20,6 +20,7 @@ contains()
 finish()
 {
     popd > /dev/null
+    unset -f contains
     unset -f finish
 }
 
