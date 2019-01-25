@@ -10,7 +10,7 @@ docker pull google/cloud-sdk
 docker run -it --name gcloud-config google/cloud-sdk gcloud login
 
 # Common rerun command for gcloud commands inside of docker image
-GCLOUD=docker run --rm --it --volumes-from gcloud-config gcloud
+GCLOUD="docker run --rm -it --volumes-from gcloud-config gcloud"
 
 # Set the project to the provided project ID
 $GCLOUD config set project $PROJECT_ID
