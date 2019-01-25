@@ -2,7 +2,7 @@
 
 PROVIDERS=(aws gcp az ibm)
 
-if [ $# -ne 2]
+if [ $# -ne 2 ]
 then
     echo "arguments for $0: <CLOUD_PROVIDER>"
     echo please specify ONE of the following ${PROVIDERS[*]}
