@@ -1,6 +1,6 @@
 #!/bin/bash
 
-PROVIDERS=(AWS GCP, Azure, IBM)
+PROVIDERS=(aws gcp az ibm)
 
 if [ $# -ne 2]
 then
