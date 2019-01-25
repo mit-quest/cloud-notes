@@ -16,8 +16,15 @@ contains()
 {
     local element match="$1"
     shift
-    for element; do [[ "$element" == "$match" ]] && return 0; done
-    return 1
+    for element
+    do
+        if [[ "$element" == "$match" ]]; then
+            echo "SUCCESS"
+            return 1
+        fi
+    done
+    echo "ERROR"
+    return 0
 }
 
 finish()
@@ -31,7 +38,14 @@ pushd $(dirname $0) > /dev/null
 
 trap finish SIGINT SIGTERM
 
-# dockerfile is expected to be in the same directory
+CONTAINS=$(contains "$PROVIDER" "${PROVIDERS[@]}")
+
+if [[ "$CONTAINS" = "ERROR" ]]; then
+    echo $ARGUMENTS
+    exit 1
+fi
+
+# Build the dockerfile for the development context
 docker build . --build-arg USER_ID=$(id -u $USER) -t pynb-cloud
 
 # The docker image responsible for provisioning resources
@@ -39,7 +53,6 @@ docker build . --build-arg USER_ID=$(id -u $USER) -t pynb-cloud
 
 # Need to determine how to push to a container registry within
 # each cloud platform using their CLI?
-CONTAINS=$(contains "$PROVIDER" "${PROVIDERS[*]}")
 ./deploy/${PROVIDER}_deploy.sh
 
 # Ideally this is created on the fly and the required login credentials
