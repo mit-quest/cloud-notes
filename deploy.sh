@@ -9,6 +9,8 @@ then
     exit 1
 fi
 
+PROVIDER=$1
+
 contains()
 {
     local element match="$1"
@@ -36,6 +38,8 @@ docker build . --build-arg USER_ID=$(id -u $USER) -t pynb-cloud
 
 # Need to determine how to push to a container registry within
 # each cloud platform using their CLI?
+CONTAINS=$(contains "$PROVIDER" "${PROVIDERS[*]}")
+./deploy/${PROVIDER}_deploy.sh
 
 # Ideally this is created on the fly and the required login credentials
 # can be used to use a docker login command and push to the new registry.
