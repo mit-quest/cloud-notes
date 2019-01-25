@@ -1,5 +1,22 @@
 #!/bin/bash
 
+PROVIDERS=(AWS GCP, Azure, IBM)
+
+if [ $# -ne 2]
+then
+    echo "arguments for $0: <CLOUD_PROVIDER>"
+    echo please specify ONE of the following ${PROVIDERS[*]}
+    exit 1
+fi
+
+contains()
+{
+    local element match="$1"
+    shift
+    for element; do [[ "$element" == "$match" ]] && return 0; done
+    return 1
+}
+
 finish()
 {
     popd > /dev/null
