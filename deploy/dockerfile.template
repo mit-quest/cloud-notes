@@ -1,7 +1,0 @@
-FROM %%CLOUD_PLATFORM_TOOLS%%
-
-COPY provisioner.py /app/
-COPY %%CLOUD_SDK%%_provisioner.py /app/
-
-WORKDIR /app
-CMD ["python3", "provisioner.py", "--platform", "%%CLOUD_PLATFORM%%"]
