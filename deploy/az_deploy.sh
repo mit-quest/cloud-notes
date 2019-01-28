@@ -12,7 +12,7 @@ SUBSCRIPTION_ID=$1
 
 # The Azure CLI container does not provide an automatic mount point
 # for it's credentials. Thes requires a little extra manual work through
-# docker but the persisted login credentials are still accesible acorss
+# docker but the persisted login credentials are still accesible across
 # container instances.
 #
 # https://github.com/Azure/azure-cli-docker/issues/54
