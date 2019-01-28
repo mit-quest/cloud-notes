@@ -24,7 +24,7 @@ AZ="docker run --rm -it -e AZURE_CONFIG_DIR=/$CONFIG --volumes-from $CONFIG micr
 $AZ account set -s $SUBSCRIPTION_ID
 
 # Should check for group existence here using `az group list`
-# before clling `az group create [params]`
+# before calling `az group create [params]`
 $AZ group create --name $RG --location $LOCATION
 
 $AZ acr create --resource-group $RG --name $REGISTRY --sku Basic
