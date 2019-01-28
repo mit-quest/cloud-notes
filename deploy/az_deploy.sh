@@ -19,6 +19,7 @@ SUBSCRIPTION_ID=$1
 
 docker run -it --name $CONFIG -e AZURE_CONFIG_DIR=/$CONFIG --mount type=volume,target=/$CONFIG microsoft/azure-cli az login
 
+# Reusable az command to mask the docker commands.
 AZ="docker run --rm -it -e AZURE_CONFIG_DIR=/$CONFIG --volumes-from $CONFIG microsoft/azure-cli az"
 
 $AZ account set -s $SUBSCRIPTION_ID
