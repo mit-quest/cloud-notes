@@ -28,12 +28,18 @@ $AZ account set -s $SUBSCRIPTION_ID
 $AZ group create --name $RG --location $LOCATION
 
 $AZ acr create --resource-group $RG --name $REGISTRY --sku Basic
-$AZ acr update --name $REGISTRY --admin-enabled true
 
 # Can't use `az acr login` from docker container. This command requires
 # an installation of docker to exist as it calls `docker ps` internally
-# and then issues a `docker login` command
+# and then issues a `docker login` command, setting admin enabled
 # $AZ acr login --name $REGISTRY
+$AZ acr update --name $REGISTRY --admin-enabled true
+
+# Get the admin username and password from the Azure Container Registry
+# and issue a docker login command for the acr.
+USERNAME=$($AZ acr credential show --name $REGISTRY --query username)
+$AZ acr credential show --name $REGISTRY --query passwords[0].value | \
+    docker login -u $USERNAME --password-stdin ${REGISTRY}.azurecr.io
 
 docker tag pynb-cloud ${REGISTRY}.azurecr.io/jupyter-server:deployment
 docker push ${REGISTRY}.azurecr.io/jupyter-server:deployment
