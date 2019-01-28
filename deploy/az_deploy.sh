@@ -26,7 +26,6 @@ AZ="docker run --rm -it -e AZURE_CONFIG_DIR=/$CONFIG --volumes-from $CONFIG micr
 # before calling `az group create [params]` but azure seems to ignore
 # commands issued to create resources that already exist.
 $AZ group create --name $RG --location $LOCATION
-
 $AZ acr create --resource-group $RG --name $REGISTRY --sku Basic
 
 # Can't use `az acr login` from docker container. This command requires
