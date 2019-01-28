@@ -12,6 +12,8 @@ SUBSCRIPTION_ID=$1
 # for it's credentials. Thes requires a little extra manual work through
 # docker but the persisted login credentials are still accesible acorss
 # container instances.
+#
+# https://github.com/Azure/azure-cli-docker/issues/54
 
 docker run -it --name $CONFIG -e AZURE_CONFIG_DIR=/$CONFIG --mount type=volume,target=/$CONFIG microsoft/azure-cli az login
 
