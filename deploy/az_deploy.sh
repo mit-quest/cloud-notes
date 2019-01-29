@@ -36,9 +36,15 @@ $AZ acr update --name $REGISTRY --admin-enabled true
 
 # Get the admin username and password from the Azure Container Registry
 # and issue a docker login command for the ACR.
-USERNAME=$($AZ acr credential show --name $REGISTRY --query username)
-$AZ acr credential show --name $REGISTRY --query passwords[0].value | \
-    docker login -u $USERNAME --password-stdin ${REGISTRY}.azurecr.io
+ACR_USERNAME="$($AZ acr credential show --name $REGISTRY --query username)"
+ACR_PASSWORD="$($AZ acr credential show --name $REGISTRY --query passwords[0].value)"
+
+# az cli prints leaves junk in the output when calling az acr credential show
+# with the --query command. Without trimming characters, the login will fail.
+ACR_USERNAME=${ACR_USERNAME: 1: -2}
+ACR_PASSWORD=${ACR_PASSWORD: 1: -2}
+
+echo $ACR_PASSWORD | docker login -u $ACR_USERNAME --password-stdin https://${REGISTRY}.azurecr.io
 
 docker tag pynb-cloud ${REGISTRY}.azurecr.io/jupyter-server:deployment
 docker push ${REGISTRY}.azurecr.io/jupyter-server:deployment
