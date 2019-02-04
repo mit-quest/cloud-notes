@@ -7,8 +7,14 @@ CONFIG=azure-config
 LOCATION=eastus
 RG=qi-bridge-transient-deploy-rg
 REGISTRY=qitransientregistry
+REG_SERVER=${REGISTRY}.azurecr.io
+APPLICATION="cloud-notes"
 
-SUBSCRIPTION_ID=$1
+# az cli leaves junk in the output when calling az methods with --query
+TrimQuery() {
+    INPUT=$1
+    echo ${INPUT: 1: -2}
+}
 
 # The Azure CLI container does not provide an automatic mount point
 # for it's credentials. Thes requires a little extra manual work through
@@ -36,15 +42,27 @@ $AZ acr update --name $REGISTRY --admin-enabled true
 
 # Get the admin username and password from the Azure Container Registry
 # and issue a docker login command for the ACR.
-ACR_USERNAME="$($AZ acr credential show --name $REGISTRY --query username)"
-ACR_PASSWORD="$($AZ acr credential show --name $REGISTRY --query passwords[0].value)"
+ACR_USERNAME=$(TrimQuery "$($AZ acr credential show --name $REGISTRY --query username)")
+ACR_PASSWORD=$(TrimQuery "$($AZ acr credential show --name $REGISTRY --query passwords[0].value)")
 
-# az cli prints leaves junk in the output when calling az acr credential show
-# with the --query command. Without trimming characters, the login will fail.
-ACR_USERNAME=${ACR_USERNAME: 1: -2}
-ACR_PASSWORD=${ACR_PASSWORD: 1: -2}
+echo $ACR_PASSWORD | docker login -u $ACR_USERNAME --password-stdin https://${REG_SERVER}
 
-echo $ACR_PASSWORD | docker login -u $ACR_USERNAME --password-stdin https://${REGISTRY}.azurecr.io
+docker tag pynb-cloud ${REG_SERVER}/${APPLICATION}:deployment
+docker push ${REG_SERVER}/${APPLICATION}:deployment
 
-docker tag pynb-cloud ${REGISTRY}.azurecr.io/jupyter-server:deployment
-docker push ${REGISTRY}.azurecr.io/jupyter-server:deployment
+# Create and deploy a container instance in Azure.
+DNS_NAME_LABEL=${APPLICATION}-${RANDOM}${RANDOM}
+FQDN=$($AZ container create \
+    --name ${APPLICATION} \
+    --resource-group $RG \
+    --image ${REG_SERVER}/${APPLICATION}:deployment \
+    --registry-login-server ${REG_SERVER} \
+    --registry-username $ACR_USERNAME \
+    --registry-password $ACR_PASSWORD \
+    --ip-address public \
+    --ports 80 8888\
+    --dns-name ${DNS_NAME_LABEL} \
+    --query ipAddress.fqdn )
+
+echo
+echo "Listening to: $FQDN:80"
