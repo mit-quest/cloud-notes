@@ -38,7 +38,11 @@ RUN mkdir -p /$WORKSPACE \
     && chown $USERNAME /$WORKSPACE
 
 USER $USERNAME
+
 WORKDIR /$WORKSPACE
+COPY $WORKSPACE/* ./
+
+RUN python3 -m pip install -r ./requirements.txt
 
 # Running jupyter inside of a container requires --ip 0.0.0.0 for host connection to notebook server
 # Since running in a container, ensure no browser is loaded, --no-browser
