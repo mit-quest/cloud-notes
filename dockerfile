@@ -26,6 +26,14 @@ RUN python3 -m pip -q install --upgrade \
     setuptools \
     jupyter
 
+WORKDIR /$WORKSPACE
+
+COPY $WORKSPACE/* ./
+COPY ipynb-url ./
+COPY process.sh ./
+
+RUN python3 -m pip install -r ./requirements.txt
+
 RUN mkdir -p /$WORKSPACE \
     && useradd \
         --create-home \
@@ -34,14 +42,11 @@ RUN mkdir -p /$WORKSPACE \
         --uid $USER_ID \
         --system \
         $USERNAME \
-    && chown $USERNAME /$WORKSPACE
+    && chown --recursive $USERNAME /$WORKSPACE
 
 USER $USERNAME
 
-WORKDIR /$WORKSPACE
-COPY $WORKSPACE/* ./
 
-RUN python3 -m pip install -r ./requirements.txt
 
 # Running jupyter inside of a container requires --ip 0.0.0.0 for host connection to notebook server
 # Since running in a container, ensure no browser is loaded, --no-browser
