@@ -7,7 +7,6 @@ ENV WORKSPACE workspace
 ENV USERNAME jupyter-cloud
 
 ENV DOCKER_LOCALE en_US.UTF-8 
-ENV DATADIR $LOCAL_CONTEXT/data
 
 RUN apt-get -qq update
 RUN apt-get -qq install -y --no-install-recommends \ 
