@@ -27,7 +27,7 @@ RUN python3 -m pip -q install --upgrade \
     jupyter
 
 WORKDIR /$WORKSPACE
-COPY $WORKSPACE/* ./
+COPY $WORKSPACE/ ./
 
 RUN python3 -m pip install -r ./requirements.txt
 
