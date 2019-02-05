@@ -45,7 +45,7 @@ ACR_PASSWORD=$(TrimQuery "$($AZ acr credential show --name $REGISTRY --query pas
 
 echo $ACR_PASSWORD | docker login -u $ACR_USERNAME --password-stdin https://${REG_SERVER}
 
-docker tag pynb-cloud ${REG_SERVER}/${APPLICATION}:deployment
+docker tag ${APPLICATION} ${REG_SERVER}/${APPLICATION}:deployment
 docker push ${REG_SERVER}/${APPLICATION}:deployment
 
 # Create and deploy a container instance in Azure.

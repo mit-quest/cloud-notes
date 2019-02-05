@@ -25,5 +25,5 @@ $GCLOUD auth configure-docker --project $PROJECT_ID
 $GCLOUD auth print-access-token | docker login -u oauth2accesstoken --password-stdin https://gcr.io
 
 # Tag and push the image to the new gcr.io repository
-docker tag pynb-cloud gcr.io/$PROJECT_ID/jupyter-server:deployment
-docker push gcr.io/$PROJECT_ID/jupyter-server:deployment
+docker tag ${APPLICATION} gcr.io/${PROJECT_ID}/${APPLICATION}:deployment
+docker push gcr.io/${PROJECT_ID}/${APPLICATION}:deployment
