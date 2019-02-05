@@ -1,7 +1,7 @@
 #!/usr/bin/env perl
 
 # Python notebooks running with the --no-browser flag set
-# Will place anunuseable GUID in the URL output.
+# Will place an unuseable GUID in the URL output.
 # This script replaces the guid with a local host url in order
 # to paste the URL into a browser window.
 
