@@ -31,9 +31,11 @@ $GCLOUD auth configure-docker --project $PROJECT_ID
 # Login to gcr.io
 $GCLOUD auth print-access-token | docker login -u oauth2accesstoken --password-stdin https://gcr.io
 
+GCR_IMAGE=gcr.io/${PROJECT_ID}/${APPLICATION}:deployment
+
 # Tag and push the image to the new gcr.io repository
-docker tag ${APPLICATION} gcr.io/${PROJECT_ID}/${APPLICATION}:deployment
-docker push gcr.io/${PROJECT_ID}/${APPLICATION}:deployment
+docker tag ${APPLICATION} ${GCR_IMAGE}
+docker push ${GCR_IMAGE}
 
 # Create a cluster to run the container
 $GCLOUD clusters create $CLUSTER --num-nodes 1
