@@ -54,11 +54,10 @@ export RESOURCES=qi-bridge-transient-resources
 export APPLICATION="cloud-notes"
 export CR_IMAGE=${APPLICATION}:deployment
 
-# Build the dockerfile for the development context
 docker build . --build-arg USER_ID=$(id -u $USER) -t $APPLICATION
 . ./deploy/${PROVIDER}_deploy.sh
 
-# Will return error by default
+# Will exit with error by default
 $ESTABLISH_CONNECTION
 
 finish
