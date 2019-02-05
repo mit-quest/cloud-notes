@@ -39,3 +39,6 @@ docker push ${GCR_IMAGE}
 
 # Create a cluster to run the container
 $GCLOUD clusters create $CLUSTER --num-nodes 1
+
+$KUBECTL run ${APPLICATION} --image ${GCR_IMAGE} --port 8888
+$KUBECTL expose deployment ${APPLICATION} --port 8888 --target-port 8888
