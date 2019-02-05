@@ -45,29 +45,18 @@ if [[ "$CONTAINS" = "ERROR" ]]; then
     exit 1
 fi
 
+# Used in deploy scripts
+export APPLICATION="cloud-notes"
+
 # Build the dockerfile for the development context
-docker build . --build-arg USER_ID=$(id -u $USER) -t pynb-cloud
+docker build . --build-arg USER_ID=$(id -u $USER) -t $APPLICATION
 
-# The docker image responsible for provisioning resources
-# might need to be built with the --network=host command
+# Capture some variables in this shell's context
+export ESTABLISH_CONNECTION="finish && return 1"
+export CONFIG="${PROVIDER}-config"
+. ./deploy/${PROVIDER}_deploy.sh
 
-# Need to determine how to push to a container registry within
-# each cloud platform using their CLI?
-./deploy/${PROVIDER}_deploy.sh
-
-# Ideally this is created on the fly and the required login credentials
-# can be used to use a docker login command and push to the new registry.
-# After the container is deployed we launch a deployment for the app
-# using the container we just uploaded to the registry and it runs remotely.
-
-# e.g.
-# <cloud-cli> <create-registry>
-# docker login <cloud-registry>
-# docker tag pynb-cloud <cloud-registry>/pynb-server
-# docker push <cloud-registry>/pynb-server
-
-while IFS= read -r line; do
-    echo "$line" | perl ./ipynb-url -
-done < <(docker run -i -p 8888:8888 pynb-cloud 2>&1)
+# Will return error by default
+$ESTABLISH_CONNECTION
 
 finish
