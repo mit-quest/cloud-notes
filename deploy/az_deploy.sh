@@ -3,12 +3,10 @@
 # Get access to the Azure CLI
 docker pull microsoft/azure-cli
 
-CONFIG=azure-config
 LOCATION=eastus
 RG=qi-bridge-transient-deploy-rg
 REGISTRY=qitransientregistry
 REG_SERVER=${REGISTRY}.azurecr.io
-APPLICATION="cloud-notes"
 
 # az cli leaves junk in the output when calling az methods with --query
 TrimQuery() {
