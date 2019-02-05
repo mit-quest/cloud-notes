@@ -46,15 +46,16 @@ if [[ "$CONTAINS" = "ERROR" ]]; then
     exit 1
 fi
 
-# Used in deploy scripts
+# Capture some variables in this shell's context that will be used in
+# cloud specific deployment scripts.
+export ESTABLISH_CONNECTION="finish && return 1"
+export CONFIG="${PROVIDER}-config"
+export RESOURCES=qi-bridge-transient-resources
 export APPLICATION="cloud-notes"
+export CR_IMAGE=${APPLICATION}:deployment
 
 # Build the dockerfile for the development context
 docker build . --build-arg USER_ID=$(id -u $USER) -t $APPLICATION
-
-# Capture some variables in this shell's context
-export ESTABLISH_CONNECTION="finish && return 1"
-export CONFIG="${PROVIDER}-config"
 . ./deploy/${PROVIDER}_deploy.sh
 
 # Will return error by default
