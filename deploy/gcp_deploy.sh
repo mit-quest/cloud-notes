@@ -3,6 +3,8 @@
 # TODO: ask for this ID
 PROJECT_ID=$1
 
+CLUSTER=qitransientcluster
+
 # Providing a default
 ZONE="us-east4-a"
 
@@ -30,3 +32,6 @@ $GCLOUD auth print-access-token | docker login -u oauth2accesstoken --password-s
 # Tag and push the image to the new gcr.io repository
 docker tag ${APPLICATION} gcr.io/${PROJECT_ID}/${APPLICATION}:deployment
 docker push gcr.io/${PROJECT_ID}/${APPLICATION}:deployment
+
+# Create a cluster to run the container
+$GCLOUD clusters create $CLUSTER --num-nodes 1
