@@ -3,6 +3,9 @@
 # TODO: ask for this ID
 PROJECT_ID=$1
 
+# Providing a default
+ZONE="us-east4-a"
+
 # Use the Prebuilt gcloud sdk container provided by Google.
 docker pull google/cloud-sdk
 
