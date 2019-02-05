@@ -68,4 +68,6 @@ echo
 echo *** USE THE FOLLOWING URL TO CONNECT TO YOUR JUPYTER SERVER ***
 echo "$FQDN":8888
 echo
-echo "Listening to: $FQDN:80"
+read -n 1 -p "PRESS ENTER TO CONTINUE AND RETRIEVE YOUR TOKEN" input
+
+ESTABLISH_CONNECTION="$AZ container attach --resource-group $RG --name $APPLICATION"
