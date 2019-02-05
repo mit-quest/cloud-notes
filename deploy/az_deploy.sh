@@ -50,7 +50,7 @@ docker push ${REG_SERVER}/${APPLICATION}:deployment
 
 # Create and deploy a container instance in Azure.
 DNS_NAME_LABEL=${APPLICATION}-${RANDOM}${RANDOM}
-FQDN=$($AZ container create \
+$AZ container create \
     --name ${APPLICATION} \
     --resource-group $RG \
     --image ${REG_SERVER}/${APPLICATION}:deployment \
@@ -58,9 +58,8 @@ FQDN=$($AZ container create \
     --registry-username $ACR_USERNAME \
     --registry-password $ACR_PASSWORD \
     --ip-address public \
-    --ports 80 8888\
-    --dns-name ${DNS_NAME_LABEL} \
-    --query ipAddress.fqdn )
+    --ports 8888\
+    --dns-name ${DNS_NAME_LABEL}
 
 echo
 echo "Listening to: $FQDN:80"
