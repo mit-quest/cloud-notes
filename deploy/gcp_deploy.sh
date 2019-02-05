@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# Will probably need to ask for this ID
+# TODO: ask for this ID
 PROJECT_ID=$1
 
 # Use the Prebuilt gcloud sdk container provided by Google.
