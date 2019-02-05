@@ -61,5 +61,11 @@ $AZ container create \
     --ports 8888\
     --dns-name ${DNS_NAME_LABEL}
 
+FQDN=$(TrimQuery \
+    "$($AZ container show --resource-group $RG --name $APPLICATION --query ipAddress.fqdn)")
+
+echo
+echo *** USE THE FOLLOWING URL TO CONNECT TO YOUR JUPYTER SERVER ***
+echo "$FQDN":8888
 echo
 echo "Listening to: $FQDN:80"
