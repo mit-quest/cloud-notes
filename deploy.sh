@@ -42,6 +42,7 @@ CONTAINS=$(contains "$PROVIDER" "${PROVIDERS[@]}")
 
 if [[ "$CONTAINS" = "ERROR" ]]; then
     echo $ARGUMENTS
+    finish
     exit 1
 fi
 
