@@ -27,10 +27,7 @@ RUN python3 -m pip -q install --upgrade \
     jupyter
 
 WORKDIR /$WORKSPACE
-
 COPY $WORKSPACE/* ./
-COPY ipynb-url ./
-COPY process.sh ./
 
 RUN python3 -m pip install -r ./requirements.txt
 
@@ -46,9 +43,7 @@ RUN mkdir -p /$WORKSPACE \
 
 USER $USERNAME
 
-
-
-# Running jupyter inside of a container requires --ip 0.0.0.0 for host connection to notebook server
+# Requires --ip 0.0.0.0 for host connection to notebook server
 # Since running in a container, ensure no browser is loaded, --no-browser
 #
 CMD ["python3", "-m", "jupyter", "notebook", "--ip", "0.0.0.0", "--no-browser"]
