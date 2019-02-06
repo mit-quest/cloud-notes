@@ -4,7 +4,8 @@ LOCATION=eastus
 REGISTRY=qitransientregistry
 REG_SERVER=${REGISTRY}.azurecr.io
 
-# az cli leaves junk in the output when calling az methods with --query
+# Cleanup function to remove trailing characters in Azure CLI's
+# --query output
 TrimQuery() {
     INPUT=$1
     echo ${INPUT: 1: -2}
