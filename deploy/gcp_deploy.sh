@@ -10,12 +10,12 @@ docker pull google/cloud-sdk
 # Login with the container. This will likely require user input.
 docker run \
     -it \
-    --name gcloud-config \
+    --name ${CONFIG} \
     google/cloud-sdk \
     gcloud auth login
 
 # Common rerun commands for gcloud commands inside of docker image
-PREFIX="docker run --rm -it --volumes-from gcloud-config google/cloud-sdk"
+PREFIX="docker run --rm --volumes-from ${CONFIG} google/cloud-sdk"
 GCLOUD="$PREFIX gcloud"
 KUBCTL="$PREFIX kubctl"
 
