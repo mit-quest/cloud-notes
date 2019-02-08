@@ -73,8 +73,31 @@ docker tag ${APPLICATION} ${REG_SERVER}/${CR_IMAGE}
 docker push ${REG_SERVER}/${CR_IMAGE}
 
 # Create a cluster to run the container
-$GCLOUD container clusters delete $CLUSTER > /dev/null
-$GCLOUD container clusters create $CLUSTER --num-nodes 1
+$GCLOUD container clusters create $CLUSTER \
+    --num-nodes 1 \
+    --enable-basic-auth \
+    --no-enable-ip-alias \
+    --metadata disable-legacy-endpoints=true \
+    --network "default" \
+    --issue-client-certificate \
+    --scopes \
+        compute-rw,storage-ro
 
-$KUBECTL run ${APPLICATION} --image=${REG_SERVER}/${CR_IMAGE} --port=8888
-$KUBECTL expose deployment ${APPLICATION} --port 8888 --target-port 8888
+$GCLOUD container clusters get-credentials $CLUSTER
+
+docker run \
+    -ti \
+    --rm \
+    --volumes-from ${CONFIG} \
+    google/cloud-sdk \
+    gcloud auth application-default login
+
+$KUBECTL run ${APPLICATION} \
+    --image=${REG_SERVER}/${CR_IMAGE} \
+    --server=https://${REG_SERVER} \
+    --port 8080
+
+$KUBECTL expose deployment ${APPLICATION} \
+    --server=https://${REG_SERVER} \
+    --port 8080 \
+    --target-port 8080
