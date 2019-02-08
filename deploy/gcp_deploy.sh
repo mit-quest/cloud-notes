@@ -25,26 +25,36 @@ $GCLOUD projects create $RESOURCES
 $GCLOUD config set project $RESOURCES
 $GCLOUD config set compute/zone $LOCATION
 
-LIST_BILLING="$GCLOUD beta billing accounts list --filter open=true"
-LIST_FORMAT_DISPLAY="\"list[no-heading](name, displayName)\""
-LIST_FORMAT_HIDDEN="\"list[no-heading](name)\""
-
+echo
+echo CHOOSE A BILLING ACCOUNT TO LINK WITH "\"${RESOURCES}\""
 let option_id=0
 while IFS= read -r line; do
     let option_id++
     echo "[${option_id}] ${line}"
-done < <($GCLOUD_BILLING $LIST_FORMAT_DISPLAY)
+done < <(docker run \
+    --rm \
+    --volumes-from ${CONFIG} \
+    google/cloud-sdk \
+    gcloud beta billing accounts list \
+    --format "table[no-heading](name,displayName)")
 
-read -n 1 -p "CHOOSE A BILLING ACCOUNT TO LINK WITH ${RESOURCES}:"
+echo
+read -n 1 -p "> " CHOICE
+echo
 
 let option_id=0
 while IFS= read -r line; do
     let option_id++
     if [ "$option_id" = $CHOICE ]; then
-        $GCLOUD alpha billing projects link $RESOURCES --account-id=$line
+        $GCLOUD alpha billing projects link $RESOURCES --billing-account $line
         break
     fi
-done < <($GCLOUD_BILLING $LIST_FORMAT_HIDDEN)
+done < <(docker run \
+    --rm \
+    --volumes-from ${CONFIG} \
+    google/cloud-sdk \
+    gcloud beta billing accounts list \
+    --format "table[no-heading](name)")
 
 # Enable the use of the container and the container registry APIs for project
 $GCLOUD services enable containerregistry.googleapis.com
