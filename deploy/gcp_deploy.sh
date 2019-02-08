@@ -17,7 +17,7 @@ docker run \
 # Common rerun commands for gcloud commands inside of docker image
 PREFIX="docker run --rm --volumes-from ${CONFIG} google/cloud-sdk"
 GCLOUD="$PREFIX gcloud"
-KUBCTL="$PREFIX kubctl"
+KUBECTL="$PREFIX kubectl"
 
 # Create a hosting project for transient resources.
 $GCLOUD projects create $RESOURCES
