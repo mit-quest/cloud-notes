@@ -11,11 +11,19 @@ docker pull google/cloud-sdk
 docker run \
     -it \
     --name ${CONTAINER_NAME} \
+    -e GOOGLE_APPLICATION_CREDENTIALS=${CONFIG_MOUNT} \
+    -e KUBECONFIG=${CONFIG_MOUNT} \
+    --mount type=volume,target=${CONFIG_MOUNT} \
     google/cloud-sdk \
     gcloud auth login
 
 # Common rerun commands for gcloud commands inside of docker image
-PREFIX="docker run --rm --volumes-from ${CONTAINER_NAME} google/cloud-sdk"
+PREFIX="docker run \
+    --rm \
+    -e GOOGLE_APPLICATION_CREDENTIALS=${CONFIG_MOUNT} \
+    -e KUBECONFIG=${CONFIG_MOUNT} \
+    --volumes-from ${CONTAINER_NAME} \
+    google/cloud-sdk"
 
 GCLOUD="$PREFIX gcloud"
 KUBECTL="$PREFIX kubectl"
@@ -34,6 +42,8 @@ while IFS= read -r line; do
     echo "[${option_id}] ${line}"
 done < <(docker run \
     --rm \
+    -e GOOGLE_APPLICATION_CREDENTIALS=${CONFIG_MOUNT} \
+    -e KUBECONFIG=${CONFIG_MOUNT} \
     --volumes-from ${CONTAINER_NAME} \
     google/cloud-sdk \
     gcloud beta billing accounts list \
@@ -52,6 +62,8 @@ while IFS= read -r line; do
     fi
 done < <(docker run \
     --rm \
+    -e GOOGLE_APPLICATION_CREDENTIALS=${CONFIG_MOUNT} \
+    -e KUBECONFIG=${CONFIG_MOUNT} \
     --volumes-from ${CONTAINER_NAME} \
     google/cloud-sdk \
     gcloud beta billing accounts list \
