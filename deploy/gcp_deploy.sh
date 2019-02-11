@@ -10,12 +10,13 @@ docker pull google/cloud-sdk
 # Login with the container. This will likely require user input.
 docker run \
     -it \
-    --name ${CONFIG} \
+    --name ${CONTAINER_NAME} \
     google/cloud-sdk \
     gcloud auth login
 
 # Common rerun commands for gcloud commands inside of docker image
-PREFIX="docker run --rm --volumes-from ${CONFIG} google/cloud-sdk"
+PREFIX="docker run --rm --volumes-from ${CONTAINER_NAME} google/cloud-sdk"
+
 GCLOUD="$PREFIX gcloud"
 KUBECTL="$PREFIX kubectl"
 
@@ -33,7 +34,7 @@ while IFS= read -r line; do
     echo "[${option_id}] ${line}"
 done < <(docker run \
     --rm \
-    --volumes-from ${CONFIG} \
+    --volumes-from ${CONTAINER_NAME} \
     google/cloud-sdk \
     gcloud beta billing accounts list \
     --format "table[no-heading](name,displayName)")
@@ -51,7 +52,7 @@ while IFS= read -r line; do
     fi
 done < <(docker run \
     --rm \
-    --volumes-from ${CONFIG} \
+    --volumes-from ${CONTAINER_NAME} \
     google/cloud-sdk \
     gcloud beta billing accounts list \
     --format "table[no-heading](name)")

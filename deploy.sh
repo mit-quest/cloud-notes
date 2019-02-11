@@ -49,7 +49,8 @@ fi
 # Capture some variables in this shell's context that will be used in
 # cloud specific deployment scripts.
 export ESTABLISH_CONNECTION="finish && return 1"
-export CONFIG="${PROVIDER}-config"
+export CONTAINER_NAME="${PROVIDER}-config"
+export CONFIG_MOUNT=/.persistant_data
 export RESOURCES=qi-bridge-transient-resources
 export APPLICATION="cloud-notes"
 export CR_IMAGE=${APPLICATION}:deployment

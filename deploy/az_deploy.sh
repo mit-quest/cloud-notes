@@ -23,14 +23,14 @@ docker pull microsoft/azure-cli
 #
 docker run \
     -it \
-    --name $CONFIG \
-    -e AZURE_CONFIG_DIR=/$CONFIG \
-    --mount type=volume,target=/$CONFIG \
+    --name ${CONTAINER_NAME} \
+    -e AZURE_CONFIG_DIR=${CONFIG_MOUNT} \
+    --mount type=volume,target=${CONFIG_MOUNT} \
     microsoft/azure-cli \
     az login
 
 # Reusable AZ command to mask the use of docker.
-AZ="docker run --rm -it -e AZURE_CONFIG_DIR=/$CONFIG --volumes-from $CONFIG microsoft/azure-cli az"
+AZ="docker run --rm -it -e AZURE_CONFIG_DIR=${CONFIG_MOUNT} --volumes-from ${CONTAINER_NAME} microsoft/azure-cli az"
 
 # Create a resource group to host transient resoureces.
 $AZ group create --name $RESOURCES --location $LOCATION
