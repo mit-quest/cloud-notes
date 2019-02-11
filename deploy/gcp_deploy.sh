@@ -62,7 +62,7 @@ $GCLOUD services enable containerregistry.googleapis.com
 $GCLOUD services enable container.googleapis.com
 
 # Add authentication information for docker to login to gcr.io
-$GCLOUD auth configure-docker --project $RESOURCES --quiet
+$GCLOUD auth configure-docker --project $RESOURCES
 
 # Login to gcr.io
 $GCLOUD auth print-access-token | docker login \
