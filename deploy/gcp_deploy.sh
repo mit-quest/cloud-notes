@@ -115,19 +115,42 @@ $GCLOUD container clusters create $CLUSTER \
 
 $GCLOUD container clusters get-credentials $CLUSTER --zone ${LOCATION}
 
-docker run \
-    -ti \
-    --rm \
-    --volumes-from ${CONFIG} \
-    google/cloud-sdk \
-    gcloud auth application-default login
+K8S_ENDPOINT=$($GCLOUD container clusters describe $CLUSTER \
+    --format="table[no-heading](endpoint)")
 
-$KUBECTL run ${APPLICATION} \
+DEPLOYMENT=${APPLICATION}-deployment
+APPSERVICE=${APPLICATION}-service
+
+$KUBECTL run \
+    $DEPLOYMENT \
     --image=${REG_SERVER}/${CR_IMAGE} \
-    --server=https://${REG_SERVER} \
-    --port 8080
+    --server=${K8S_SERVER} \
+    --port 8888
 
-$KUBECTL expose deployment ${APPLICATION} \
-    --server=https://${REG_SERVER} \
-    --port 8080 \
-    --target-port 8080
+$KUBECTL expose deployment \
+    ${DEPLOYMENT} \
+    --name ${APPSERVICE} \
+    --type=LoadBalancer \
+    --server=${K8S_SERVER} \
+    --port 8888 \
+    --target-port 8888
+
+# Get the IP Address of the exposed Jupyter notebook service running
+# in the kubernetes cluster
+JUPYTER_SERVER=$($KUBECTL \
+    get services $APPSERVICE \
+    -o=custom-columns=EXTERNAL-IP:.status.loadBalancer.ingress..ip \
+    --no-headers)
+
+JUPYTER_POD=$($KUBECTL \
+    get pods \
+    -o=custom-columns=NAME:.metadata.name \
+    --no-headers)
+
+echo
+echo "*** USE THE FOLLOWING URL TO CONNECT TO YOUR JUPYTER SERVER ***"
+echo ${JUPYTER_SERVER}:8888
+echo
+read -n 1 -p "PRESS ENTER TO CONTINUE AND RETRIEVE YOUR TOKEN" input
+
+ESTABLISH_CONNECTION="$KUBECTL logs -f $JUPYTER_POD"
