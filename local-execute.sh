@@ -2,7 +2,7 @@
 
 set -e
 
-APPLICATION="cloud-notes"
+APPLICATION="cloud-notes-local"
 
 finish()
 {
