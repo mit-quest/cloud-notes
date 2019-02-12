@@ -36,7 +36,7 @@ finish()
 
 pushd $(dirname $0) > /dev/null
 
-trap finish SIGINT SIGTERM
+trap finish SIGINT SIGTERM EXIT
 
 CONTAINS=$(contains "$PROVIDER" "${PROVIDERS[@]}")
 
@@ -60,5 +60,3 @@ docker build . --build-arg USER_ID=$(id -u $USER) -t $APPLICATION
 
 # Will exit with error by default
 $ESTABLISH_CONNECTION
-
-finish
