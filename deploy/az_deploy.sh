@@ -73,7 +73,7 @@ FQDN=$(TrimQuery \
     "$($AZ container show --resource-group $RESOURCES --name $APPLICATION --query ipAddress.fqdn)")
 
 echo
-echo *** USE THE FOLLOWING URL TO CONNECT TO YOUR JUPYTER SERVER ***
+echo "*** USE THE FOLLOWING URL TO CONNECT TO YOUR JUPYTER SERVER ***"
 echo "$FQDN":8888
 echo
 read -n 1 -p "PRESS ENTER TO CONTINUE AND RETRIEVE YOUR TOKEN" input
