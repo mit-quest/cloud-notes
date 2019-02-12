@@ -20,11 +20,11 @@ contains()
     do
         if [[ "$element" == "$match" ]]; then
             echo "SUCCESS"
-            return 1
+            return 0
         fi
     done
     echo "ERROR"
-    return 0
+    return 1
 }
 
 finish()
@@ -42,7 +42,6 @@ CONTAINS=$(contains "$PROVIDER" "${PROVIDERS[@]}")
 
 if [[ "$CONTAINS" = "ERROR" ]]; then
     echo $ARGUMENTS
-    finish
     exit 1
 fi
 
@@ -56,7 +55,7 @@ export APPLICATION="cloud-notes"
 export CR_IMAGE=${APPLICATION}:deployment
 
 docker build . --build-arg USER_ID=$(id -u $USER) -t $APPLICATION
-. ./deploy/${PROVIDER}_deploy.sh
+. ./bin/${PROVIDER}_deploy.sh
 
 # Will exit with error by default
 $ESTABLISH_CONNECTION
