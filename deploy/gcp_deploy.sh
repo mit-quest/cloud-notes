@@ -113,7 +113,7 @@ $GCLOUD container clusters create $CLUSTER \
     --scopes \
         compute-rw,storage-ro
 
-$GCLOUD container clusters get-credentials $CLUSTER
+$GCLOUD container clusters get-credentials $CLUSTER --zone ${LOCATION}
 
 docker run \
     -ti \
