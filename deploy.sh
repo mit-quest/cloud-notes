@@ -57,5 +57,12 @@ export CR_IMAGE=${APPLICATION}:deployment
 docker build . --build-arg USER_ID=$(id -u $USER) -t $APPLICATION
 . ./bin/${PROVIDER}_deploy.sh
 
+echo
+echo "*** USE THE FOLLOWING URL TO CONNECT TO YOUR JUPYTER SERVER ***"
+echo ${JUPYTER_SERVER}:8888
+echo
+read -n 1 -p "PRESS ENTER TO CONTINUE AND RETRIEVE YOUR TOKEN" input
+echo
+
 # Will exit with error by default
 $ESTABLISH_CONNECTION

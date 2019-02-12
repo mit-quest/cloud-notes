@@ -157,10 +157,4 @@ JUPYTER_POD=$($KUBECTL \
     -o=custom-columns=NAME:.metadata.name \
     --no-headers)
 
-echo
-echo "*** USE THE FOLLOWING URL TO CONNECT TO YOUR JUPYTER SERVER ***"
-echo ${JUPYTER_SERVER}:8888
-echo
-read -n 1 -p "PRESS ENTER TO CONTINUE AND RETRIEVE YOUR TOKEN" input
-
 ESTABLISH_CONNECTION="$KUBECTL logs -f $JUPYTER_POD"

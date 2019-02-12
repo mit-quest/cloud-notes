@@ -69,13 +69,7 @@ $AZ container create \
     --ports 8888\
     --dns-name ${DNS_NAME_LABEL}
 
-FQDN=$(TrimQuery \
+JUPYTER_SERVER=$(TrimQuery \
     "$($AZ container show --resource-group $RESOURCES --name $APPLICATION --query ipAddress.fqdn)")
-
-echo
-echo "*** USE THE FOLLOWING URL TO CONNECT TO YOUR JUPYTER SERVER ***"
-echo "$FQDN":8888
-echo
-read -n 1 -p "PRESS ENTER TO CONTINUE AND RETRIEVE YOUR TOKEN" input
 
 ESTABLISH_CONNECTION="$AZ container attach --resource-group $RESOURCES --name $APPLICATION"
