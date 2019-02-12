@@ -137,10 +137,20 @@ $KUBECTL expose deployment \
 
 # Get the IP Address of the exposed Jupyter notebook service running
 # in the kubernetes cluster
-JUPYTER_SERVER=$($KUBECTL \
-    get services $APPSERVICE \
-    -o=custom-columns=EXTERNAL-IP:.status.loadBalancer.ingress..ip \
-    --no-headers)
+while [ -z "$JUPYTER_SERVER" ]; do
+    JUPYTER_SERVER=$($KUBECTL \
+        get services $APPSERVICE \
+        -o=custom-columns=EXTERNAL-IP:.status.loadBalancer.ingress..ip \
+        --no-headers)
+
+    # Qerying for the external IP immediately after setting up a service
+    # in Kubernetes will sometimes result in the external IP not being set
+    # and the query will return "<none>"
+    #
+    if [ "<none>" = "$JUPYTER_SERVER" ]; then
+        JUPYTER_SERVER=
+    fi
+done
 
 JUPYTER_POD=$($KUBECTL \
     get pods \
