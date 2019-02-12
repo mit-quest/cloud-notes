@@ -20,7 +20,9 @@ docker run \
     google/cloud-sdk \
     gcloud auth login
 
-# Common rerun commands for gcloud commands inside of docker image
+# Common docker command component for gcloud and kubectl commands inside
+# of the google/cloud-sdk container.
+#
 PREFIX="docker run \
     --rm \
     -e KUBECONFIG=${CONFIG_MOUNT}/kube_config \
@@ -36,12 +38,24 @@ $GCLOUD projects create $RESOURCES
 $GCLOUD config set project $RESOURCES
 $GCLOUD config set compute/zone $LOCATION
 
+# GCP requires setting up billing on a project before certain services
+# can be used. GCP does not automatically create a link to billing
+# as the billing structure of GCP allows for many billing accounts within
+# an organization.
 echo
 echo CHOOSE A BILLING ACCOUNT TO LINK WITH "\"${RESOURCES}\""
+
+# Create a menu for billing account options.
 let option_id=0
 while IFS= read -r line; do
     let option_id++
+
+    # Provide an options menu to select a billing account.
     echo "[${option_id}] ${line}"
+
+# Lists all of the available billing accounts for the current user
+# formatted to list the account number and the display name.
+#
 done < <(docker run \
     --rm \
     -e KUBECONFIG=${CONFIG_MOUNT}/kube_config \
