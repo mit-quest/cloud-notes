@@ -7,12 +7,15 @@ REG_SERVER=gcr.io/${RESOURCES}
 # Use the Prebuilt gcloud sdk container provided by Google.
 docker pull google/cloud-sdk
 
-# Login with the container. This will likely require user input.
+# Login with the container. This currently requires user interaction
+# at the browser to complete. The below command creates a volume
+# at the ${CONFIG_MOUNT} location in order to persist kubernetes
+# login credentials by setting the KUBECONFIG environment variable.
+#
 docker run \
     -it \
     --name ${CONTAINER_NAME} \
-    -e GOOGLE_APPLICATION_CREDENTIALS=${CONFIG_MOUNT} \
-    -e KUBECONFIG=${CONFIG_MOUNT} \
+    -e KUBECONFIG=${CONFIG_MOUNT}/kube_config \
     --mount type=volume,target=${CONFIG_MOUNT} \
     google/cloud-sdk \
     gcloud auth login
@@ -20,8 +23,7 @@ docker run \
 # Common rerun commands for gcloud commands inside of docker image
 PREFIX="docker run \
     --rm \
-    -e GOOGLE_APPLICATION_CREDENTIALS=${CONFIG_MOUNT} \
-    -e KUBECONFIG=${CONFIG_MOUNT} \
+    -e KUBECONFIG=${CONFIG_MOUNT}/kube_config \
     --volumes-from ${CONTAINER_NAME} \
     google/cloud-sdk"
 
@@ -42,8 +44,7 @@ while IFS= read -r line; do
     echo "[${option_id}] ${line}"
 done < <(docker run \
     --rm \
-    -e GOOGLE_APPLICATION_CREDENTIALS=${CONFIG_MOUNT} \
-    -e KUBECONFIG=${CONFIG_MOUNT} \
+    -e KUBECONFIG=${CONFIG_MOUNT}/kube_config \
     --volumes-from ${CONTAINER_NAME} \
     google/cloud-sdk \
     gcloud beta billing accounts list \
@@ -60,10 +61,12 @@ while IFS= read -r line; do
         $GCLOUD alpha billing projects link $RESOURCES --billing-account $line
         break
     fi
+
+# From the above user selection, link the billing account to the current project.
+#
 done < <(docker run \
     --rm \
-    -e GOOGLE_APPLICATION_CREDENTIALS=${CONFIG_MOUNT} \
-    -e KUBECONFIG=${CONFIG_MOUNT} \
+    -e KUBECONFIG=${CONFIG_MOUNT}/kube_config \
     --volumes-from ${CONTAINER_NAME} \
     google/cloud-sdk \
     gcloud beta billing accounts list \
