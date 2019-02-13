@@ -2,7 +2,7 @@
 ## A Cloud Agnostic deployment service for Python Notebooks
 
 ### Purpose
-To enable developers and researchers to get up and running in the cloud without previous cloud provision knowledge or the time to learn the skills needed to setup a cloud environment.
+To enable developers and researchers to get up and running in the cloud without previous cloud provisioning knowledge or the time to learn the skills needed to setup a cloud environment.
 
 ## Getting Started (Local)
 1. Place all Jupyter notebooks and code dependencies in the workspace folder.
