@@ -22,10 +22,11 @@ To enable developers and researchers to get up and running in the cloud without 
 2. [Install Docker for Windows](https://docs.docker.com/docker-for-windows/install/).
 
 ## Local Deployments
-1. Place all Jupyter notebooks and code dependencies in the workspace folder.
+1. Place all Jupyter notebooks and code dependencies in the workspace folder. 
+   **__NOTE__**: All python dependencies are currently managed by pip. Use a `requirements.txt` file to ensure your python dependencies are installed into the docker image.
 2. Run `./local-execute.sh`. This will launch a Jupyter server inside a docker container on your local machine.
 
-   **__NOTE__**: Any changes you make in the container should be reflected on the local machine. You can also add more files to the workspace without the need to restart the container and the server should reflect those changes. Use this feature to ensure the container is capable of running th application before running the deploy.sh script to run the service in the cloud.
+**__NOTE__**: Any changes you make in the locally running container should be reflected on the local machine. You can also add more files to the workspace without the need to restart the container and the server should reflect those changes. Use this feature to ensure the container is capable of running th application before running the deploy.sh script to run the service in the cloud.
 
 ## Cloud Deployments
 1. Place all Jupyter notebooks and code dependencies in the workspace folder.
