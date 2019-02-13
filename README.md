@@ -24,9 +24,9 @@ To enable developers and researchers to get up and running in the cloud without 
 > capable of running th application before running the deploy.sh script to run the service
 > in the cloud.
 
-## Getting Started (Cloud Server)
+## Cloud Deployments
 1. Place all Jupyter notebooks and code dependencies in the workspace folder.
-2. Run the `./deploy.sh <PROVIDER>`  command with the public cloud platform provider of choice. See the table below for valid arguments.
+2. Run the `./deploy.sh <PROVIDER>`  command with the public cloud platform provider of choice. See the table below for valid arguments. In order to deploy to a cloud platform, you must have the appropriate subscription to the platform.
 
 |     Cloud Platform    | Argument |          NOTES          |
 |:----------------------|:--------:|-------------------------|
