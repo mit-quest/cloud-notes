@@ -11,10 +11,14 @@ To enable developers and researchers to get up and running in the cloud without 
 1. Install Docker using your distro's installation method. See Docker's provided installation instructions for it's [provided platforms](https://docs.docker.com/install/#supported-platforms).
 
 #### Windows
-1. [Turn on optional features](file:///C:/Windows/System32/OptionalFeatures.exe) in Windows and select the following items.
+1. Turn on optional features using the optional features tool here: 
+
+   "C:\Windows\System32\OptionalFeatures.exe" and select the following items.
+
    a. Containers
    b. Windows Subsystem for Linux
    c. Hyper-V
+
 2. [Install Docker for Windows](https://docs.docker.com/docker-for-windows/install/).
 
 ## Local Deployments
