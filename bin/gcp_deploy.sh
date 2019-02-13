@@ -132,7 +132,7 @@ while [ -z "$JUPYTER_SERVER" ]; do
         -o=custom-columns=EXTERNAL-IP:.status.loadBalancer.ingress..ip \
         --no-headers)
 
-    # Qerying for the external IP immediately after setting up a service
+    # Querying for the external IP immediately after setting up a service
     # in Kubernetes will sometimes result in the external IP not being set
     # and the query will return "<none>"
     #
