@@ -24,3 +24,11 @@ To enable developers and researchers to get up and running in the cloud without 
 | Google Cloud Platform | gcp      |                         |
 | IBM Cloud             | ibm      | *Currently unsupported* |
 | Microsoft Azure       | az       |                         |
+
+---
+
+> **__NOTE__**: Getting the login key on from the server currently requires accessing the remote
+> URL and then reading through the console output to find a string that indicates what the
+> login token is.
+
+
