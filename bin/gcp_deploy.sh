@@ -47,11 +47,14 @@ echo CHOOSE A BILLING ACCOUNT TO LINK WITH "\"${RESOURCES}\""
 
 # Create a menu for billing account options.
 let option_id=0
+accounts=()
 while IFS= read -r line; do
     let option_id++
 
     # Provide an options menu to select a billing account.
     echo "[${option_id}] ${line}"
+    account_id="${line%% *}"
+    accounts+=("$account_id")
 
 # Lists all of the available billing accounts for the current user
 # formatted to list the account number and the display name.
@@ -68,23 +71,9 @@ echo
 read -n 1 -p "> " CHOICE
 echo
 
-let option_id=0
-while IFS= read -r line; do
-    let option_id++
-    if [ "$option_id" = $CHOICE ]; then
-        $GCLOUD alpha billing projects link $RESOURCES --billing-account $line
-        break
-    fi
+let CHOICE--
 
-# From the above user selection, link the billing account to the current project.
-#
-done < <(docker run \
-    --rm \
-    -e KUBECONFIG=${CONFIG_MOUNT}/kube_config \
-    --volumes-from ${CONTAINER_NAME} \
-    google/cloud-sdk \
-    gcloud beta billing accounts list \
-    --format "table[no-heading](name)")
+$GCLOUD alpha billing projects link $RESOURCES --billing-account ${accounts[CHOICE]}
 
 # Enable the use of the container and the container registry APIs for project
 $GCLOUD services enable containerregistry.googleapis.com
