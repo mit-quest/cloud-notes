@@ -18,9 +18,9 @@ NOTE: Any changes you make in the container should be reflected on the local mac
 1. Place all jupyter notebooks and code dependencies in the workspace folder.
 2. Run the `./deploy.sh <PROVIDER>`  command with the public cloud platform provider of choice. See the table below for valid arguments.
 
-|     Cloud Platform    | Argument |
-|:----------------------|:--------:|
-| Amazon Web Services   | aws      |
-| Google Cloud Platform | gcp      |
-| IBM Cloud             | ibm      |
-| Microsoft Azure       | az       |
+|     Cloud Platform    | Argument |          NOTES          |
+|:----------------------|:--------:|-------------------------|
+| Amazon Web Services   | aws      | *Currently unsupported* |
+| Google Cloud Platform | gcp      |                         |
+| IBM Cloud             | ibm      | *Currently unsupported* |
+| Microsoft Azure       | az       |                         |
