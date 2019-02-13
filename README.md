@@ -11,7 +11,9 @@ To enable developers and researchers to get up and running in the cloud without 
 
 > **__NOTE__**: Any changes you make in the container should be reflected on the local machine.
 > You can also add more files to the workspace without the need to restart the container
-> and the server should reflect those changes. Use this feature to 
+> and the server should reflect those changes. Use this feature to ensure the container is
+> capable of running th application before running the deploy.sh script to run the service
+> in the cloud.
 
 ## Getting Started (Cloud Server)
 1. Place all jupyter notebooks and code dependencies in the workspace folder.
