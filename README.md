@@ -16,7 +16,7 @@ To enable developers and researchers to get up and running in the cloud without 
 > in the cloud.
 
 ## Getting Started (Cloud Server)
-1. Place all jupyter notebooks and code dependencies in the workspace folder.
+1. Place all Jupyter notebooks and code dependencies in the workspace folder.
 2. Run the `./deploy.sh <PROVIDER>`  command with the public cloud platform provider of choice. See the table below for valid arguments.
 
 |     Cloud Platform    | Argument |          NOTES          |
