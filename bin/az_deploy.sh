@@ -52,14 +52,14 @@ ACR_PASSWORD=$(TrimQuery "$($AZ acr credential show --name $REGISTRY --query pas
 # Login to the privte Azure Container Registry with Docker.
 echo $ACR_PASSWORD | docker login -u $ACR_USERNAME --password-stdin https://${REG_SERVER}
 
-PushToRemote ${APPLICATION} ${REG_SERVER}
+REMOTE_IMAGE=$(PushToRemote ${APPLICATION} ${REG_SERVER})
 
 # Create and deploy a container instance in Azure.
 DNS_NAME_LABEL=${APPLICATION}-${RANDOM}${RANDOM}
 $AZ container create \
     --name ${APPLICATION} \
     --resource-group $RESOURCES \
-    --image ${REG_SERVER}/${APPLICATION}:deployment \
+    --image ${REMOTE_IMAGE} \
     --registry-login-server ${REG_SERVER} \
     --registry-username $ACR_USERNAME \
     --registry-password $ACR_PASSWORD \

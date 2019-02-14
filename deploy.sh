@@ -53,16 +53,24 @@ export CONTAINER_NAME="${PROVIDER}-config"
 export CONFIG_MOUNT=/.persistant_data
 export RESOURCES=qi-bridge-transient-resources
 export APPLICATION="cloud-notes"
-export CR_IMAGE=${APPLICATION}:deployment
 
+# Tags and pushes an image to a remote registry.
+# ARGUMENTS:
+#   LOCAL_IMAGE - Docker image name on the local machine
+#   REGISTRY    - The remote Container Registry URL
+#.
+# Returns: the remote image name as REMOTE_IMAGE.
+#
 function PushToRemote()
 {
-    APP=$1
+    LOCAL_IMAGE=$1
     REGISTRY=$2
 
-    REMOTE_IMAGE=${REGISTRY}/${APP}:$(id -u -n $RUID)-deployment
+    REMOTE_IMAGE=${REGISTRY}/${LOCAL_IMAGE}:$(id -u -n $RUID)-deployment
     docker tag ${APP} ${REMOTE_IMAGE}
     docker push ${REMOTE_IMAGE} 
+
+    echo $REMOTE_IMAGE
 }
 
 export -f PushToRemote

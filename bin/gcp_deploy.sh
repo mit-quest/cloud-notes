@@ -87,7 +87,7 @@ $GCLOUD auth print-access-token | docker login \
     -u oauth2accesstoken \
     --password-stdin https://gcr.io
 
-PushToRemote ${APPLICATION} ${REG_SERVER}
+REMOTE_IMAGE=$(PushToRemote ${APPLICATION} ${REG_SERVER})
 
 # Create a cluster to run the container
 $GCLOUD container clusters create $CLUSTER \
@@ -110,7 +110,7 @@ APPSERVICE=${APPLICATION}-service
 
 $KUBECTL run \
     $DEPLOYMENT \
-    --image=${REG_SERVER}/${CR_IMAGE} \
+    --image=${REMOTE_IMAGE} \
     --server=${K8S_SERVER} \
     --port 8888
 
