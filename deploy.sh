@@ -42,7 +42,7 @@ function PushToRemote()
 
 export -f PushToRemote
 
-contains()
+function contains()
 {
     local element match="$1"
     shift
@@ -57,7 +57,7 @@ contains()
     return 1
 }
 
-finish()
+function finish()
 {
     popd > /dev/null
 
