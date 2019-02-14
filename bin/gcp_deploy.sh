@@ -87,9 +87,7 @@ $GCLOUD auth print-access-token | docker login \
     -u oauth2accesstoken \
     --password-stdin https://gcr.io
 
-# Tag and push the image to the new gcr.io repository
-docker tag ${APPLICATION} ${REG_SERVER}/${CR_IMAGE}
-docker push ${REG_SERVER}/${CR_IMAGE}
+PushToRemote ${APPLICATION} ${REG_SERVER}
 
 # Create a cluster to run the container
 $GCLOUD container clusters create $CLUSTER \

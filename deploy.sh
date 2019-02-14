@@ -55,6 +55,18 @@ export RESOURCES=qi-bridge-transient-resources
 export APPLICATION="cloud-notes"
 export CR_IMAGE=${APPLICATION}:deployment
 
+function PushToRemote()
+{
+    APP=$1
+    REGISTRY=$2
+
+    REMOTE_IMAGE=${REGISTRY}/${APP}:$(id -u -n $RUID)-deployment
+    docker tag ${APP} ${REMOTE_IMAGE}
+    docker push ${REMOTE_IMAGE} 
+}
+
+export -f PushToRemote
+
 docker build . --build-arg USER_ID=$(id -u $USER) -t $APPLICATION
 . ./bin/${PROVIDER}_deploy.sh
 

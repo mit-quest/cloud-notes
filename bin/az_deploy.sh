@@ -52,9 +52,7 @@ ACR_PASSWORD=$(TrimQuery "$($AZ acr credential show --name $REGISTRY --query pas
 # Login to the privte Azure Container Registry with Docker.
 echo $ACR_PASSWORD | docker login -u $ACR_USERNAME --password-stdin https://${REG_SERVER}
 
-# Tag and push container to ACR.
-docker tag ${APPLICATION} ${REG_SERVER}/${CR_IMAGE}
-docker push ${REG_SERVER}/${CR_IMAGE}
+PushToRemote ${APPLICATION} ${REG_SERVER}
 
 # Create and deploy a container instance in Azure.
 DNS_NAME_LABEL=${APPLICATION}-${RANDOM}${RANDOM}
