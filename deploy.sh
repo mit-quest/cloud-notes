@@ -85,7 +85,7 @@ if [[ "$CONTAINS" = "ERROR" ]]; then
 fi
 
 docker build . --build-arg USER_ID=$(id -u $USER) -t $APPLICATION
-. ./bin/${PROVIDER}_deploy.sh
+. ./bin/${PROVIDER}
 
 echo
 echo "*** USE THE FOLLOWING URL TO CONNECT TO YOUR JUPYTER SERVER ***"
