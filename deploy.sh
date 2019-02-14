@@ -12,42 +12,9 @@ fi
 
 PROVIDER=$1
 
-contains()
-{
-    local element match="$1"
-    shift
-    for element
-    do
-        if [[ "$element" == "$match" ]]; then
-            echo "SUCCESS"
-            return 0
-        fi
-    done
-    echo "ERROR"
-    return 1
-}
-
-finish()
-{
-    popd > /dev/null
-    unset -f contains
-    unset -f finish
-}
-
-pushd $(dirname $0) > /dev/null
-
-trap finish EXIT
-
-CONTAINS=$(contains "$PROVIDER" "${PROVIDERS[@]}")
-
-if [[ "$CONTAINS" = "ERROR" ]]; then
-    echo $ARGUMENTS
-    exit 1
-fi
-
 # Capture some variables in this shell's context that will be used in
 # cloud specific deployment scripts.
-export ESTABLISH_CONNECTION="return 1"
+export ESTABLISH_CONNECTION="exit 1"
 export JUPYTER_SERVER=""
 export CONTAINER_NAME="${PROVIDER}-config"
 export CONFIG_MOUNT=/.persistant_data
@@ -74,6 +41,48 @@ function PushToRemote()
 }
 
 export -f PushToRemote
+
+contains()
+{
+    local element match="$1"
+    shift
+    for element
+    do
+        if [[ "$element" == "$match" ]]; then
+            echo "SUCCESS"
+            return 0
+        fi
+    done
+    echo "ERROR"
+    return 1
+}
+
+finish()
+{
+    popd > /dev/null
+
+    unset ESTABLISH_CONNECTION
+    unset JUPYTER_SERVER
+    unset CONTAINER_NAME
+    unset CONFIG_MOUNT
+    unset RESOURCES
+    unset APPLICATION
+
+    unset -f contains
+    unset -f finish
+    unset -f PushToRemote
+}
+
+pushd $(dirname $0) > /dev/null
+
+trap finish EXIT
+
+CONTAINS=$(contains "$PROVIDER" "${PROVIDERS[@]}")
+
+if [[ "$CONTAINS" = "ERROR" ]]; then
+    echo $ARGUMENTS
+    exit 1
+fi
 
 docker build . --build-arg USER_ID=$(id -u $USER) -t $APPLICATION
 . ./bin/${PROVIDER}_deploy.sh
