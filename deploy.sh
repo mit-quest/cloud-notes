@@ -1,7 +1,5 @@
 #!/bin/bash
 
-_USER=
-
 PROVIDERS=(aws gcp az ibm)
 ARGUMENTS="please specify ONE of the following providers:[${PROVIDERS[*]}]"
 
