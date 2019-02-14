@@ -1,5 +1,7 @@
 #!/bin/bash
 
+_USER=
+
 PROVIDERS=(aws gcp az ibm)
 ARGUMENTS="please specify ONE of the following providers:[${PROVIDERS[*]}]"
 
@@ -36,7 +38,7 @@ finish()
 
 pushd $(dirname $0) > /dev/null
 
-trap finish SIGINT SIGTERM EXIT
+trap finish EXIT
 
 CONTAINS=$(contains "$PROVIDER" "${PROVIDERS[@]}")
 
