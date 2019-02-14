@@ -18,7 +18,7 @@ export ESTABLISH_CONNECTION="exit 1"
 export JUPYTER_SERVER=""
 export CONTAINER_NAME="${PROVIDER}-config"
 export CONFIG_MOUNT=/.persistant_data
-export RESOURCES=qi-bridge-transient-resources
+export RESOURCES=$(id -u -n $RUID)-transient-resources
 export APPLICATION="cloud-notes"
 
 # Tags and pushes an image to a remote registry.
