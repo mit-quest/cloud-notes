@@ -34,7 +34,7 @@ function PushToRemote()
     REGISTRY=$2
 
     REMOTE_IMAGE=${REGISTRY}/${LOCAL_IMAGE}:$(id -u -n $RUID)-deployment
-    docker tag ${APP} ${REMOTE_IMAGE}
+    docker tag ${LOCAL_IMAGE} ${REMOTE_IMAGE}
     docker push ${REMOTE_IMAGE} 
 
     echo $REMOTE_IMAGE
