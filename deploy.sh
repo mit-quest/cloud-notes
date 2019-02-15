@@ -1,6 +1,6 @@
 #!/bin/bash
 
-PROVIDERS=(aws gcp az ibm)
+PROVIDERS=(aws gcp az ibm local)
 ARGUMENTS="please specify ONE of the following providers:[${PROVIDERS[*]}]"
 
 if [ $# -ne 1 ]
