@@ -15,8 +15,6 @@ PROVIDER=$1
 
 # Capture some variables in this shell's context that will be used in
 # cloud specific deployment scripts.
-export ESTABLISH_CONNECTION="exit 1"
-export JUPYTER_SERVER=""
 export CONTAINER_NAME="${PROVIDER}-config"
 export CONFIG_MOUNT=/.persistant_data
 export RESOURCES="$(id -u -n $RUID)-transient-resources"
@@ -28,6 +26,9 @@ export APPLICATION=cloud-notes$(if [ -z "${PROVIDER/local/}" ]; then echo -${PRO
 
 if [ -z "${PROVIDER/local/}" ]; then
     export MOUNTSOURCE=$(pwd)
+else
+    export ESTABLISH_CONNECTION="exit 1"
+    export JUPYTER_SERVER=""
 fi
 
 # Tags and pushes an image to a remote registry.
