@@ -1,0 +1,10 @@
+#!/bin/bash
+
+while IFS= read -r line; do
+    echo "$line" | perl ./ipynb-url -
+done < <(docker run \
+    --rm \
+    -i \
+    -p 8888:8888 \
+    --mount type=bind,source="${MOUNTSOURCE}/workspace",target="/workspace" \
+    $APPLICATION 2>&1)
