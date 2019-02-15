@@ -11,6 +11,14 @@ then
     exit 1
 fi
 
+if [ ! -x "$(command -v docker)" ]; then
+    echo \
+"An installation of docker is required. \
+See https://docs.docker.com/install for installation instructions."
+
+    exit 1
+fi
+
 PROVIDER=$1
 
 # Capture some variables in this shell's context that will be used in
