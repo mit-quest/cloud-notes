@@ -20,7 +20,15 @@ export JUPYTER_SERVER=""
 export CONTAINER_NAME="${PROVIDER}-config"
 export CONFIG_MOUNT=/.persistant_data
 export RESOURCES="$(id -u -n $RUID)-transient-resources"
-export APPLICATION="cloud-notes"
+
+# Manipulate the container name to include "-local" as a subscript if
+# running locally.
+#
+export APPLICATION=cloud-notes$(if [ -z "${PROVIDER/local/}" ]; then echo -${PROVIDER}; fi)
+
+if [ -z "${PROVIDER/local/}" ]; then
+    export MOUNTSOURCE=$(pwd)
+fi
 
 # Tags and pushes an image to a remote registry.
 # ARGUMENTS:
@@ -89,12 +97,14 @@ fi
 docker build . --build-arg USER_ID=$(id -u $USER) -t $APPLICATION
 . ./bin/${PROVIDER}
 
-echo
-echo "*** USE THE FOLLOWING URL TO CONNECT TO YOUR JUPYTER SERVER ***"
-echo ${JUPYTER_SERVER}:8888
-echo
-read -n 1 -p "PRESS ENTER TO CONTINUE AND RETRIEVE YOUR TOKEN" input
-echo
+if [ ! -z ${PROVIDER/local/} ]; then
+    echo
+    echo "*** USE THE FOLLOWING URL TO CONNECT TO YOUR JUPYTER SERVER ***"
+    echo ${JUPYTER_SERVER}:8888
+    echo
+    read -n 1 -p "PRESS ENTER TO CONTINUE AND RETRIEVE YOUR TOKEN" input
+    echo
 
-# Will exit with error by default
-$ESTABLISH_CONNECTION
+    # Will exit with error by default
+    $ESTABLISH_CONNECTION
+fi
