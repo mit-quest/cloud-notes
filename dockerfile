@@ -24,7 +24,8 @@ RUN apt-get -qq install -y --no-install-recommends \
 RUN python3 -m pip -q install --upgrade \
     pip \
     setuptools \
-    jupyter
+    jupyter \
+    jupyter-repo2docker
 
 WORKDIR /$WORKSPACE
 COPY $WORKSPACE/ ./
