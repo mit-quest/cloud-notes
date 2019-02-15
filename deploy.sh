@@ -7,6 +7,7 @@ if [ $# -ne 1 ]
 then
     echo "arguments for $0: <CLOUD_PROVIDER>"
     echo $ARGUMENTS
+
     exit 1
 fi
 
@@ -18,7 +19,7 @@ export ESTABLISH_CONNECTION="exit 1"
 export JUPYTER_SERVER=""
 export CONTAINER_NAME="${PROVIDER}-config"
 export CONFIG_MOUNT=/.persistant_data
-export RESOURCES=$(id -u -n $RUID)-transient-resources
+export RESOURCES="$(id -u -n $RUID)-transient-resources"
 export APPLICATION="cloud-notes"
 
 # Tags and pushes an image to a remote registry.
@@ -33,11 +34,12 @@ function PushToRemote()
     LOCAL_IMAGE=$1
     REGISTRY=$2
 
-    REMOTE_IMAGE=${REGISTRY}/${LOCAL_IMAGE}:$(id -u -n $RUID)-deployment
-    docker tag ${LOCAL_IMAGE} ${REMOTE_IMAGE}
-    docker push ${REMOTE_IMAGE} 
+    REMOTE_IMAGE="${REGISTRY}/${LOCAL_IMAGE}:dep.$(id -u -n $RUID)"
 
-    echo $REMOTE_IMAGE
+    docker tag ${LOCAL_IMAGE} ${REMOTE_IMAGE} > /dev/null
+    docker push ${REMOTE_IMAGE} > /dev/null
+
+    echo ${REMOTE_IMAGE}
 }
 
 export -f PushToRemote
