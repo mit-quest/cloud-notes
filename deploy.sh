@@ -33,7 +33,7 @@ export RESOURCES="$(id -u -n $RUID)-transient-resources"
 export APPLICATION=cloud-notes$(if [ -z "${PROVIDER/local/}" ]; then echo -${PROVIDER}; fi)
 
 if [ -z "${PROVIDER/local/}" ]; then
-    export MOUNTSOURCE=$(pwd)
+    export MOUNTSOURCE=$(dirname $0)
 else
     export ESTABLISH_CONNECTION="exit 1"
     export JUPYTER_SERVER=""
