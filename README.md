@@ -20,6 +20,17 @@ To enable developers and researchers to get up and running in the cloud without 
    c) Hyper-V  
 
 2. [Install Docker for Windows](https://docs.docker.com/docker-for-windows/install/).
+3. Expose Docker daemon on tcp://localhost:2375
+   [Image of Docker Settings for TCP](./_static/docker-tcp.png)
+4. Give docker drive access
+   [Image of Docker Drive Share Settings](./_static/docker-sharing.png)
+5. Add a wsl.conf file to change the auto mount settings in WSL:
+
+   ```
+   [automount]
+   root    = /
+   options = "metadata"
+   ```
 
 ## Deployment
 1. Place all Jupyter notebooks and code dependencies in the workspace folder.  
