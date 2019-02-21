@@ -13,6 +13,10 @@ tag=${tag: 0: 8}
 
 docker pull jupyter/repo2docker:${tag}
 
+# The Docker Socket needs to be mounted to the
+# repo2docker image when issuing a docker run
+# command as docker is a dependency of repo2docker
+#
 C_DOCKER_SOCKET=/var/run/docker.sock
 
 if [[ "$(IsWindows)" = "true" ]]; then
