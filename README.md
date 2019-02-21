@@ -6,11 +6,24 @@ To enable developers and researchers to get up and running in the cloud without 
 ## Getting Started
 ### Prerequisites
 1. Access to a web browser on the local machine. This is used to complete login steps associated with each platform as well as viewing the notebboks in the Jupyter server once it is deployed either locally or in the cloud.
+2. An active subscription in one of the supported Cloud Platforms [below](#supported-platforms).
 
 #### Linux
 1. Install Docker using your distro's installation method. See Docker's provided installation instructions for it's [supported platforms](https://docs.docker.com/install/#supported-platforms).
 
 #### Windows
+
+**NOTE**:  
+According to the official docker documentation, in order for Windows to work with docker,
+The System _MUST_ meet the following specifications:
+
+> - Windows 10 64bit: Pro, Enterprise or Education (1607 Anniversary Update, Build 14393 or later).
+> - Virtualization is enabled in BIOS. Typically, virtualization is enabled by default.
+>   This is different from having Hyper-V enabled. For more detail see Virtualization must
+>   be enabled in Troubleshooting.
+> - CPU SLAT-capable feature.
+> - At least 4GB of RAM.
+
 1. Turn on optional features using the optional features tool here:  
    "C:\Windows\System32\OptionalFeatures.exe"
 
@@ -20,20 +33,30 @@ To enable developers and researchers to get up and running in the cloud without 
    c) Hyper-V  
 
 2. [Install Docker for Windows](https://docs.docker.com/docker-for-windows/install/).
+3. Expose Docker daemon on tcp://localhost:2375
+   ![Image of Docker Settings for TCP](./_static/docker-tcp.png)
+4. Give docker drive access
+   ![Image of Docker Drive Share Settings](./_static/docker-sharing.png)
+5. Add a WSL configuration file `/etc/wsl.conf` to change the auto mount settings in WSL:
+
+   ```
+   [automount]
+   root    = /
+   options = "metadata"
+   ```
 
 ## Deployment
 1. Place all Jupyter notebooks and code dependencies in the workspace folder.  
-   **__NOTE__**: All python dependencies are currently managed by pip. Use a `requirements.txt` file to ensure your python dependencies are installed into the docker image.
 
-2. Run the `./deploy.sh <PROVIDER>`  command with the public cloud platform provider of choice. See the table below for valid arguments. In order to deploy to a cloud platform, you must have the appropriate subscription to the platform.
+2. Run the `./deploy.sh <PROVIDER>`  command with the public cloud platform provider of choice. See the table below for valid arguments.
 
-|     Cloud Platform    | Argument |          NOTES          |
-|:----------------------|:--------:|-------------------------|
-| Local Jupyter Server  | local    |                         |
-| Amazon Web Services   | aws      | *Currently unsupported* |
-| Google Cloud Platform | gcp      |                         |
-| IBM Cloud             | ibm      | *Currently unsupported* |
-| Microsoft Azure       | az       |                         |
+| <a name=supported-platforms></a>Cloud Platform    | Argument |          NOTES          |
+|:--------------------------------------------------|:--------:|-------------------------|
+| Local Jupyter Server                              | local    |                         |
+| [Amazon Web Services](https://aws.amazon.com)     | aws      | *Currently unsupported* |
+| [Google Cloud Platform](https://cloud.google.com) | gcp      |                         |
+| [IBM Cloud](https://cloud.ibm.com)                | ibm      | *Currently unsupported* |
+| [Microsoft Azure](https://azure.microsoft.com)    | az       |                         |
 
 ---
 
