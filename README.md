@@ -11,6 +11,18 @@ To enable developers and researchers to get up and running in the cloud without 
 1. Install Docker using your distro's installation method. See Docker's provided installation instructions for it's [supported platforms](https://docs.docker.com/install/#supported-platforms).
 
 #### Windows
+
+**NOTE**
+According to the official docker documentation, in order for Windows to work with docker,  
+The System _MUST_ meet the following specifications:
+
+> - Windows 10 64bit: Pro, Enterprise or Education (1607 Anniversary Update, Build 14393 or later).
+> - Virtualization is enabled in BIOS. Typically, virtualization is enabled by default.
+>   This is different from having Hyper-V enabled. For more detail see Virtualization must
+>   be enabled in Troubleshooting.
+> - CPU SLAT-capable feature.
+> - At least 4GB of RAM.
+
 1. Turn on optional features using the optional features tool here:  
    "C:\Windows\System32\OptionalFeatures.exe"
 
