@@ -1,6 +1,6 @@
 #!/bin/bash
 
-source ./utils.sh
+source ${WORKDIR}/bin/utils.sh
 
 repo2docker_remote=https://github.com/jupyter/repo2docker.git
 
