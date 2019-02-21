@@ -30,8 +30,10 @@ else
     H_DOCKER_SOCKET=${C_DOCKER_SOCKET}
 fi
 
+# Alias the jupyter-repo2docker command
 R2D="docker run \
     -ti  \
     --rm \
     --volume type=bind,source="${H_DOCKER_SOCKET}",target=${C_DOCKER_SOCKET} \
-    jupyter/repo2docker:${tag}"
+    jupyter/repo2docker:${tag} \
+    jupyter-repo2docker"
