@@ -4,7 +4,10 @@ source ./utils.sh
 
 repo2docker_remote=https://github.com/jupyter/repo2docker.git
 
-# Query remote for the latest commit hash of HEAD
+# As of 2-21-2019, repo2docker is not published on hub.docker.com
+# with a latest tag. The tagging strategy is to use the commit hash
+# for the repositories HEAD as the image tag.
+#
 tag=$(git ls-remote $repo2docker_remote HEAD | awk '{ print $1 }')
 tag=${tag: 0: 8}
 
