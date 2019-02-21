@@ -103,7 +103,7 @@ if [[ "$CONTAINS" = "ERROR" ]]; then
     exit 1
 fi
 
-docker build . --build-arg USER_ID=$(id -u $USER) -t $APPLICATION
+. ./bin/build
 . ./bin/${PROVIDER}
 
 if [ ! -z ${PROVIDER/local/} ]; then
