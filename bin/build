@@ -1,5 +1,7 @@
 #!/bin/bash
 
+source ./utils.sh
+
 repo2docker_remote=https://github.com/jupyter/repo2docker.git
 
 # Query remote for the latest commit hash of HEAD
@@ -7,3 +9,17 @@ tag=$(git ls-remote $repo2docker_remote HEAD | awk '{ print $1 }')
 tag=${tag: 0: 8}
 
 docker pull jupyter/repo2docker:$tag
+
+C_DOCKER_SOCKET=/var/run/docker.sock
+
+if [[ "$(IsWindows)" = "true" ]]; then
+    H_DOCKER_SOCKET=npipe:////./pipe/docker_engine
+else
+    H_DOCKER_SOCKET=${C_DOCKER_SOCKET}
+fi
+
+R2D="docker run \
+    -ti  \
+    --rm \
+    --volume type=bind,source="${H_DOCKER_SOCKET}",target=${C_DOCKER_SOCKET} \
+    jupyter/repo2docker:${tag}"
