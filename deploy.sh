@@ -20,7 +20,8 @@ See https://docs.docker.com/install for installation instructions."
 fi
 
 PROVIDER=$1
-WORKDIR=$(dirname $0)
+
+export WORKDIR=$(dirname $0)
 
 # Capture some variables in this shell's context that will be used in
 # cloud specific deployment scripts.

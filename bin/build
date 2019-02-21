@@ -37,3 +37,10 @@ R2D="docker run \
     --volume type=bind,source="${H_DOCKER_SOCKET}",target=${C_DOCKER_SOCKET} \
     jupyter/repo2docker:${tag} \
     jupyter-repo2docker"
+
+# Use repo2docker to build the workspace folder.
+$R2D \
+    --no-run \
+    --image-name ${APPLICATION}-base \
+    --target-repo-dir /workspace \
+    ${WORKDIR}/workspace
