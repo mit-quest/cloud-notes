@@ -23,7 +23,6 @@ To enable developers and researchers to get up and running in the cloud without 
 
 ## Deployment
 1. Place all Jupyter notebooks and code dependencies in the workspace folder.  
-   **__NOTE__**: All python dependencies are currently managed by pip. Use a `requirements.txt` file to ensure your python dependencies are installed into the docker image.
 
 2. Run the `./deploy.sh <PROVIDER>`  command with the public cloud platform provider of choice. See the table below for valid arguments. In order to deploy to a cloud platform, you must have the appropriate subscription to the platform.
 
