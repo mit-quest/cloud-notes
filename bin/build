@@ -19,22 +19,11 @@ docker pull jupyter/repo2docker:${tag}
 #
 C_DOCKER_SOCKET=/var/run/docker.sock
 
-# Docker For Windows Desktop uses a named pipe or a tcp
-# port for connecting to the docker daemon. If running
-# Bash on Windows, choose the windows communication methods
-# for the Docker Socket.
-#
-if [[ "$(IsWindows)" = "true" ]]; then
-    H_DOCKER_SOCKET=npipe:////./pipe/docker_engine
-else
-    H_DOCKER_SOCKET=${C_DOCKER_SOCKET}
-fi
-
 # Alias the jupyter-repo2docker command
 R2D="docker run \
     -ti  \
     --rm \
-    --volume type=bind,source="${H_DOCKER_SOCKET}",target=${C_DOCKER_SOCKET} \
+    --volume "${C_DOCKER_SOCKET}":${C_DOCKER_SOCKET} \
     jupyter/repo2docker:${tag} \
     jupyter-repo2docker"
 
