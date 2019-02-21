@@ -12,8 +12,8 @@ To enable developers and researchers to get up and running in the cloud without 
 
 #### Windows
 
-**NOTE**
-According to the official docker documentation, in order for Windows to work with docker,  
+**NOTE**:  
+According to the official docker documentation, in order for Windows to work with docker,
 The System _MUST_ meet the following specifications:
 
 > - Windows 10 64bit: Pro, Enterprise or Education (1607 Anniversary Update, Build 14393 or later).
