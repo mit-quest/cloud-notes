@@ -20,6 +20,7 @@ See https://docs.docker.com/install for installation instructions."
 fi
 
 PROVIDER=$1
+WORKDIR=$(dirname $0)
 
 # Capture some variables in this shell's context that will be used in
 # cloud specific deployment scripts.
@@ -33,7 +34,7 @@ export RESOURCES="$(id -u -n $RUID)-transient-resources"
 export APPLICATION=cloud-notes$(if [ -z "${PROVIDER/local/}" ]; then echo -${PROVIDER}; fi)
 
 if [ -z "${PROVIDER/local/}" ]; then
-    export MOUNTSOURCE=$(dirname $0)
+    export MOUNTSOURCE=${WORKDIR}
 else
     export ESTABLISH_CONNECTION="exit 1"
     export JUPYTER_SERVER=""
@@ -78,8 +79,6 @@ function contains()
 
 function finish()
 {
-    popd > /dev/null
-
     unset ESTABLISH_CONNECTION
     unset JUPYTER_SERVER
     unset CONTAINER_NAME
@@ -92,8 +91,6 @@ function finish()
     unset -f PushToRemote
 }
 
-pushd $(dirname $0) > /dev/null
-
 trap finish EXIT
 
 CONTAINS=$(contains "$PROVIDER" "${PROVIDERS[@]}")
@@ -103,8 +100,8 @@ if [[ "$CONTAINS" = "ERROR" ]]; then
     exit 1
 fi
 
-. ./bin/build
-. ./bin/${PROVIDER}
+. ${WORKDIR}/bin/build
+. ${WORKDIR}/bin/${PROVIDER}
 
 if [ ! -z ${PROVIDER/local/} ]; then
     echo
