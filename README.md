@@ -6,6 +6,7 @@ To enable developers and researchers to get up and running in the cloud without 
 ## Getting Started
 ### Prerequisites
 1. Access to a web browser on the local machine. This is used to complete login steps associated with each platform as well as viewing the notebboks in the Jupyter server once it is deployed either locally or in the cloud.
+2. An active subscription in one of the supported Cloud Platforms [below](#supported-platforms).
 
 #### Linux
 1. Install Docker using your distro's installation method. See Docker's provided installation instructions for it's [supported platforms](https://docs.docker.com/install/#supported-platforms).
@@ -47,9 +48,9 @@ The System _MUST_ meet the following specifications:
 ## Deployment
 1. Place all Jupyter notebooks and code dependencies in the workspace folder.  
 
-2. Run the `./deploy.sh <PROVIDER>`  command with the public cloud platform provider of choice. See the table below for valid arguments. In order to deploy to a cloud platform, you must have the appropriate subscription to the platform.
+2. Run the `./deploy.sh <PROVIDER>`  command with the public cloud platform provider of choice. See the table below for valid arguments.
 
-|                   Cloud Platform                  | Argument |          NOTES          |
+| <a name=supported-platforms></a>Cloud Platform    | Argument |          NOTES          |
 |:--------------------------------------------------|:--------:|-------------------------|
 | Local Jupyter Server                              | local    |                         |
 | [Amazon Web Services](https://aws.amazon.com)     | aws      | *Currently unsupported* |
