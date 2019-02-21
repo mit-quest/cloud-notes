@@ -43,4 +43,4 @@ $R2D \
     --no-run \
     --image-name ${APPLICATION}-base \
     --target-repo-dir /workspace \
-    ${WORKDIR}/workspace
+    ${MOUNTSOURCE}
