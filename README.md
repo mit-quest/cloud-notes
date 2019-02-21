@@ -24,7 +24,7 @@ To enable developers and researchers to get up and running in the cloud without 
    ![Image of Docker Settings for TCP](./_static/docker-tcp.png)
 4. Give docker drive access
    ![Image of Docker Drive Share Settings](./_static/docker-sharing.png)
-5. Add a wsl.conf file to change the auto mount settings in WSL:
+5. Add a WSL configuration file `/etc/wsl.conf` to change the auto mount settings in WSL:
 
    ```
    [automount]
