@@ -23,6 +23,7 @@ C_DOCKER_SOCKET=/var/run/docker.sock
 R2D="docker run \
     -ti  \
     --rm \
+    --mount type=bind,source=${MOUNTSOURCE},target=/workspace
     --volume "${C_DOCKER_SOCKET}":${C_DOCKER_SOCKET} \
     jupyter/repo2docker:${tag} \
     jupyter-repo2docker"
@@ -30,6 +31,8 @@ R2D="docker run \
 # Use repo2docker to build the workspace folder.
 $R2D \
     --no-run \
-    --image-name ${APPLICATION}-base \
-    --target-repo-dir /workspace \
-    ${MOUNTSOURCE}
+    --debug \
+    --image-name ${APPLICATION} \
+    --user-name $(id -urn) \
+    --user-id $(id -ur) \
+    /workspace
