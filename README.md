@@ -49,13 +49,13 @@ The System _MUST_ meet the following specifications:
 
 2. Run the `./deploy.sh <PROVIDER>`  command with the public cloud platform provider of choice. See the table below for valid arguments. In order to deploy to a cloud platform, you must have the appropriate subscription to the platform.
 
-|     Cloud Platform    | Argument |          NOTES          |
-|:----------------------|:--------:|-------------------------|
-| Local Jupyter Server  | local    |                         |
-| Amazon Web Services   | aws      | *Currently unsupported* |
-| Google Cloud Platform | gcp      |                         |
-| IBM Cloud             | ibm      | *Currently unsupported* |
-| Microsoft Azure       | az       |                         |
+|                   Cloud Platform                  | Argument |          NOTES          |
+|:--------------------------------------------------|:--------:|-------------------------|
+| Local Jupyter Server                              | local    |                         |
+| [Amazon Web Services](https://aws.amazon.com)     | aws      | *Currently unsupported* |
+| [Google Cloud Platform](https://cloud.google.com) | gcp      |                         |
+| [IBM Cloud](https://cloud.ibm.com)                | ibm      | *Currently unsupported* |
+| [Microsoft Azure](https://azure.microsoft.com)    | az       |                         |
 
 ---
 
