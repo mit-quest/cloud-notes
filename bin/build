@@ -8,7 +8,7 @@ repo2docker_remote=https://github.com/jupyter/repo2docker.git
 tag=$(git ls-remote $repo2docker_remote HEAD | awk '{ print $1 }')
 tag=${tag: 0: 8}
 
-docker pull jupyter/repo2docker:$tag
+docker pull jupyter/repo2docker:${tag}
 
 C_DOCKER_SOCKET=/var/run/docker.sock
 
