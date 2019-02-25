@@ -74,16 +74,14 @@ function CheckProvider()
     fi
 }
 
-
-
-
+# Checks the current environment to determine if the active bash shell
+# is running on Windows Subsystem for Linux.
+#
 function IsWindows()
 {
     if grep -qE "(Microsoft|WSL)" /proc/version &> /dev/null; then
-        echo true
+        return 0
     else
-        echo false
+        return 1
     fi
-
-    return 0
 }
