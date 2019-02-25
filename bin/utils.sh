@@ -10,10 +10,13 @@ See https://docs.docker.com/install for installation instructions."
    fi
 }
 
-# Get the absolute path to the working directory
-pushd $(dirname $0) > /dev/null
-export WORKDIR=$(pwd -P)
-popd > /dev/null
+function GetAbsPath()
+{
+    # Get the absolute path to the working directory
+    pushd $(dirname $0) > /dev/null
+    export WORKDIR=$(pwd -P)
+    popd > /dev/null
+}
 
 PROVIDERS=(aws gcp az ibm local)
 ARGUMENTS="please specify ONE of the following providers:[${PROVIDERS[*]}]"
