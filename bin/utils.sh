@@ -85,3 +85,15 @@ function InWSLBash()
         return 1
     fi
 }
+
+# Determines if the current user is part of the docker group
+# required as part of the post setup of a docker installation
+#
+function DockerMember()
+{
+    if groups $(id -urn) | grep &>/dev/null "\bdocker\b"; then
+        return 0
+    else
+        return 1
+    fi
+}
