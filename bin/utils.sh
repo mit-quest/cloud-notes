@@ -112,16 +112,28 @@ function IsRoot()
 # If effective user id is 0 (a root user), then print the provided
 # error message to stderr.
 #
-# ARGUMENTS:
-#   _ERROR_MESSAGE - A message to print to stderr if a the EUID is
-#                    a root user
-#
-function RootWarning()
+function PermissionsCheck()
 {
-    _ERROR_MESSAGE=$1
+    _ROOT_WARNING="\
+WARNING: Running as root. This may cause unintended side \
+effects with deployments. If another user runs as root, they \
+may override this deployment. To avoid this error, make sure you \
+are a member of the docker group"
+
+    _ERROR_MESSAGE="\
+ERROR: Running as an under-privileged user. \
+Make sure you are part of the docker group."
 
     IsRoot
     if [ $? = 0 ]; then
-        echo "$_ERROR_MESSAGE" 1>&2
+        echo "$_ROOT_WARNING" 1>&2
+    else
+        DockerMember
+        if [ $? = 1 ]; then
+            echo "$_ERROR_MESSAGE" 1>&2
+            return 1
+        fi
     fi
+
+    return 0
 }
