@@ -12,10 +12,14 @@ See https://docs.docker.com/install for installation instructions."
 
 function GetAbsPath()
 {
+    _SCRIPT_NAME=$1
+
     # Get the absolute path to the working directory
-    pushd $(dirname $0) > /dev/null
-    export WORKDIR=$(pwd -P)
+    pushd $(dirname $_SCRIPT_NAME) > /dev/null
+    _SCRIPT_DIR=$(pwd -P)
     popd > /dev/null
+
+    echo $_SCRIPT_DIR
 }
 
 PROVIDERS=(aws gcp az ibm local)
