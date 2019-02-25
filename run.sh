@@ -3,6 +3,7 @@
 . $(dirname $0)/bin/utils.sh
 
 RequireDocker
+PermissionsCheck
 
 WORKDIR=$(GetAbsPath $0)
 
