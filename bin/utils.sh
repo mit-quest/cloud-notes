@@ -1,12 +1,14 @@
 #!/bin/bash
 
-if [ ! -x "$(command -v docker)" ]; then
-    echo "\
+function RequireDocker()
+{
+    if [ ! -x "$(command -v docker)" ]; then
+        echo "\
 An installation of docker is required. \
 See https://docs.docker.com/install for installation instructions."
-
-    exit 1
-fi
+        exit 1
+   fi
+}
 
 # Get the absolute path to the working directory
 pushd $(dirname $0) > /dev/null
