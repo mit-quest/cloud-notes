@@ -1,5 +1,9 @@
 #!/bin/bash
 
+. $(dirname $0)/bin/utils.sh
+
+WORKDIR=$(GetAbsPath $0)
+
 PROVIDER=$1
 
 # Capture some variables in this shell's context that will be used in
