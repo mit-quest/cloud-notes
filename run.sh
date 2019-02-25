@@ -13,11 +13,6 @@ fi
 
 PROVIDER=$1
 
-# Get the absolute path to the working directory
-pushd $(dirname $0) > /dev/null
-export WORKDIR=$(pwd -P)
-popd > /dev/null
-
 # Capture some variables in this shell's context that will be used in
 # cloud specific deployment scripts.
 export CONTAINER_NAME="${PROVIDER}-config"

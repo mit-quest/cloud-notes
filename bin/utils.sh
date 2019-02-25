@@ -8,6 +8,10 @@ See https://docs.docker.com/install for installation instructions."
     exit 1
 fi
 
+# Get the absolute path to the working directory
+pushd $(dirname $0) > /dev/null
+export WORKDIR=$(pwd -P)
+popd > /dev/null
 
 function IsWindows()
 {
