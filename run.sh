@@ -2,6 +2,8 @@
 
 . $(dirname $0)/bin/utils.sh
 
+RequireDocker
+
 WORKDIR=$(GetAbsPath $0)
 
 PROVIDER=$1
