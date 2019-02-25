@@ -97,3 +97,31 @@ function DockerMember()
         return 1
     fi
 }
+
+# Checks if the user is attempting to run a sript as root.
+#
+function IsRoot()
+{
+    if [ $(id -u) = 0 ]; then
+        return 0
+    else
+        return 1
+    fi
+}
+
+# If effective user id is 0 (a root user), then print the provided
+# error message to stderr.
+#
+# ARGUMENTS:
+#   _ERROR_MESSAGE - A message to print to stderr if a the EUID is
+#                    a root user
+#
+function RootWarning()
+{
+    _ERROR_MESSAGE=$1
+
+    IsRoot
+    if [ $? = 0 ]; then
+        echo "$_ERROR_MESSAGE" 1>&2
+    fi
+}
