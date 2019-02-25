@@ -1,16 +1,5 @@
 #!/bin/bash
 
-PROVIDERS=(aws gcp az ibm local)
-ARGUMENTS="please specify ONE of the following providers:[${PROVIDERS[*]}]"
-
-if [ $# -ne 1 ]
-then
-    echo "arguments for $0: <CLOUD_PROVIDER>"
-    echo $ARGUMENTS
-
-    exit 1
-fi
-
 PROVIDER=$1
 
 # Capture some variables in this shell's context that will be used in

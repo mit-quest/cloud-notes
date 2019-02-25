@@ -13,6 +13,17 @@ pushd $(dirname $0) > /dev/null
 export WORKDIR=$(pwd -P)
 popd > /dev/null
 
+PROVIDERS=(aws gcp az ibm local)
+ARGUMENTS="please specify ONE of the following providers:[${PROVIDERS[*]}]"
+
+if [ $# -ne 1 ]
+then
+    echo "arguments for $0: <CLOUD_PROVIDER>"
+    echo $ARGUMENTS
+
+    exit 1
+fi
+
 function IsWindows()
 {
     if grep -qE "(Microsoft|WSL)" /proc/version &> /dev/null; then
