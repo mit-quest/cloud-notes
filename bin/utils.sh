@@ -3,9 +3,7 @@
 function RequireDocker()
 {
     if [ ! -x "$(command -v docker)" ]; then
-        echo "\
-An installation of docker is required. \
-See https://docs.docker.com/install for installation instructions."
+        echo "Docker is not installed." 1>&2
         exit 1
    fi
 }
