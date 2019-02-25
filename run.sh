@@ -20,21 +20,6 @@ else
     export JUPYTER_SERVER=""
 fi
 
-function contains()
-{
-    local element match="$1"
-    shift
-    for element
-    do
-        if [[ "$element" == "$match" ]]; then
-            echo "SUCCESS"
-            return 0
-        fi
-    done
-    echo "ERROR"
-    return 1
-}
-
 function finish()
 {
     unset ESTABLISH_CONNECTION

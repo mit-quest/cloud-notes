@@ -24,6 +24,22 @@ then
     exit 1
 fi
 
+function contains()
+{
+    local element match="$1"
+    shift
+    for element
+    do
+        if [[ "$element" == "$match" ]]; then
+            echo "SUCCESS"
+            return 0
+        fi
+    done
+    echo "ERROR"
+    return 1
+}
+
+
 function IsWindows()
 {
     if grep -qE "(Microsoft|WSL)" /proc/version &> /dev/null; then
