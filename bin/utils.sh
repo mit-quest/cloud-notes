@@ -63,14 +63,13 @@ function Contains()
 #
 function CheckProvider()
 {
-    local _PROVIDER = $1
-    local ERROR_MSG="please specify ONE of the following providers:[${PROVIDERS[*]}]"
+    local _PROVIDER=$1
+    local _ERROR_MSG="please specify a valid Provider. providers:[${PROVIDERS[*]}]"
 
-    if [ $# -ne 1 ]
+    Contains $_PROVIDER ${PROVIDERS[@]}
+    if [ $? -ne 0 ]
     then
-        echo "arguments for $0: <CLOUD_PROVIDER>"
-        echo $ARGUMENTS
-
+        echo $_ERROR_MSG
         exit 1
     fi
 }
