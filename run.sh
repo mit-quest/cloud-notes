@@ -1,5 +1,6 @@
 #!/bin/bash
 
+# Import our utility functions
 . $(dirname $0)/bin/utils.sh
 
 RequireDocker
