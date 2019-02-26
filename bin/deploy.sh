@@ -26,4 +26,4 @@ export CONFIG_MOUNT=/.persistant_data
 export RESOURCES="$(id -u -n $RUID)-transient-resources"
 export CONTAINER_NAME="${PROVIDER}-config"
 
-${WORKDIR}/bin/$1
+. ${WORKDIR}/bin/$1
