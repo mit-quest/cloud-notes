@@ -1,14 +1,24 @@
 #!/bin/bash
 
+set -e
+
 # Import our utility functions
 . $(dirname $0)/bin/utils.sh
+
+trap UnsetUtils EXIT
 
 RequireDocker
 PermissionsCheck
 
+if ! [ $# = 1 ]; then
+    echo "USE: $0 <PROVIDER>" 1>&2
+    exit 1
+fi
+
 WORKDIR=$(GetAbsPath $0)
 
 PROVIDER=$1
+CheckProvider $PROVIDER
 
 # Capture some variables in this shell's context that will be used in
 # cloud specific deployment scripts.
@@ -43,13 +53,6 @@ function finish()
 }
 
 trap finish EXIT
-
-CONTAINS=$(contains "$PROVIDER" "${PROVIDERS[@]}")
-
-if [[ "$CONTAINS" = "ERROR" ]]; then
-    echo $ARGUMENTS
-    exit 1
-fi
 
 . ${WORKDIR}/bin/build
 . ${WORKDIR}/bin/${PROVIDER}
