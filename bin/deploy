@@ -43,7 +43,7 @@ export RESOURCES="$(id -u -n $RUID)-transient-resources"
 export CONTAINER_NAME="${PROVIDER}-config"
 
 if ! [ -z "$WORKDIR" ]; then
-    . $(GetAbsPath ${BASH_SOURCE[0]})/${PROVIDER}
-else
     . ${WORKDIR}/bin/${PROVIDER}
+else
+    . $(GetAbsPath ${BASH_SOURCE[0]})/${PROVIDER}
 fi
