@@ -24,7 +24,7 @@ CheckProvider $PROVIDER
 
 export APPLICATION=$(GetContainerName "cloud-notes" $PROVIDER)
 export WORKDIR=$(GetAbsPath $0)
-export ESTABLISH_CONNECTION="exit 1"
+export ESTABLISH_CONNECTION=""
 export JUPYTER_SERVER=""
 
 function finish()
@@ -41,6 +41,11 @@ trap finish EXIT
 
 . ${WORKDIR}/bin/build
 . ${WORKDIR}/bin/deploy ${PROVIDER}
+
+if [ -z "$ESTABLISH_CONNECTION" ]; then
+    echo "An error occurred during deployment and no Jupyter server was found." >&2
+    exit 1
+fi
 
 if [ ! -z ${PROVIDER/local/} ]; then
     echo
