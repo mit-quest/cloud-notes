@@ -55,6 +55,8 @@ if [ ! -z ${PROVIDER/local/} ]; then
     read -n 1 -p "PRESS ENTER TO CONTINUE AND RETRIEVE YOUR TOKEN" input
     echo
 
-    # Will exit with error by default
+    trap \
+        'echo "\nTerminating connection to host. Server will continue running remotely"' SIGINT
+
     $ESTABLISH_CONNECTION
 fi
