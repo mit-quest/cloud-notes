@@ -123,8 +123,9 @@ $KUBECTL expose deployment \
     --target-port 8888
 
 # Get the IP Address of the exposed Jupyter notebook service running
-# in the kubernetes cluster
-set -e
+# in the kubernetes cluster using an exponential backoff technique
+let backoff=2
+let attempts=0
 while [ -z "$JUPYTER_SERVER" ]; do
     JUPYTER_SERVER=$($KUBECTL \
         get services $APPSERVICE \
@@ -133,13 +134,27 @@ while [ -z "$JUPYTER_SERVER" ]; do
 
     # Querying for the external IP immediately after setting up a service
     # in Kubernetes will sometimes result in the external IP not being set
-    # and the query will return "<none>"
+    # and the query will return "<none>". When this happens, we should
+    # backoff and try again.
     #
-    if [ "<none>" = "$JUPYTER_SERVER" ]; then
+    if [[ "<none>" = "$JUPYTER_SERVER" ||  ! $? = 0 ]]; then
+        let attempts+=1
         JUPYTER_SERVER=
+
+        echo "Failed to connect to GKE to retrieve server IP."
+        echo "Retrying in: $backoff seconds."
+        sleep $backoff
+
+        let backoff*=2
+        if [ $backoff -ge 128 ]; then
+            echo "Failed to retrieve server IP after $attempts attempts." >&2
+            echo "Stopping further execution" >&2
+            exit 1
+        fi
+    else
+        echo "Jupyter Server running at $JUPYTER_SERVER"
     fi
 done
-set +e
 
 JUPYTER_POD=$($KUBECTL \
     get pods \
