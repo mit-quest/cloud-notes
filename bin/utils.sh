@@ -141,6 +141,32 @@ Make sure you are part of the docker group."
     return 0
 }
 
+# Gets pseudo-unique container name based on provider specification
+# ARGUMENTS:
+#   _PREFIX   - The base name for the container.
+#   _PROVIDER - The platform provider.
+#
+# RETURNS:
+#   _CONTAINER_NAME (string).
+#
+function GetContainerName()
+{
+    local _PREFIX=$1
+    local _PROVIDER=$2
+
+    CheckProvider $_PROVIDER
+
+    _POSTFIX=
+    if [ -z "${_PROVIDER/local/}" ]; then
+        _POSTFIX="${_PROVIDER}"
+    else
+        _POSTFIX=$(hostname)
+    fi
+
+    # _CONTAINER_NAME
+    echo "${_PREFIX}-${_POSTFIX}"
+}
+
 function UnsetUtils()
 {
     unset PROVIDERS
@@ -155,4 +181,5 @@ function UnsetUtils()
     unset -f CheckProvider
     unset -f InWSLBash
     unset -f UnsetUtils
+    unset -f GetContainerName
 }

@@ -15,21 +15,11 @@ if ! [ $# = 1 ]; then
     exit 1
 fi
 
-WORKDIR=$(GetAbsPath $0)
-
 PROVIDER=$1
 CheckProvider $PROVIDER
+APPLICAITION=$(GetContainerName "cloud-notes" $PROVIDER)
 
-# Capture some variables in this shell's context that will be used in
-# cloud specific deployment scripts.
-export CONTAINER_NAME="${PROVIDER}-config"
-export CONFIG_MOUNT=/.persistant_data
-export RESOURCES="$(id -u -n $RUID)-transient-resources"
-
-# Manipulate the container name to include "-local" as a subscript if
-# running locally.
-#
-export APPLICATION=cloud-notes$(if [ -z "${PROVIDER/local/}" ]; then echo -${PROVIDER}; fi)
+WORKDIR=$(GetAbsPath $0)
 
 if [ -z "${PROVIDER/local/}" ]; then
     export MOUNTSOURCE="${WORKDIR}/workspace"
