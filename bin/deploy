@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # Import utils.h
-. $(dirname $0)/utils.sh
+. $(dirname ${BASH_SOURCE[0]})/utils.sh
 RequireDocker
 PermissionCheck
 
@@ -43,7 +43,7 @@ export RESOURCES="$(id -u -n $RUID)-transient-resources"
 export CONTAINER_NAME="${PROVIDER}-config"
 
 if ! [ -z "$WORKDIR" ]; then
-    . $(GetAbsPath)/${PROVIDER}
+    . $(GetAbsPath ${BASH_SOURCE[0]})/${PROVIDER}
 else
     . ${WORKDIR}/bin/${PROVIDER}
 fi

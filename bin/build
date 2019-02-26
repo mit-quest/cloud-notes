@@ -1,11 +1,11 @@
 #!/bin/bash
 
 # Import utils.h
-. $(dirname $0)/utils.sh
+. $(dirname ${BASH_SOURCE[0]})/utils.sh
 RequireDocker
 PermissionCheck
 
-MOUNTSOURCE="$(GetAbsPath $0)"
+MOUNTSOURCE="$(GetAbsPath ${BASH_SOURCE[0]})"
 pushd ${MOUNTSOURCE}/../ >/dev/null
 MOUNTSOURCE="$(pwd)/workspace"
 popd >/dev/null
