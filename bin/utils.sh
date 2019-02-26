@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # Check if file is already sourced
-if ! [ -n $__UTILS__ ] && return || readonly __UTILS__=1
+[ -n "$__UTILS__" ] && return || readonly __UTILS__=1
 
 # Checks for Docker installation and causes script to exit
 # if installation cannot be found.
