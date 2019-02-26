@@ -21,3 +21,7 @@ function PushToRemote()
 }
 
 export -f PushToRemote
+
+export CONFIG_MOUNT=/.persistant_data
+export RESOURCES="$(id -u -n $RUID)-transient-resources"
+export CONTAINER_NAME="${PROVIDER}-config"
