@@ -124,6 +124,7 @@ $KUBECTL expose deployment \
 
 # Get the IP Address of the exposed Jupyter notebook service running
 # in the kubernetes cluster
+set -e
 while [ -z "$JUPYTER_SERVER" ]; do
     JUPYTER_SERVER=$($KUBECTL \
         get services $APPSERVICE \
@@ -138,6 +139,7 @@ while [ -z "$JUPYTER_SERVER" ]; do
         JUPYTER_SERVER=
     fi
 done
+set +e
 
 JUPYTER_POD=$($KUBECTL \
     get pods \
