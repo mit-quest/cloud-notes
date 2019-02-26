@@ -17,29 +17,22 @@ fi
 
 PROVIDER=$1
 CheckProvider $PROVIDER
-APPLICAITION=$(GetContainerName "cloud-notes" $PROVIDER)
 
-WORKDIR=$(GetAbsPath $0)
-
-if [ -z "${PROVIDER/local/}" ]; then
-    export MOUNTSOURCE="${WORKDIR}/workspace"
-else
-    export ESTABLISH_CONNECTION="exit 1"
-    export JUPYTER_SERVER=""
-fi
+export APPLICATION=$(GetContainerName "cloud-notes" $PROVIDER)
+export WORKDIR=$(GetAbsPath $0)
+export MOUNTSOURCE="${WORKDIR}/workspace"
+export ESTABLISH_CONNECTION="exit 1"
+export JUPYTER_SERVER=""
 
 function finish()
 {
+    unset APPLICATION
+    unset WORKDIR
+    unset MOUNTSOURCE
     unset ESTABLISH_CONNECTION
     unset JUPYTER_SERVER
-    unset CONTAINER_NAME
-    unset CONFIG_MOUNT
-    unset RESOURCES
-    unset APPLICATION
 
-    unset -f contains
     unset -f finish
-    unset -f PushToRemote
 }
 
 trap finish EXIT
