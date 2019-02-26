@@ -3,7 +3,7 @@
 # Import utils.h
 . $(dirname ${BASH_SOURCE[0]})/utils.sh
 RequireDocker
-PermissionCheck
+PermissionsCheck
 
 MOUNTSOURCE="$(GetAbsPath ${BASH_SOURCE[0]})"
 pushd ${MOUNTSOURCE}/../ >/dev/null
