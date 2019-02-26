@@ -1,11 +1,5 @@
 #!/bin/bash
 
-# Setup logging
-# print to >&3 for stdout
-exec 3>&1 4>&2
-trap 'exec 2>&4 1>&3' 0 1 2 3 RETURN
-exec 1>"$0-$(date +%s)".log 2>&1
-
 # Import our utility functions
 . $(dirname $0)/bin/utils.sh
 
