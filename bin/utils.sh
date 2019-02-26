@@ -137,3 +137,15 @@ Make sure you are part of the docker group."
 
     return 0
 }
+
+function UnsetUtils()
+{
+    unset -f RequireDocker
+    unset -f GetAbsPath
+    unset -f PermissionsCheck
+    unset -f IsRoot
+    unset -f DockerMember
+    unset -f Contains
+    unset -f CheckProvider
+    unset -f InWSLBash
+}
