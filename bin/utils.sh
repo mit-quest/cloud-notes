@@ -140,6 +140,8 @@ Make sure you are part of the docker group."
 
 function UnsetUtils()
 {
+    unset PROVIDERS
+
     unset -f RequireDocker
     unset -f GetAbsPath
     unset -f PermissionsCheck
@@ -148,4 +150,5 @@ function UnsetUtils()
     unset -f Contains
     unset -f CheckProvider
     unset -f InWSLBash
+    unset -f UnsetUtils
 }
