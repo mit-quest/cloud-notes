@@ -29,7 +29,6 @@ C_DOCKER_SOCKET=/var/run/docker.sock
 
 # Alias the jupyter-repo2docker command
 R2D="docker run \
-    -ti  \
     --rm \
     --mount type=bind,source=${MOUNTSOURCE},target=/workspace
     --volume "${C_DOCKER_SOCKET}":${C_DOCKER_SOCKET} \
