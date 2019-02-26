@@ -72,7 +72,7 @@ function CheckProvider()
     Contains $_PROVIDER ${PROVIDERS[@]}
     if [ $? -ne 0 ]
     then
-        echo $_ERROR_MSG
+        echo $_ERROR_MSG 1>&2
         exit 1
     fi
 }
