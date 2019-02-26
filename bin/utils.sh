@@ -112,6 +112,11 @@ function IsRoot()
     fi
 }
 
+function ToLower()
+{
+    echo "$1" | awk '{print tolower($0)}'
+}
+
 # If effective user id is 0 (a root user), then print the provided
 # error message to stderr.
 #
@@ -163,14 +168,43 @@ function GetContainerName()
         _POSTFIX=$(hostname)
     fi
 
-    # _CONTAINER_NAME
-    echo "${_PREFIX}-${_POSTFIX}"
+    _CONTAINER_NAME=$(ToLower "${_PREFIX}-${_POSTFIX}")
+    echo $_CONTAINER_NAME
+}
+
+# Unset a readonly variable.
+# ARGUMENTS:
+#    _READONLY_VAR - The name of the readonly variable
+#
+function UnsetReadonly()
+{
+    # Requires gdb. This function should not cause a failure
+    # if gdb is not installed. Return if gdb is not found.
+    if [ ! -x "$(command -v gdb)" ]; then 
+        return 0
+    fi
+
+# Don't move the following lines for formatting reasons.
+# Formatted to work with the EOF block.
+$_READONLY_VAR=$1
+
+# Unset will fail. Redirect stderr to stdout and capture
+# return value 
+unset $_READONLY_VAR > /dev/null 2>&1
+if [ $? -ne 0 ]; then
+    gdb -n <<EOF > /dev/null 2>&1
+ attach $$
+ call unbind_variable("$_READONLY_VAR")
+ detach
+ quit
+EOF
+fi
 }
 
 function UnsetUtils()
 {
-    unset PROVIDERS
-    unset __UTILS__
+    UnsetReadonly PROVIDERS
+    UnsetReadonly __UTILS__
 
     unset -f RequireDocker
     unset -f GetAbsPath
@@ -180,6 +214,8 @@ function UnsetUtils()
     unset -f Contains
     unset -f CheckProvider
     unset -f InWSLBash
-    unset -f UnsetUtils
     unset -f GetContainerName
+    unset -f ToLower
+    unset -f UnsetReadonly
+    unset -f UnsetUtils
 }
