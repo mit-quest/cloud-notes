@@ -11,7 +11,7 @@ function RequireDocker()
     if [ ! -x "$(command -v docker)" ]; then
         echo "Docker is not installed." 1>&2
         exit 1
-   fi
+    fi
 }
 
 # Get the absolute path to the provided script
