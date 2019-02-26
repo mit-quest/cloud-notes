@@ -1,5 +1,21 @@
 #!/bin/bash
 
+# Import utils.h
+. $(dirname $0)/utils.sh
+RequireDocker
+PermissionCheck
+
+function CheckProviderArgument()
+{
+    if ! [ $# = 1 ]; then
+        echo "USE: $0 <PROVIDER>" 1>&2
+        exit 1
+    fi
+}
+
+PROVIDER=$1
+CheckProviderArgument $PROVIDER
+
 # Tags and pushes an image to a remote registry.
 # ARGUMENTS:
 #   LOCAL_IMAGE - Docker image name on the local machine
@@ -26,4 +42,8 @@ export CONFIG_MOUNT=/.persistant_data
 export RESOURCES="$(id -u -n $RUID)-transient-resources"
 export CONTAINER_NAME="${PROVIDER}-config"
 
-. ${WORKDIR}/bin/$1
+if ! [ -z "$WORKDIR" ]; then
+    . $(GetAbsPath)/${PROVIDER}
+else
+    . ${WORKDIR}/bin/${PROVIDER}
+fi
