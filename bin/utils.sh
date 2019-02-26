@@ -22,7 +22,7 @@ function RequireDocker()
 #   The absolute path to the file as _FILE_PATH
 function GetAbsPath()
 {
-    _FILE_NAME=$1
+    local _FILE_NAME=$1
 
     pushd $(dirname $_FILE_NAME) > /dev/null
     _FILE_PATH=$(pwd -P)
@@ -32,7 +32,7 @@ function GetAbsPath()
 }
 
 # Valid Platforms/Providers
-PROVIDERS=(aws gcp az ibm local)
+readonly PROVIDERS=(aws gcp az ibm local)
 
 # Checks for a value givrn the contents of an Array
 #
