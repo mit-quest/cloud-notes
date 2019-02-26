@@ -42,7 +42,7 @@ function finish()
 trap finish EXIT
 
 . ${WORKDIR}/bin/build
-. ${WORKDIR}/bin/deploy.sh ${PROVIDER}
+. ${WORKDIR}/bin/deploy ${PROVIDER}
 
 if [ ! -z ${PROVIDER/local/} ]; then
     echo
