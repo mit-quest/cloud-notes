@@ -35,6 +35,10 @@ R2D="docker run \
     jupyter/repo2docker:${tag} \
     jupyter-repo2docker"
 
+if [ -z "${APPLICATION}" ]; then
+    APPLICATION="cloud-notes"
+fi
+
 # Use repo2docker to build the workspace folder.
 $R2D \
     --no-run \
