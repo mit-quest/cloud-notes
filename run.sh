@@ -24,7 +24,6 @@ CheckProvider $PROVIDER
 
 export APPLICATION=$(GetContainerName "cloud-notes" $PROVIDER)
 export WORKDIR=$(GetAbsPath $0)
-export MOUNTSOURCE="${WORKDIR}/workspace"
 export ESTABLISH_CONNECTION="exit 1"
 export JUPYTER_SERVER=""
 
@@ -32,7 +31,6 @@ function finish()
 {
     unset APPLICATION
     unset WORKDIR
-    unset MOUNTSOURCE
     unset ESTABLISH_CONNECTION
     unset JUPYTER_SERVER
 

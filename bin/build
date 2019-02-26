@@ -1,6 +1,14 @@
 #!/bin/bash
 
-source ${WORKDIR}/bin/utils.sh
+# Import utils.h
+. $(dirname $0)/utils.sh
+RequireDocker
+PermissionCheck
+
+MOUNTSOURCE="$(GetAbsPath $0)"
+pushd ${MOUNTSOURCE}/../ >/dev/null
+MOUNTSOURCE="$(pwd)/workspace"
+popd >/dev/null
 
 repo2docker_remote=https://github.com/jupyter/repo2docker.git
 
