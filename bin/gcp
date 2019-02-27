@@ -4,8 +4,13 @@ LOCATION="us-east4-a"
 CLUSTER=qitransientcluster
 REG_SERVER=gcr.io/${RESOURCES}
 
-# Use the Prebuilt gcloud sdk container provided by Google.
-docker pull google/cloud-sdk
+function GetPlatformContainer()
+{
+    # Use the Prebuilt gcloud sdk container provided by Google.
+    docker pull google/cloud-sdk
+}
+
+GetPlatformContainer
 
 # Login with the container. This currently requires user interaction
 # at the browser to complete. The below command creates a volume
