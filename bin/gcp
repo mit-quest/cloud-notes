@@ -181,9 +181,12 @@ function Deploy()
 
 Deploy
 
-JUPYTER_POD=$($KUBECTL \
-    get pods \
-    -o=custom-columns=NAME:.metadata.name \
-    --no-headers)
+function ConnectToServer()
+{
+    JUPYTER_POD=$($KUBECTL \
+        get pods \
+        -o=custom-columns=NAME:.metadata.name \
+        --no-headers)
 
-ESTABLISH_CONNECTION="$KUBECTL logs -f $JUPYTER_POD"
+    $KUBECTL logs -f $JUPYTER_POD
+}
