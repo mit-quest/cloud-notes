@@ -58,14 +58,19 @@ function Provision()
 
 Provision
 
-# Get the admin username and password from the Azure Container Registry
-# by querying for the data using `az acr credential show`
-#
-ACR_USERNAME=$(TrimQuery "$($AZ acr credential show --name $REGISTRY --query username)")
-ACR_PASSWORD=$(TrimQuery "$($AZ acr credential show --name $REGISTRY --query passwords[0].value)")
+function PrepareDocker()
+{
+    # Get the admin username and password from the Azure Container Registry
+    # by querying for the data using `az acr credential show`
+    #
+    ACR_USERNAME=$(TrimQuery "$($AZ acr credential show --name $REGISTRY --query username)")
+    ACR_PASSWORD=$(TrimQuery "$($AZ acr credential show --name $REGISTRY --query passwords[0].value)")
 
-# Login to the privte Azure Container Registry with Docker.
-echo $ACR_PASSWORD | docker login -u $ACR_USERNAME --password-stdin https://${REG_SERVER}
+    # Login to the privte Azure Container Registry with Docker.
+    echo $ACR_PASSWORD | docker login -u $ACR_USERNAME --password-stdin https://${REG_SERVER}
+}
+
+PrepareDocker
 
 REMOTE_IMAGE=$(PushToRemote ${APPLICATION} ${REG_SERVER})
 

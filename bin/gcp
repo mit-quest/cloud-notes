@@ -94,13 +94,18 @@ function Provision()
 
 Provision
 
-# Add authentication information for docker to login to gcr.io
-$GCLOUD auth configure-docker --project $RESOURCES
+function PrepareDocker()
+{
+    # Add authentication information for docker to login to gcr.io
+    $GCLOUD auth configure-docker --project $RESOURCES
 
-# Login to gcr.io
-$GCLOUD auth print-access-token | docker login \
-    -u oauth2accesstoken \
-    --password-stdin https://gcr.io
+    # Login to gcr.io
+    $GCLOUD auth print-access-token | docker login \
+        -u oauth2accesstoken \
+        --password-stdin https://gcr.io
+}
+
+PrepareDocker
 
 REMOTE_IMAGE=$(PushToRemote ${APPLICATION} ${REG_SERVER})
 
