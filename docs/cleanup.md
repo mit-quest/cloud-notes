@@ -12,6 +12,5 @@ Until automatic resource cleanup is implemented, follow the directions for the s
 4. Select Google Kubernetes Engine
    ![](./_static/GCP/gke.png)
 5. Delete qitransientcluster
-   ![](./_static/GCP/qitransient-highlight.png)
+   ![](./_static/GCP/clusters.png)
    ![](./_static/GCP/delete.png)
-
