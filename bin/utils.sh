@@ -172,6 +172,20 @@ function GetContainerName()
     echo $_CONTAINER_NAME
 }
 
+# Given a directory name, enumerates the contents of the folder
+# AGUMENTS:
+#   _FOLDER     - The path to the folder
+#   _BLACK_LIST - Configuration file to blacklist specific files
+#                 from being enumerated
+#
+function EnumerateFolderContents()
+{
+    local _FOLDER=$1
+    local _BLACK_LIST=$2
+
+    find "$_FOLDER" -name "*" | sed 's|'$_FOLDER/'||' | grep -vf $_BLACKLIST
+}
+
 # Unset a readonly variable.
 # ARGUMENTS:
 #    _READONLY_VAR - The name of the readonly variable
