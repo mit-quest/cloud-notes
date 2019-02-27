@@ -109,72 +109,77 @@ PrepareDocker
 
 REMOTE_IMAGE=$(PushToRemote ${APPLICATION} ${REG_SERVER})
 
-# Create a cluster to run the container
-$GCLOUD container clusters create $CLUSTER \
-    --num-nodes 1 \
-    --enable-basic-auth \
-    --no-enable-ip-alias \
-    --metadata disable-legacy-endpoints=true \
-    --network "default" \
-    --issue-client-certificate \
-    --scopes \
-        compute-rw,storage-ro
+function Deploy()
+{
+    # Create a cluster to run the container
+    $GCLOUD container clusters create $CLUSTER \
+        --num-nodes 1 \
+        --enable-basic-auth \
+        --no-enable-ip-alias \
+        --metadata disable-legacy-endpoints=true \
+        --network "default" \
+        --issue-client-certificate \
+        --scopes \
+            compute-rw,storage-ro
 
-$GCLOUD container clusters get-credentials $CLUSTER --zone ${LOCATION}
+    $GCLOUD container clusters get-credentials $CLUSTER --zone ${LOCATION}
 
-K8S_ENDPOINT=$($GCLOUD container clusters describe $CLUSTER \
-    --format="table[no-heading](endpoint)")
+    K8S_ENDPOINT=$($GCLOUD container clusters describe $CLUSTER \
+        --format="table[no-heading](endpoint)")
 
-DEPLOYMENT=${APPLICATION}-deployment
-APPSERVICE=${APPLICATION}-service
+    DEPLOYMENT=${APPLICATION}-deployment
+    APPSERVICE=${APPLICATION}-service
 
-$KUBECTL run \
-    $DEPLOYMENT \
-    --image=${REMOTE_IMAGE} \
-    --server=${K8S_SERVER} \
-    --port 8888
+    $KUBECTL run \
+        $DEPLOYMENT \
+        --image=${REMOTE_IMAGE} \
+        --server=${K8S_SERVER} \
+        --port 8888
 
-$KUBECTL expose deployment \
-    ${DEPLOYMENT} \
-    --name ${APPSERVICE} \
-    --type=LoadBalancer \
-    --server=${K8S_SERVER} \
-    --port 8888 \
-    --target-port 8888
+    $KUBECTL expose deployment \
+        ${DEPLOYMENT} \
+        --name ${APPSERVICE} \
+        --type=LoadBalancer \
+        --server=${K8S_SERVER} \
+        --port 8888 \
+        --target-port 8888
 
-# Get the IP Address of the exposed Jupyter notebook service running
-# in the kubernetes cluster using an exponential backoff technique
-let backoff=2
-let attempts=0
-while [ -z "$JUPYTER_SERVER" ]; do
-    JUPYTER_SERVER=$($KUBECTL \
-        get services $APPSERVICE \
-        -o=custom-columns=EXTERNAL-IP:.status.loadBalancer.ingress..ip \
-        --no-headers)
+    # Get the IP Address of the exposed Jupyter notebook service running
+    # in the kubernetes cluster using an exponential backoff technique
+    let backoff=2
+    let attempts=0
+    while [ -z "$JUPYTER_SERVER" ]; do
+        JUPYTER_SERVER=$($KUBECTL \
+            get services $APPSERVICE \
+            -o=custom-columns=EXTERNAL-IP:.status.loadBalancer.ingress..ip \
+            --no-headers)
 
-    # Querying for the external IP immediately after setting up a service
-    # in Kubernetes will sometimes result in the external IP not being set
-    # and the query will return "<none>". When this happens, we should
-    # backoff and try again.
-    #
-    if [[ "<none>" = "$JUPYTER_SERVER" ||  ! $? = 0 ]]; then
-        let attempts+=1
-        JUPYTER_SERVER=
+        # Querying for the external IP immediately after setting up a service
+        # in Kubernetes will sometimes result in the external IP not being set
+        # and the query will return "<none>". When this happens, we should
+        # backoff and try again.
+        #
+        if [[ "<none>" = "$JUPYTER_SERVER" ||  ! $? = 0 ]]; then
+            let attempts+=1
+            JUPYTER_SERVER=
 
-        echo "Failed to connect to GKE to retrieve server IP."
-        echo "Retrying in: $backoff seconds."
-        sleep $backoff
+            echo "Failed to connect to GKE to retrieve server IP."
+            echo "Retrying in: $backoff seconds."
+            sleep $backoff
 
-        let backoff*=2
-        if [ $backoff -ge 128 ]; then
-            echo "Failed to retrieve server IP after $attempts attempts." >&2
-            echo "Stopping further execution" >&2
-            exit 1
+            let backoff*=2
+            if [ $backoff -ge 128 ]; then
+                echo "Failed to retrieve server IP after $attempts attempts." >&2
+                echo "Stopping further execution" >&2
+                exit 1
+            fi
+        else
+            echo "Jupyter Server running at $JUPYTER_SERVER"
         fi
-    else
-        echo "Jupyter Server running at $JUPYTER_SERVER"
-    fi
-done
+    done
+}
+
+Deploy
 
 JUPYTER_POD=$($KUBECTL \
     get pods \

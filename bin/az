@@ -74,20 +74,25 @@ PrepareDocker
 
 REMOTE_IMAGE=$(PushToRemote ${APPLICATION} ${REG_SERVER})
 
-# Create and deploy a container instance in Azure.
-DNS_NAME_LABEL=${APPLICATION}-${RANDOM}${RANDOM}
-$AZ container create \
-    --name ${APPLICATION} \
-    --resource-group $RESOURCES \
-    --image ${REMOTE_IMAGE} \
-    --registry-login-server ${REG_SERVER} \
-    --registry-username $ACR_USERNAME \
-    --registry-password $ACR_PASSWORD \
-    --ip-address public \
-    --ports 8888\
-    --dns-name ${DNS_NAME_LABEL}
+function Deploy()
+{
+    # Create and deploy a container instance in Azure.
+    DNS_NAME_LABEL=${APPLICATION}-${RANDOM}${RANDOM}
+    $AZ container create \
+        --name ${APPLICATION} \
+        --resource-group $RESOURCES \
+        --image ${REMOTE_IMAGE} \
+        --registry-login-server ${REG_SERVER} \
+        --registry-username $ACR_USERNAME \
+        --registry-password $ACR_PASSWORD \
+        --ip-address public \
+        --ports 8888\
+        --dns-name ${DNS_NAME_LABEL}
 
-JUPYTER_SERVER=$(TrimQuery \
-    "$($AZ container show --resource-group $RESOURCES --name $APPLICATION --query ipAddress.fqdn)")
+    JUPYTER_SERVER=$(TrimQuery \
+        "$($AZ container show --resource-group $RESOURCES --name $APPLICATION --query ipAddress.fqdn)")
+}
+
+Deploy
 
 ESTABLISH_CONNECTION="$AZ container attach --resource-group $RESOURCES --name $APPLICATION"
