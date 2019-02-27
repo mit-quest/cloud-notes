@@ -42,16 +42,21 @@ Login
 # Reusable AZ command to mask the use of docker.
 AZ="docker run --rm -it -e AZURE_CONFIG_DIR=${CONFIG_MOUNT} --volumes-from ${CONTAINER_NAME} microsoft/azure-cli az"
 
-# Create a resource group to host transient resoureces.
-$AZ group create --name $RESOURCES --location $LOCATION
-$AZ acr create --resource-group $RESOURCES --name $REGISTRY --sku Basic
+function Provision()
+{
+    # Create a resource group to host transient resoureces.
+    $AZ group create --name $RESOURCES --location $LOCATION
+    $AZ acr create --resource-group $RESOURCES --name $REGISTRY --sku Basic
 
-# Can't use `az acr login` from docker container. This command requires
-# an installation of docker to exist as it calls `docker ps` internally
-# and then issues a `docker login` command. Instead setting admin enabled
-# to login with the ACR admin credential.
-#
-$AZ acr update --name $REGISTRY --admin-enabled true
+    # Can't use `az acr login` from docker container. This command requires
+    # an installation of docker to exist as it calls `docker ps` internally
+    # and then issues a `docker login` command. Instead setting admin enabled
+    # to login with the ACR admin credential.
+    #
+    $AZ acr update --name $REGISTRY --admin-enabled true
+}
+
+Provision
 
 # Get the admin username and password from the Azure Container Registry
 # by querying for the data using `az acr credential show`

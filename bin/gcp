@@ -42,52 +42,57 @@ PREFIX="docker run \
 GCLOUD="$PREFIX gcloud"
 KUBECTL="$PREFIX kubectl"
 
-# Create a hosting project for transient resources.
-$GCLOUD projects create $RESOURCES
+function Provision()
+{
+    # Create a hosting project for transient resources.
+    $GCLOUD projects create $RESOURCES
 
-$GCLOUD config set project $RESOURCES
-$GCLOUD config set compute/zone $LOCATION
+    $GCLOUD config set project $RESOURCES
+    $GCLOUD config set compute/zone $LOCATION
 
-# GCP requires setting up billing on a project before certain services
-# can be used. GCP does not automatically create a link to billing
-# as the billing structure of GCP allows for many billing accounts within
-# an organization.
-echo
-echo CHOOSE A BILLING ACCOUNT TO LINK WITH "\"${RESOURCES}\""
+    # GCP requires setting up billing on a project before certain services
+    # can be used. GCP does not automatically create a link to billing
+    # as the billing structure of GCP allows for many billing accounts within
+    # an organization.
+    echo
+    echo CHOOSE A BILLING ACCOUNT TO LINK WITH "\"${RESOURCES}\""
 
-# Create a menu for billing account options.
-let option_id=0
-accounts=()
-while IFS= read -r line; do
-    let option_id++
+    # Create a menu for billing account options.
+    let option_id=0
+    accounts=()
+    while IFS= read -r line; do
+        let option_id++
 
-    # Provide an options menu to select a billing account.
-    echo "[${option_id}] ${line}"
-    account_id="${line%% *}"
-    accounts+=("$account_id")
+        # Provide an options menu to select a billing account.
+        echo "[${option_id}] ${line}"
+        account_id="${line%% *}"
+        accounts+=("$account_id")
 
-# Lists all of the available billing accounts for the current user
-# formatted to list the account number and the display name.
-#
-done < <(docker run \
-    --rm \
-    -e KUBECONFIG=${CONFIG_MOUNT}/kube_config \
-    --volumes-from ${CONTAINER_NAME} \
-    google/cloud-sdk \
-    gcloud beta billing accounts list \
-    --format "table[no-heading](name,displayName)")
+    # Lists all of the available billing accounts for the current user
+    # formatted to list the account number and the display name.
+    #
+    done < <(docker run \
+        --rm \
+        -e KUBECONFIG=${CONFIG_MOUNT}/kube_config \
+        --volumes-from ${CONTAINER_NAME} \
+        google/cloud-sdk \
+        gcloud beta billing accounts list \
+        --format "table[no-heading](name,displayName)")
 
-echo
-read -n 1 -p "> " CHOICE
-echo
+    echo
+    read -n 1 -p "> " CHOICE
+    echo
 
-let CHOICE--
+    let CHOICE--
 
-$GCLOUD alpha billing projects link $RESOURCES --billing-account ${accounts[CHOICE]}
+    $GCLOUD alpha billing projects link $RESOURCES --billing-account ${accounts[CHOICE]}
 
-# Enable the use of the container and the container registry APIs for project
-$GCLOUD services enable containerregistry.googleapis.com
-$GCLOUD services enable container.googleapis.com
+    # Enable the use of the container and the container registry APIs for project
+    $GCLOUD services enable containerregistry.googleapis.com
+    $GCLOUD services enable container.googleapis.com
+}
+
+Provision
 
 # Add authentication information for docker to login to gcr.io
 $GCLOUD auth configure-docker --project $RESOURCES
