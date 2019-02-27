@@ -110,7 +110,7 @@ function ConnectToServer()
 #   _BUCKET_NAME - The GCP Data Bucket to upload data
 #   _AUTH_CONFIG - The pre-authenticated config container
 #
-function CopyDataToCloud()
+function CopyData()
 {
     _SOURCE_DIR=$1
     _BUCKET_NAME=$2
