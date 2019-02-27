@@ -26,13 +26,18 @@ GetPlatformContainer
 #
 # https://github.com/Azure/azure-cli-docker/issues/54
 #
-docker run \
-    -it \
-    --name ${CONTAINER_NAME} \
-    -e AZURE_CONFIG_DIR=${CONFIG_MOUNT} \
-    --mount type=volume,target=${CONFIG_MOUNT} \
-    microsoft/azure-cli \
-    az login
+function Login()
+{
+    docker run \
+        -it \
+        --name ${CONTAINER_NAME} \
+        -e AZURE_CONFIG_DIR=${CONFIG_MOUNT} \
+        --mount type=volume,target=${CONFIG_MOUNT} \
+        microsoft/azure-cli \
+        az login
+}
+
+Login
 
 # Reusable AZ command to mask the use of docker.
 AZ="docker run --rm -it -e AZURE_CONFIG_DIR=${CONFIG_MOUNT} --volumes-from ${CONTAINER_NAME} microsoft/azure-cli az"

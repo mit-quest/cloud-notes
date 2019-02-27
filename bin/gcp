@@ -17,13 +17,18 @@ GetPlatformContainer
 # at the ${CONFIG_MOUNT} location in order to persist kubernetes
 # login credentials by setting the KUBECONFIG environment variable.
 #
-docker run \
-    -it \
-    --name ${CONTAINER_NAME} \
-    -e KUBECONFIG=${CONFIG_MOUNT}/kube_config \
-    --mount type=volume,target=${CONFIG_MOUNT} \
-    google/cloud-sdk \
-    gcloud auth login
+function Login()
+{
+    docker run \
+        -it \
+        --name ${CONTAINER_NAME} \
+        -e KUBECONFIG=${CONFIG_MOUNT}/kube_config \
+        --mount type=volume,target=${CONFIG_MOUNT} \
+        google/cloud-sdk \
+        gcloud auth login
+}
+
+Login
 
 # Common docker command component for gcloud and kubectl commands inside
 # of the google/cloud-sdk container.
