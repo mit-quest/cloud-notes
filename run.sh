@@ -51,6 +51,6 @@ if [ ! -z ${PROVIDER/local/} ]; then
 
     trap \
         'echo "\nTerminating connection to host. Server will continue running remotely"' SIGINT
-
-    ConnectToServer
 fi
+
+ConnectToServer
