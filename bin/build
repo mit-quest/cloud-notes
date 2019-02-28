@@ -18,8 +18,8 @@ function GetBuilder()
     # with a latest tag. The tagging strategy is to use the commit hash
     # for the repository's HEAD as the image tag.
     #
-    local tag=$(git ls-remote $repo2docker_remote HEAD | awk '{ print $1 }')
-    local tag=${tag: 0: 8}
+    tag=$(git ls-remote $repo2docker_remote HEAD | awk '{ print $1 }')
+    tag=${tag: 0: 8}
 
     docker pull jupyter/repo2docker:${tag}
 }
