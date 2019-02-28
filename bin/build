@@ -10,40 +10,51 @@ pushd ${MOUNTSOURCE}/../ >/dev/null
 MOUNTSOURCE="$(pwd)/workspace"
 popd >/dev/null
 
-repo2docker_remote=https://github.com/jupyter/repo2docker.git
+function GetBuilder()
+{
+    local repo2docker_remote=https://github.com/jupyter/repo2docker.git
 
-# As of 2-21-2019, repo2docker is not published on hub.docker.com
-# with a latest tag. The tagging strategy is to use the commit hash
-# for the repositories HEAD as the image tag.
-#
-tag=$(git ls-remote $repo2docker_remote HEAD | awk '{ print $1 }')
-tag=${tag: 0: 8}
+    # As of 2-21-2019, repo2docker is not published on hub.docker.com
+    # with a latest tag. The tagging strategy is to use the commit hash
+    # for the repository's HEAD as the image tag.
+    #
+    tag=$(git ls-remote $repo2docker_remote HEAD | awk '{ print $1 }')
+    tag=${tag: 0: 8}
 
-docker pull jupyter/repo2docker:${tag}
+    docker pull jupyter/repo2docker:${tag}
+}
 
-# The Docker Socket needs to be mounted to the
-# repo2docker image when issuing a docker run
-# command as docker is a dependency of repo2docker
-#
-C_DOCKER_SOCKET=/var/run/docker.sock
+GetBuilder
 
-# Alias the jupyter-repo2docker command
-R2D="docker run \
-    --rm \
-    --mount type=bind,source=${MOUNTSOURCE},target=/workspace
-    --volume "${C_DOCKER_SOCKET}":${C_DOCKER_SOCKET} \
-    jupyter/repo2docker:${tag} \
-    jupyter-repo2docker"
+function Build()
+{
 
-if [ -z "${APPLICATION}" ]; then
-    APPLICATION="cloud-notes"
-fi
+    # The Docker Socket needs to be mounted to the
+    # repo2docker image when issuing a docker run
+    # command as docker is a dependency of repo2docker
+    #
+    C_DOCKER_SOCKET=/var/run/docker.sock
 
-# Use repo2docker to build the workspace folder.
-$R2D \
-    --no-run \
-    --debug \
-    --image-name ${APPLICATION} \
-    --user-name $(id -urn) \
-    --user-id $(id -ur) \
-    /workspace
+    # Alias the jupyter-repo2docker command
+    R2D="docker run \
+        --rm \
+        --mount type=bind,source=${MOUNTSOURCE},target=/workspace
+        --volume "${C_DOCKER_SOCKET}":${C_DOCKER_SOCKET} \
+        jupyter/repo2docker:${tag} \
+        jupyter-repo2docker"
+
+    if [ -z "${APPLICATION}" ]; then
+        APPLICATION="cloud-notes"
+    fi
+
+    # Use repo2docker to build the workspace folder.
+    $R2D \
+        --no-run \
+        --debug \
+        --image-name ${APPLICATION} \
+        --user-name $(id -urn) \
+        --user-id $(id -ur) \
+        /workspace
+}
+
+Build

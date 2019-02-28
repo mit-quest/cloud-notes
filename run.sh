@@ -36,7 +36,7 @@ trap finish EXIT
 . ${WORKDIR}/bin/build
 . ${WORKDIR}/bin/deploy ${PROVIDER}
 
-if [ -z "$ESTABLISH_CONNECTION" ]; then
+if ! typeset -f ConnectToServer >/dev/null; then
     echo "An error occurred during deployment and no Jupyter server was found." >&2
     exit 1
 fi
@@ -51,6 +51,6 @@ if [ ! -z ${PROVIDER/local/} ]; then
 
     trap \
         'echo "\nTerminating connection to host. Server will continue running remotely"' SIGINT
-
-    $ESTABLISH_CONNECTION
 fi
+
+ConnectToServer

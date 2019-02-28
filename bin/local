@@ -1,10 +1,13 @@
 #!/bin/bash
 
-while IFS= read -r line; do
-    echo "$line" | perl ${WORKDIR}/bin/ipynb-url -
-done < <(docker run \
-    --rm \
-    -i \
-    -p 8888:8888 \
-    --mount type=bind,source="${MOUNTSOURCE}",target="/workspace" \
-    $APPLICATION 2>&1)
+function ConnectToServer()
+{
+    while IFS= read -r line; do
+        echo "$line" | perl ${WORKDIR}/bin/ipynb-url -
+    done < <(docker run \
+        --rm \
+        -i \
+        -p 8888:8888 \
+        --mount type=bind,source="${MOUNTSOURCE}",target="/workspace" \
+        $APPLICATION 2>&1)
+}
