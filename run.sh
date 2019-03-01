@@ -8,8 +8,8 @@ trap UnsetUtils EXIT
 RequireDocker
 PermissionsCheck
 
-if ! [ $# = 1 ]; then
-    echo "USE: $0 <PROVIDER>" 1>&2
+if ! [ $# = 3 ]; then
+    echo "USE: $0 <WORKSPACE> <DATA> <PROVIDER>" 1>&2
     exit 1
 fi
 
