@@ -5,11 +5,6 @@
 RequireDocker
 PermissionsCheck
 
-MOUNTSOURCE="$(GetAbsPath ${BASH_SOURCE[0]})"
-pushd ${MOUNTSOURCE}/../ >/dev/null
-MOUNTSOURCE="$(pwd)/workspace"
-popd >/dev/null
-
 # Validates the Workspace directory/repository
 # ARGUMENTS:
 #   $1 [WORKSPACE] - The main application workspace or repository.
@@ -26,6 +21,9 @@ function CheckWorkspace()
         return 1
     fi
 }
+
+__qi_workspace=$1
+CheckWorkspace "$__qi_workspace"
 
 # Validates the Data Directory
 # ARGUMENTS:
@@ -48,6 +46,9 @@ function CheckDataSource()
         return 1
     fi
 }
+
+__qi_datasource=$2
+CheckDataSource "$__qi_datasource" "$__qi_workspace"
 
 function GetBuilder()
 {
