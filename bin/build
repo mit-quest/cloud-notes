@@ -10,6 +10,37 @@ pushd ${MOUNTSOURCE}/../ >/dev/null
 MOUNTSOURCE="$(pwd)/workspace"
 popd >/dev/null
 
+# Validates the Workspace directory/repository
+# ARGUMENTS:
+#   $1 [WORKSPACE] - The main application workspace or repository.
+#
+function CheckWorkspace()
+{
+    if [ -d $1 ]
+        return 0
+    else
+        return 1
+    fi
+}
+
+# Validates the Data Directory
+# ARGUMENTS:
+#   $1 [DATADIR]   - Data directory.
+#   $2 [WORKSPACE] - The main application workspace
+#
+function CheckDataDirectory()
+{
+    if [ -d $1 ]; then
+        if find $2 -name \*$1\* -and -type d; then
+            echo "Data directory cannot be a subdirectory of the workspace" > &2
+            return 1
+        fi
+        return 0
+    else
+        return 1
+    fi
+}
+
 function GetBuilder()
 {
     local repo2docker_remote=https://github.com/jupyter/repo2docker.git
