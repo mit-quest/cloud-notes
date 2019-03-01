@@ -13,7 +13,14 @@ if ! [ $# = 3 ]; then
     exit 1
 fi
 
-PROVIDER=$1
+# The repository or directory location of the AI workflow
+WORKSPACE=$1
+
+# The data location of the associated workflow
+DATA=$2
+
+# The cloud platform provider
+PROVIDER=$3
 CheckProvider $PROVIDER
 
 export APPLICATION=$(GetContainerName "cloud-notes" $PROVIDER)
