@@ -5,25 +5,10 @@
 RequireDocker
 PermissionsCheck
 
-# Validates the Workspace directory/repository
-# ARGUMENTS:
-#   $1 [WORKSPACE] - The main application workspace or repository.
-#
-function CheckWorkspace()
-{
-    if ! [ $# = 1 ]; then
-        echo "USE: ${FUNCNAME[0]} <WORKSPACE>" 1>&2
-    fi
-
-    if [ -d $1 ]
-        return 0
-    else
-        return 1
-    fi
-}
-
-__qi_workspace=$1
-CheckWorkspace "$__qi_workspace"
+if ! [ $# = 2 ]
+    echo "USE: ${BASH_SOURCE[0]} <WORKSPACE> <APPLICATION_NAME>" 1>&2
+    exit 1
+fi
 
 # Validates the Data Directory
 # ARGUMENTS:
@@ -36,8 +21,8 @@ function CheckDataSource()
         echo "USE: ${FUNCNAME[0]} <DATASOURCE> <WORKSPACE>" 1>&2
     fi
 
-    if [ -d $1 ]; then
-        if find $2 -name \*$1\* -and -type d; then
+    if [ -d "$1" ]; then
+        if find "$2" -name \*$1\* -and -type d; then
             echo "Data directory cannot be a subdirectory of the workspace" > &2
             return 1
         fi
@@ -47,8 +32,22 @@ function CheckDataSource()
     fi
 }
 
-__qi_datasource=$2
-CheckDataSource "$__qi_datasource" "$__qi_workspace"
+# Validates the Workspace directory/repository
+# ARGUMENTS:
+#   $1 [WORKSPACE] - The main application workspace or repository.
+#
+function CheckWorkspace()
+{
+    if ! [ $# = 1 ]; then
+        echo "USE: ${FUNCNAME[0]} <WORKSPACE>" 1>&2
+    fi
+
+    if [ -d "$1" ]
+        return 0
+    else
+        return 1
+    fi
+}
 
 function GetBuilder()
 {
@@ -64,37 +63,44 @@ function GetBuilder()
     docker pull jupyter/repo2docker:${tag}
 }
 
-GetBuilder
-
 function Build()
 {
+    if ! [ $# = 2 ]; then
+        echo "USE: FUNCNAME[0] <WORKSPACE> <APPLICATION_NAME>" 1>&2
+    fi
+
+    local _workspace="$1"
+    local _application="$2"
 
     # The Docker Socket needs to be mounted to the
     # repo2docker image when issuing a docker run
     # command as docker is a dependency of repo2docker
     #
-    C_DOCKER_SOCKET=/var/run/docker.sock
+    local C_DOCKER_SOCKET=/var/run/docker.sock
 
     # Alias the jupyter-repo2docker command
     R2D="docker run \
         --rm \
-        --mount type=bind,source=${MOUNTSOURCE},target=/workspace
+        --mount type=bind,source=${_workspace},target=/workspace
         --volume "${C_DOCKER_SOCKET}":${C_DOCKER_SOCKET} \
         jupyter/repo2docker:${tag} \
         jupyter-repo2docker"
-
-    if [ -z "${APPLICATION}" ]; then
-        APPLICATION="cloud-notes"
-    fi
 
     # Use repo2docker to build the workspace folder.
     $R2D \
         --no-run \
         --debug \
-        --image-name ${APPLICATION} \
+        --image-name ${_application} \
         --user-name $(id -urn) \
         --user-id $(id -ur) \
         /workspace
 }
 
-Build
+
+__qi_workspace=$1
+CheckWorkspace "$__qi_workspace"
+
+__qi_application=$2
+
+GetBuilder
+Build "$__qi_workspace" "$__qi_application"
