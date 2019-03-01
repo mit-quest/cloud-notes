@@ -28,7 +28,7 @@ function CheckWorkspace()
 #   $1 [DATADIR]   - Data directory.
 #   $2 [WORKSPACE] - The main application workspace
 #
-function CheckDataDirectory()
+function CheckDataSource()
 {
     if [ -d $1 ]; then
         if find $2 -name \*$1\* -and -type d; then
