@@ -18,8 +18,8 @@ function CheckDataSource()
     fi
 
     if [ -d "$1" ]; then
-        if find "$2" -name \*$1\* -and -type d; then
-            echo "Data directory cannot be a subdirectory of the workspace" > &2
+        if find "$(dirname $1)" -wholename \*$(dirname $2)\* -and -type d; then
+            echo "Data directory cannot be a subdirectory of the workspace" 1>&2
             return 1
         fi
         return 0
@@ -38,8 +38,12 @@ function CheckWorkspace()
         echo "USE: ${FUNCNAME[0]} <WORKSPACE>" 1>&2
     fi
 
-    if [ -d "$1" ]
-        return 0
+    if [ -d "$1" ]; then
+        if [[ "$1" = /* ]]; then
+            return 0
+        else
+            return 1
+        fi
     else
         return 1
     fi
