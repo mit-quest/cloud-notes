@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # Import our utility functions
-. $(dirname $0)/bin/utils.sh
+. $(dirname ${BASH_SOURCE[0]})/bin/utils.sh
 
 trap UnsetUtils EXIT
 
@@ -9,46 +9,45 @@ RequireDocker
 PermissionsCheck
 
 if ! [ $# = 3 ]; then
-    echo "USE: $0 <WORKSPACE> <DATA> <PROVIDER>" 1>&2
+    echo "USE: ${BASH_SOURCE[0]} <WORKSPACE> <DATA> <PROVIDER>" 1>&2
     exit 1
 fi
 
 # The repository or directory location of the AI workflow
-WORKSPACE=$1
+__qi_workspace=$1
+CheckWorkspace "$__qi_workspace"
 
 # The data location of the associated workflow
-DATA=$2
+__qi_datasource=$2
+CheckDataSource "$__qi_datasource" "$__qi_workspace"
 
 # The cloud platform provider
-PROVIDER=$3
-CheckProvider $PROVIDER
+__qi_provider=$3
+CheckProvider "$__qi_provider"
 
-export APPLICATION=$(GetContainerName "cloud-notes" $PROVIDER)
-export WORKDIR=$(GetAbsPath $0)
-export ESTABLISH_CONNECTION=""
-export JUPYTER_SERVER=""
+__qi_application_name=$(GetContainerName "cloud-notes" "$__qi_provider")
 
 function finish()
 {
-    unset APPLICATION
-    unset WORKDIR
-    unset ESTABLISH_CONNECTION
-    unset JUPYTER_SERVER
+    unset __qi_application_name
+    unset __qi_datasource
+    unset __qi_provider
+    unset __qi_workspace
 
     unset -f finish
 }
 
 trap finish EXIT
 
-. ${WORKDIR}/bin/build
-. ${WORKDIR}/bin/deploy ${PROVIDER}
+. ${BASH_SOURCE[0]}/bin/build  ${__qi_workspace} ${__qi_application_name}
+. ${BASH_SOURCE[0]}/bin/deploy ${__qi_provider}
 
 if ! typeset -f ConnectToServer >/dev/null; then
     echo "An error occurred during deployment and no Jupyter server was found." >&2
     exit 1
 fi
 
-if [ ! -z ${PROVIDER/local/} ]; then
+if [ ! -z ${__qi_provider/local/} ]; then
     echo
     echo "*** USE THE FOLLOWING URL TO CONNECT TO YOUR JUPYTER SERVER ***"
     echo ${JUPYTER_SERVER}:8888
