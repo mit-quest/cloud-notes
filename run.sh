@@ -2,6 +2,7 @@
 
 # Import our utility functions
 . $(dirname ${BASH_SOURCE[0]})/bin/utils.sh
+. $(dirname ${BASH_SOURCE[0]})/bin/build
 
 trap UnsetUtils EXIT
 
@@ -39,8 +40,10 @@ function finish()
 
 trap finish EXIT
 
-. ${BASH_SOURCE[0]}/bin/build  ${__qi_workspace} ${__qi_application_name}
-. ${BASH_SOURCE[0]}/bin/deploy ${__qi_provider}
+GetBuilder
+Build "$__qi_workspace" "$__qi_application_name"
+
+. $(dirname ${BASH_SOURCE[0]})/bin/deploy ${__qi_provider}
 
 if ! typeset -f ConnectToServer >/dev/null; then
     echo "An error occurred during deployment and no Jupyter server was found." >&2
