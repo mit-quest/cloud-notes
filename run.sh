@@ -15,11 +15,11 @@ if ! [ $# = 3 ]; then
 fi
 
 # The repository or directory location of the AI workflow
-__qi_workspace=$1
+__qi_workspace=$(GetAbsPath "$1")
 CheckWorkspace "$__qi_workspace"
 
 # The data location of the associated workflow
-__qi_datasource=$2
+__qi_datasource=$(GetAbsPath "$2")
 CheckDataSource "$__qi_datasource" "$__qi_workspace"
 
 # The cloud platform provider
