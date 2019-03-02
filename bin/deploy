@@ -42,8 +42,4 @@ export CONFIG_MOUNT=/.persistant_data
 export RESOURCES="$(id -un $RUID)-transient-resources"
 export CONTAINER_NAME="${PROVIDER}-config"
 
-if ! [ -z "$WORKDIR" ]; then
-    . ${WORKDIR}/bin/${PROVIDER}
-else
-    . $(GetAbsPath ${BASH_SOURCE[0]})/${PROVIDER}
-fi
+. $(dirname ${BASH_SOURCE[0]})/${PROVIDER}
