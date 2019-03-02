@@ -14,7 +14,8 @@ function RequireDocker()
     fi
 }
 
-# Get the absolute path to the provided script
+# Get the absolute path to the provided script, including
+# the script name.
 # ARGUMENTS:
 #   _FILE_NAME - The name of the file or script to find
 #                  the absolute filesystem path for
@@ -25,10 +26,10 @@ function GetAbsPath()
     local _FILE_NAME=$1
 
     pushd $(dirname $_FILE_NAME) > /dev/null
-    _FILE_PATH=$(pwd -P)
+    local _FILE_PATH="$(pwd -P)/$(basename $_FILE_NAME)"
     popd > /dev/null
 
-    echo $_FILE_PATH
+    echo "$_FILE_PATH"
 }
 
 # Valid Platforms/Providers

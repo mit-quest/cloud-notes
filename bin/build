@@ -1,14 +1,49 @@
 #!/bin/bash
 
+# Check if file is already sourced
+[ -n "$__BUILD__" ] && return || readonly __BUILD__=1
+
 # Import utils.h
 . $(dirname ${BASH_SOURCE[0]})/utils.sh
-RequireDocker
-PermissionsCheck
 
-MOUNTSOURCE="$(GetAbsPath ${BASH_SOURCE[0]})"
-pushd ${MOUNTSOURCE}/../ >/dev/null
-MOUNTSOURCE="$(pwd)/workspace"
-popd >/dev/null
+# Validates the Data Directory
+# ARGUMENTS:
+#   $1 [DATASOURCE] - Data source.
+#   $2 [WORKSPACE]  - The main application workspace
+#
+function CheckDataSource()
+{
+    if ! [ $# = 2 ]; then
+        echo "USE: ${FUNCNAME[0]} <DATASOURCE> <WORKSPACE>" 1>&2
+    fi
+
+    if [ -d "$1" ]; then
+        return 0
+    else
+        return 1
+    fi
+}
+
+# Validates the Workspace directory/repository
+# ARGUMENTS:
+#   $1 [WORKSPACE] - The main application workspace or repository.
+#
+function CheckWorkspace()
+{
+    if ! [ $# = 1 ]; then
+        echo "USE: ${FUNCNAME[0]} <WORKSPACE>" 1>&2
+    fi
+
+    if [ -d "$1" ]; then
+        if [[ "$1" = /* ]]; then
+            return 0
+        else
+            return 1
+        fi
+    else
+        return 1
+    fi
+}
 
 function GetBuilder()
 {
@@ -24,37 +59,35 @@ function GetBuilder()
     docker pull jupyter/repo2docker:${tag}
 }
 
-GetBuilder
-
 function Build()
 {
+    if ! [ $# = 2 ]; then
+        echo "USE: FUNCNAME[0] <WORKSPACE> <APPLICATION_NAME>" 1>&2
+    fi
+
+    local _workspace="$1"
+    local _application="$2"
 
     # The Docker Socket needs to be mounted to the
     # repo2docker image when issuing a docker run
     # command as docker is a dependency of repo2docker
     #
-    C_DOCKER_SOCKET=/var/run/docker.sock
+    local C_DOCKER_SOCKET=/var/run/docker.sock
 
     # Alias the jupyter-repo2docker command
     R2D="docker run \
         --rm \
-        --mount type=bind,source=${MOUNTSOURCE},target=/workspace
+        --mount type=bind,source=${_workspace},target=/workspace
         --volume "${C_DOCKER_SOCKET}":${C_DOCKER_SOCKET} \
         jupyter/repo2docker:${tag} \
         jupyter-repo2docker"
-
-    if [ -z "${APPLICATION}" ]; then
-        APPLICATION="cloud-notes"
-    fi
 
     # Use repo2docker to build the workspace folder.
     $R2D \
         --no-run \
         --debug \
-        --image-name ${APPLICATION} \
+        --image-name ${_application} \
         --user-name $(id -urn) \
         --user-id $(id -ur) \
         /workspace
 }
-
-Build

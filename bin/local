@@ -3,11 +3,11 @@
 function ConnectToServer()
 {
     while IFS= read -r line; do
-        echo "$line" | perl ${WORKDIR}/bin/ipynb-url -
+        echo "$line" | perl $(dirname ${BASH_SOURCE[0]})/ipynb-url -
     done < <(docker run \
         --rm \
         -i \
         -p 8888:8888 \
-        --mount type=bind,source="${MOUNTSOURCE}",target="/workspace" \
-        $APPLICATION 2>&1)
+        --mount type=bind,source="${__qi_workspace}",target="/workspace" \
+        ${__qi_application_name} 2>&1)
 }
