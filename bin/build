@@ -1,14 +1,10 @@
 #!/bin/bash
 
+# Check if file is already sourced
+[ -n "$__BUILD__" ] && return || readonly __BUILD__=1
+
 # Import utils.h
 . $(dirname ${BASH_SOURCE[0]})/utils.sh
-RequireDocker
-PermissionsCheck
-
-if ! [ $# = 2 ]
-    echo "USE: ${BASH_SOURCE[0]} <WORKSPACE> <APPLICATION_NAME>" 1>&2
-    exit 1
-fi
 
 # Validates the Data Directory
 # ARGUMENTS:
@@ -95,12 +91,3 @@ function Build()
         --user-id $(id -ur) \
         /workspace
 }
-
-
-__qi_workspace=$1
-CheckWorkspace "$__qi_workspace"
-
-__qi_application=$2
-
-GetBuilder
-Build "$__qi_workspace" "$__qi_application"
