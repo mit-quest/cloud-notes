@@ -18,10 +18,6 @@ function CheckDataSource()
     fi
 
     if [ -d "$1" ]; then
-        if find "$(dirname $1)" -wholename \*$(dirname $2)\* -and -type d; then
-            echo "Data directory cannot be a subdirectory of the workspace" 1>&2
-            return 1
-        fi
         return 0
     else
         return 1
