@@ -157,18 +157,18 @@ Make sure you are part of the docker group."
 #
 function GetContainerName()
 {
-    local _PREFIX=$1
-    local _PROVIDER=$2
+    local _prefix=$1
+    local _provider=$2
 
-    CheckProvider $_PROVIDER
+    CheckProvider $_provider
 
-    _POSTFIX=
-    if [ -z "${_PROVIDER/local/}" ]; then
-        _POSTFIX="-$(hostname)"
+    _postfix=
+    if [ -z "${_provider/local/}" ]; then
+        _postfix="-$(hostname)"
     fi
 
-    _CONTAINER_NAME=$(ToLower "${_PREFIX}${_POSTFIX}")
-    echo $_CONTAINER_NAME
+    _container_name=$(ToLower "${_prefix}${_postfix}")
+    echo $_container_name
 }
 
 # Given a directory name, enumerates the contents of the folder
