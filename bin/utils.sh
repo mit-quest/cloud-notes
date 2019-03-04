@@ -163,13 +163,11 @@ function GetContainerName()
     CheckProvider $_PROVIDER
 
     _POSTFIX=
-    if ! [ -z "${_PROVIDER/local/}" ]; then
-        _POSTFIX="${_PROVIDER}"
-    else
-        _POSTFIX=$(hostname)
+    if [ -z "${_PROVIDER/local/}" ]; then
+        _POSTFIX="-$(hostname)"
     fi
 
-    _CONTAINER_NAME=$(ToLower "${_PREFIX}-${_POSTFIX}")
+    _CONTAINER_NAME=$(ToLower "${_PREFIX}${_POSTFIX}")
     echo $_CONTAINER_NAME
 }
 
