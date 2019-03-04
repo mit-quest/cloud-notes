@@ -77,7 +77,7 @@ function Build()
     # Alias the jupyter-repo2docker command
     R2D="docker run \
         --rm \
-        --mount type=bind,source=${_workspace},target=/workspace
+        --mount type=bind,source=${_workspace},target=/build
         --volume "${C_DOCKER_SOCKET}":${C_DOCKER_SOCKET} \
         jupyter/repo2docker:${tag} \
         jupyter-repo2docker"
@@ -89,5 +89,6 @@ function Build()
         --image-name ${_application} \
         --user-name $(id -urn) \
         --user-id $(id -ur) \
-        /workspace
+        --target-repo-dir /workspace \
+        /build
 }
