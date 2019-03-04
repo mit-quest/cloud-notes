@@ -1,5 +1,6 @@
 #!/bin/bash
 
+APPLICATION=$1
 LOCATION="us-east4-a"
 CLUSTER=qitransientcluster
 REG_SERVER=gcr.io/${RESOURCES}

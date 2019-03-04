@@ -3,6 +3,7 @@
 # Import utils.h
 . $(dirname ${BASH_SOURCE[0]})/utils.sh
 
+APPLICATION=$1
 LOCATION=eastus
 REGISTRY=qitransientregistry
 REG_SERVER=${REGISTRY}.azurecr.io

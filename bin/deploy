@@ -5,6 +5,8 @@
 RequireDocker
 PermissionsCheck
 
+__qi_application_name=$1
+
 function CheckProviderArgument()
 {
     if ! [ $# = 1 ]; then
@@ -13,7 +15,7 @@ function CheckProviderArgument()
     fi
 }
 
-PROVIDER=$1
+PROVIDER=$2
 CheckProviderArgument $PROVIDER
 
 # Tags and pushes an image to a remote registry.
@@ -42,4 +44,4 @@ export CONFIG_MOUNT=/.persistant_data
 export RESOURCES="$(id -un $RUID)-transient-resources"
 export CONTAINER_NAME="${PROVIDER}-config"
 
-. $(dirname ${BASH_SOURCE[0]})/${PROVIDER}
+. $(dirname ${BASH_SOURCE[0]})/${PROVIDER} $__qi_application_name
