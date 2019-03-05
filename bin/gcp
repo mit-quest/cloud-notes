@@ -112,72 +112,73 @@ REMOTE_IMAGE=$(PushToRemote ${APPLICATION} ${REG_SERVER})
 
 function Deploy()
 {
-    # Create a cluster to run the container
-    $GCLOUD container clusters create $CLUSTER \
-        --num-nodes 1 \
-        --enable-basic-auth \
-        --no-enable-ip-alias \
-        --metadata disable-legacy-endpoints=true \
-        --network "default" \
-        --issue-client-certificate \
-        --scopes \
-            compute-rw,storage-ro
+    local _address="${APPLICATION}-${RESOURCES}"
+    local _compute_tag="cloud-notes-server"
 
-    $GCLOUD container clusters get-credentials $CLUSTER --zone ${LOCATION}
+    $GCLOUD compute addresses create ${_address} \
+        --region us-east4
 
-    K8S_ENDPOINT=$($GCLOUD container clusters describe $CLUSTER \
-        --format="table[no-heading](endpoint)")
-
-    DEPLOYMENT=${APPLICATION}-deployment
-    APPSERVICE=${APPLICATION}-service
-
-    $KUBECTL run \
-        $DEPLOYMENT \
-        --image=${REMOTE_IMAGE} \
-        --server=${K8S_SERVER} \
-        --port 8888
-
-    $KUBECTL expose deployment \
-        ${DEPLOYMENT} \
-        --name ${APPSERVICE} \
-        --type=LoadBalancer \
-        --server=${K8S_SERVER} \
-        --port 8888 \
-        --target-port 8888
-
-    # Get the IP Address of the exposed Jupyter notebook service running
-    # in the kubernetes cluster using an exponential backoff technique
-    let backoff=2
-    let attempts=0
-    while [ -z "$JUPYTER_SERVER" ]; do
-        JUPYTER_SERVER=$($KUBECTL \
-            get services $APPSERVICE \
-            -o=custom-columns=EXTERNAL-IP:.status.loadBalancer.ingress..ip \
-            --no-headers)
-
-        # Querying for the external IP immediately after setting up a service
-        # in Kubernetes will sometimes result in the external IP not being set
-        # and the query will return "<none>". When this happens, we should
-        # backoff and try again.
-        #
-        if [[ "<none>" = "$JUPYTER_SERVER" ||  ! $? = 0 ]]; then
-            let attempts+=1
-            JUPYTER_SERVER=
-
-            echo "Failed to connect to GKE to retrieve server IP."
-            echo "Retrying in: $backoff seconds."
-            sleep $backoff
-
-            let backoff*=2
-            if [ $backoff -ge 128 ]; then
-                echo "Failed to retrieve server IP after $attempts attempts." >&2
-                echo "Stopping further execution" >&2
-                exit 1
-            fi
-        else
-            echo "Jupyter Server running at $JUPYTER_SERVER"
+    $GCLOUD compute instances create \
+        $APPLICATION                      \
+        --machine-type n1-standard-1      \
+        --zone ${LOCATION}                \
+        --image-family ubuntu-1804-lts    \
+        --image-project ubuntu-os-cloud   \
+        --address ${_address}             \
+        --tags ${_compute_tag}            \
+        --meta-data startup-script='#!/bin/bash
+        echo "Checking for CUDA and installing."
+        # Check for CUDA and try to install.
+        if ! dpkg-query -W cuda-10-0; then
+            curl -O \
+                http://developer.download.nvidia.com/compute/cuda/repos/ubuntu1804/x86_64/cuda-repo-ubuntu1804_10.0.130-1_amd64.deb
+            dpkg -i ./cuda-repo-ubuntu1804_10.0.130-1_amd64.deb
+            apt-key adv \
+                --fetch-keys \
+                http://developer.download.nvidia.com/compute/cuda/repos/ubuntu1604/x86_64/7fa2af80.pub
+            apt-get update
+            apt-get install cuda-10-0 -y
         fi
-    done
+        # Enable persistence mode
+        nvidia-smi -pm 1
+        # Check for docker
+        if ! dpkg-query -W docker-ce; then
+            apt-get install \
+                apt-transport-https \
+                ca-certificates \
+                gnupg-agent \
+                software-properties-common
+            curl -O https://download.docker.com/linux/linux/ubuntu/gpg | apt-key add -
+            apt-add-repository \
+                "deb [arch=amd64] https://download.docker.com/linux/ubuntu \
+                $(lsb_release -cs) \
+                stable"
+            apt-get update
+            apt-get install -y \
+                docker-ce \
+                docker-ce-cli \
+                containerd.io
+        fi'
+
+
+    # TODO:
+    # Attach accelerator to image and duplicate the following container
+    # deployment parameters in non container optimized os deployment
+    # from above..
+    #--accelerator nvidia-tesla-p4 \
+    #--container-image ${REMOTE_IMAGE} \
+    #--container-privileged            \
+    #--container-restart-policy always \
+
+    $GCLOUD compute firewall-rules create allow-cn-server \
+        --allow tcp:8888 --target-tags ${_compute_tag}
+
+    # TODO:
+    # Attach/Mount data to VM and share the mount with the container
+    # being deployed above.
+
+    JUPYTER_SERVER="${_address}"
+
 }
 
 Deploy
