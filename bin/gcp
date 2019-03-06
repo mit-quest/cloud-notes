@@ -119,6 +119,10 @@ function Deploy()
     $GCLOUD compute addresses create ${_address} \
         --region us-east4
 
+    # TODO:
+    # Parameterize the startup-script
+    # Callback on startup-script completion?
+    # Automatically stop this resource (GPU cost is high).
     $GCLOUD compute instances create \
         $APPLICATION                               \
         --zone ${LOCATION}                         \
