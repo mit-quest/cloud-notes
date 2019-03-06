@@ -115,14 +115,9 @@ function Deploy()
 {
     local _address="${APPLICATION}-${RESOURCES}"
     local _compute_tag="cloud-notes-server"
-    local _application_disk="${_address}-disk"
 
     $GCLOUD compute addresses create ${_address} \
         --region us-east4
-
-    $GCLOUD compute disks create ${_application_disk} \
-        --zone ${LOCATION} \
-        --size 200GB
 
     $GCLOUD compute instances create \
         $APPLICATION                      \
@@ -131,7 +126,7 @@ function Deploy()
         --accelerator nvidia-tesla-p4     \
         --image-family ubuntu-1804-lts    \
         --image-project ubuntu-os-cloud   \
-        --disk name=${_application_disk},device-name=/mnt/data,mode=rw \
+        --boot-disk-size 200GB            \
         --address ${_address}             \
         --tags ${_compute_tag}            \
         --metadata-from-file startup-script=/mnt/startup/ubuntu-startup.sh
