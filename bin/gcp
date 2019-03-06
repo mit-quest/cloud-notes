@@ -120,15 +120,15 @@ function Deploy()
         --region us-east4
 
     $GCLOUD compute instances create \
-        $APPLICATION                      \
-        --zone ${LOCATION}                \
-        --machine-type n1-standard-1      \
-        --accelerator nvidia-tesla-p4     \
-        --image-family ubuntu-1804-lts    \
-        --image-project ubuntu-os-cloud   \
-        --boot-disk-size 200GB            \
-        --address ${_address}             \
-        --tags ${_compute_tag}            \
+        $APPLICATION                               \
+        --zone ${LOCATION}                         \
+        --machine-type n1-standard-1               \
+        --accelerator type=nvidia-tesla-p4,count=1 \
+        --image-family ubuntu-1804-lts             \
+        --image-project ubuntu-os-cloud            \
+        --boot-disk-size 200GB                     \
+        --address ${_address}                      \
+        --tags ${_compute_tag}                     \
         --metadata-from-file startup-script=/mnt/startup/ubuntu-startup.sh
  
     $GCLOUD compute firewall-rules create allow-cn-server \
