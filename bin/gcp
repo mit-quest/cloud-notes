@@ -134,16 +134,8 @@ function Deploy()
         --disk name=${_application_disk},device-name=/mnt/data,mode=rw \
         --address ${_address}             \
         --tags ${_compute_tag}            \
-        --metadata-from-file startup-script=/mnt/startup/ubuntu-config
-
-    # TODO:
-    # Attach accelerator to image and duplicate the following container
-    # deployment parameters in non container optimized os deployment
-    # from above..
-    #--container-image ${REMOTE_IMAGE} \
-    #--container-privileged            \
-    #--container-restart-policy always \
-
+        --metadata-from-file startup-script=/mnt/startup/ubuntu-startup.sh
+ 
     $GCLOUD compute firewall-rules create allow-cn-server \
         --allow tcp:8888 --target-tags ${_compute_tag}
 
