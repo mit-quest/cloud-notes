@@ -13,7 +13,8 @@ fi
 nvidia-smi -pm 1
 
 echo Checking for Docker and installing
-# Check for docker and try to install.
+# Check for docker and try to install it along with nvidia-docker2 to run
+# Nvidia Container runtime.
 if ! dpkg-query -W docker-ce; then
     apt-get update
     apt-get install \
@@ -35,9 +36,24 @@ if ! dpkg-query -W docker-ce; then
         docker-ce-cli \
         containerd.io
 
+    # Install Nvidia-Docker
+    curl -fsSL https://nvidia.github.io/nvidia-docker/gpgkey | apt-key add -
+    curl -sL https://nvidia/github.io/nvidia-docker/$(lsb_release -cs)/nvidia-docker.list | \
+        tee /etc/apt/sources.list.d/nvidia-docker.list
+
+    apt-get install -y nvidia-docker2
+    pkill -SIGHUP dockerd
+
     gcloud auth configure-docker
     gcloud auth print-access-token | docker login \
         -u oauth2accesstoken \
-        --passwd-stdin \
+        --password-stdin \
         <REGISTRY>
+
+    docker pull <IMAGE>
+    docker run \
+        --restart always \
+        -p 8888:8888 \
+        --mount type=bind,source=/mnt/data,target=/data
+        --runtime nvidia
 fi
