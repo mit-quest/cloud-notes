@@ -115,9 +115,14 @@ function Deploy()
 {
     local _address="${APPLICATION}-${RESOURCES}"
     local _compute_tag="cloud-notes-server"
+    local _application_disk="${_address}-disk"
 
     $GCLOUD compute addresses create ${_address} \
         --region us-east4
+
+    $GCLOUD compute disks create ${_application_disk} \
+        --zone ${LOCATION} \
+        --size 200GB
 
     $GCLOUD compute instances create \
         $APPLICATION                      \
