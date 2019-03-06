@@ -23,7 +23,7 @@ if ! dpkg-query -W docker-ce; then
         gnupg-agent \
         software-properties-common
 
-    curl -fsSL https://download.docker.com/linux/linux/ubuntu/gpg | apt-key add -
+    curl -fsSL https://download.docker.com/linux/ubuntu/gpg | apt-key add -
 
     apt-add-repository \
         "deb [arch=amd64] https://download.docker.com/linux/ubuntu \
