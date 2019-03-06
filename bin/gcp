@@ -25,6 +25,7 @@ function Login()
         --name ${CONTAINER_NAME} \
         -e KUBECONFIG=${CONFIG_MOUNT}/kube_config \
         --mount type=volume,target=${CONFIG_MOUNT} \
+        --mount type=bind,source=$(dirname "$(GetAbsPath ${BASH_SOURCE[0]})/scripts"),target=/mnt/startup \
         google/cloud-sdk \
         gcloud auth login
 }
@@ -120,52 +121,20 @@ function Deploy()
 
     $GCLOUD compute instances create \
         $APPLICATION                      \
-        --machine-type n1-standard-1      \
         --zone ${LOCATION}                \
+        --machine-type n1-standard-1      \
+        --accelerator nvidia-tesla-p4     \
         --image-family ubuntu-1804-lts    \
         --image-project ubuntu-os-cloud   \
+        --disk name=${_application_disk}  \
         --address ${_address}             \
         --tags ${_compute_tag}            \
-        --meta-data startup-script='#!/bin/bash
-        echo "Checking for CUDA and installing."
-        # Check for CUDA and try to install.
-        if ! dpkg-query -W cuda-10-0; then
-            curl -O \
-                http://developer.download.nvidia.com/compute/cuda/repos/ubuntu1804/x86_64/cuda-repo-ubuntu1804_10.0.130-1_amd64.deb
-            dpkg -i ./cuda-repo-ubuntu1804_10.0.130-1_amd64.deb
-            apt-key adv \
-                --fetch-keys \
-                http://developer.download.nvidia.com/compute/cuda/repos/ubuntu1604/x86_64/7fa2af80.pub
-            apt-get update
-            apt-get install cuda-10-0 -y
-        fi
-        # Enable persistence mode
-        nvidia-smi -pm 1
-        # Check for docker
-        if ! dpkg-query -W docker-ce; then
-            apt-get install \
-                apt-transport-https \
-                ca-certificates \
-                gnupg-agent \
-                software-properties-common
-            curl -O https://download.docker.com/linux/linux/ubuntu/gpg | apt-key add -
-            apt-add-repository \
-                "deb [arch=amd64] https://download.docker.com/linux/ubuntu \
-                $(lsb_release -cs) \
-                stable"
-            apt-get update
-            apt-get install -y \
-                docker-ce \
-                docker-ce-cli \
-                containerd.io
-        fi'
-
+        --metadata-from-file startup-script=/mnt/startup/ubuntu-config
 
     # TODO:
     # Attach accelerator to image and duplicate the following container
     # deployment parameters in non container optimized os deployment
     # from above..
-    #--accelerator nvidia-tesla-p4 \
     #--container-image ${REMOTE_IMAGE} \
     #--container-privileged            \
     #--container-restart-policy always \
