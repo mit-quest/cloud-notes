@@ -131,7 +131,7 @@ function Deploy()
         --accelerator nvidia-tesla-p4     \
         --image-family ubuntu-1804-lts    \
         --image-project ubuntu-os-cloud   \
-        --disk name=${_application_disk}  \
+        --disk name=${_application_disk},device-name=/mnt/data,mode=rw \
         --address ${_address}             \
         --tags ${_compute_tag}            \
         --metadata-from-file startup-script=/mnt/startup/ubuntu-config
