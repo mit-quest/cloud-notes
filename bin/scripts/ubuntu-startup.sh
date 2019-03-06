@@ -48,7 +48,7 @@ if ! dpkg-query -W docker-ce; then
     gcloud auth print-access-token | docker login \
         -u oauth2accesstoken \
         --password-stdin \
-        <REGISTRY>
+        gcr.io
 
     docker pull <IMAGE>
     docker run \
