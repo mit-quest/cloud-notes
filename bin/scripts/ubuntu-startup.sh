@@ -1,4 +1,17 @@
 #!/bin/bash
+
+__qi_container_name=$(curl \
+    http://metadata.google.internal/computeMetaData/v1/instance/attributes/__qi_container_name \
+    -H "Metadata-Flavor: Google")
+
+__qi_application_bucket=$(curl \
+    http://metadata.google.internal/computeMetaData/v1/instance/attributes/__qi_app_bucket \
+    -H "Metadata-Flavor: Google")
+
+echo "Copying data to /mnt/data."
+mkdir -m 1777 /mnt/data
+nohup gsutils -m cp -r gs://$__qi_application_bucket/* /mnt/data/ &>/dev/null &
+
 echo "Checking for CUDA and installing."
 # Check for CUDA and try to install.
 if ! dpkg-query -W cuda-10-0; then
@@ -62,10 +75,12 @@ if ! dpkg-query -W docker-ce; then
         --password-stdin \
         gcr.io
 
-    docker pull <IMAGE>
+    docker pull $__qi_container_name
     docker run \
         --restart always \
         -p 8888:8888 \
-        --mount type=bind,source=/mnt/data,target=/data
-        --runtime nvidia
+        --mount type=bind,source=/mnt/data,target=/workspace/data
+        --runtime nvidia \
+        $__qi_container_name
+
 fi
