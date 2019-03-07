@@ -26,6 +26,9 @@ CheckDataSource "$__qi_datasource" "$__qi_workspace"
 __qi_provider=$3
 CheckProvider "$__qi_provider"
 
+# TODO:
+# Add GPU parameter/flag to specify the need for a vm with GPUs
+
 __qi_application_name=$(GetContainerName "cloud-notes" "$__qi_provider")
 
 function finish()
@@ -43,7 +46,10 @@ trap finish EXIT
 GetBuilder
 Build "$__qi_workspace" "$__qi_application_name"
 
-. $(dirname ${BASH_SOURCE[0]})/bin/deploy ${__qi_application_name} ${__qi_provider}
+. $(dirname ${BASH_SOURCE[0]})/bin/deploy \
+    ${__qi_application_name} \
+    ${__qi_provider} \
+    ${__qi_datasource}
 
 if ! typeset -f ConnectToServer >/dev/null; then
     echo "An error occurred during deployment and no Jupyter server was found." >&2
