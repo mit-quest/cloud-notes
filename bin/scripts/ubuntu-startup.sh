@@ -12,6 +12,9 @@ fi
 # Enable persistence mode
 nvidia-smi -pm 1
 
+# TODO:
+# Install cudnn >= 7.0
+
 echo Checking for Docker and installing
 # Check for docker and try to install it along with nvidia-docker2 to run
 # Nvidia Container runtime.
@@ -37,10 +40,12 @@ if ! dpkg-query -W docker-ce; then
         containerd.io
 
     # Install Nvidia-Docker
-    curl -fsSL https://nvidia.github.io/nvidia-docker/gpgkey | apt-key add -
-    curl -sL https://nvidia/github.io/nvidia-docker/$(lsb_release -cs)/nvidia-docker.list | \
+    distribution=$(. /etc/os-releas;echo $ID$VERSION_ID)
+    curl -sL https://nvidia.github.io/nvidia-docker/gpgkey | apt-key add -
+    curl -sL https://nvidia/github.io/nvidia-docker/$distribution/nvidia-docker.list | \
         tee /etc/apt/sources.list.d/nvidia-docker.list
 
+    apt-get update
     apt-get install -y nvidia-docker2
     pkill -SIGHUP dockerd
 
