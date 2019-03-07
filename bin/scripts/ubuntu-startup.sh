@@ -47,7 +47,7 @@ if ! dpkg-query -W docker-ce; then
         containerd.io
 
     # Install Nvidia-Docker
-    distribution=$(. /etc/os-releas;echo $ID$VERSION_ID)
+    distribution=$(. /etc/os-release;echo $ID$VERSION_ID)
     curl -sL https://nvidia.github.io/nvidia-docker/gpgkey | apt-key add -
     curl -sL https://nvidia/github.io/nvidia-docker/$distribution/nvidia-docker.list | \
         tee /etc/apt/sources.list.d/nvidia-docker.list
