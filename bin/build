@@ -56,7 +56,9 @@ function GetBuilder()
     tag=$(git ls-remote $repo2docker_remote HEAD | awk '{ print $1 }')
     tag=${tag: 0: 8}
 
+    set -e
     docker pull jupyter/repo2docker:${tag}
+    set +e
 }
 
 function Build()
