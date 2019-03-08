@@ -134,8 +134,8 @@ function Deploy()
         --boot-disk-size 200GB                     \
         --address ${_address}                      \
         --tags ${_compute_tag}                     \
-        --metadata __qi_container_name=$REMOTE_IMAGE \
-        --metadata __qi_app_bucket=<DATA_SOURCE>   \
+        --metadata \
+        __qi_container_name=$REMOTE_IMAGE,__qi_app_bucket=<DATA_SOURCE> \
         --metadata-from-file startup-script=/mnt/startup/ubuntu-startup.sh
  
     $GCLOUD compute firewall-rules create allow-cn-server \
