@@ -10,7 +10,7 @@ __qi_application_bucket=$(curl \
 
 echo "Copying data to /mnt/data."
 mkdir -m 1777 /mnt/data
-nohup gsutils -m cp -r gs://$__qi_application_bucket/* /mnt/data/ &>/dev/null &
+nohup gsutil -m cp -r gs://$__qi_application_bucket/* /mnt/data/ &>/dev/null &
 
 echo "Checking for CUDA and installing."
 # Check for CUDA and try to install.
