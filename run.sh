@@ -57,7 +57,9 @@ if ! [ -z "$__qi_gpu" ]; then
 
     __qi_application_name=${__qi_application_name}-gpu
 
-    docker build $(dirname $dockerfile) -f $dockerfile -t $__qi_application_name
+    docker build $(dirname ${dockerfile}) \
+        -f ${dockerfile} \
+        -t ${__qi_application_name}
 fi
 
 . $(dirname ${BASH_SOURCE[0]})/bin/deploy \
