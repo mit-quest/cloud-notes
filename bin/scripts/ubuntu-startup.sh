@@ -1,11 +1,11 @@
 #!/bin/bash
 
 __qi_container_name=$(curl \
-    http://metadata.google.internal/computeMetaData/v1/instance/attributes/__qi_container_name \
+    http://metadata.google.internal/computeMetadata/v1/instance/attributes/__qi_container_name \
     -H "Metadata-Flavor: Google")
 
 __qi_application_bucket=$(curl \
-    http://metadata.google.internal/computeMetaData/v1/instance/attributes/__qi_app_bucket \
+    http://metadata.google.internal/computeMetadata/v1/instance/attributes/__qi_app_bucket \
     -H "Metadata-Flavor: Google")
 
 echo "Copying data to /mnt/data."
