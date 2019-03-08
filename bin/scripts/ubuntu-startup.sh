@@ -65,6 +65,11 @@ if ! dpkg-query -W docker-ce; then
         docker-ce-cli \
         containerd.io
 
+    gcloud auth print-access-token | docker login \
+        -u oauth2accesstoken \
+        --password-stdin \
+        gcr.io
+
     # Install Nvidia-Docker
     distribution=$(. /etc/os-release;echo $ID$VERSION_ID)
     curl -sL https://nvidia.github.io/nvidia-docker/gpgkey | apt-key add -
@@ -75,12 +80,6 @@ if ! dpkg-query -W docker-ce; then
     apt-get install -y nvidia-docker2
     pkill -SIGHUP dockerd
 
-    gcloud auth print-access-token | docker login \
-        -u oauth2accesstoken \
-        --password-stdin \
-        gcr.io
-
-    docker pull $__qi_container_name
     docker run \
         --restart always \
         -p 8888:8888 \
