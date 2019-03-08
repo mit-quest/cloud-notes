@@ -5,6 +5,8 @@ data/*
 workspace/*
 !workspace/README.md
 
+dockerfile
+
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
