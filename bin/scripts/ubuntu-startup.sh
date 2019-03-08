@@ -69,7 +69,6 @@ if ! dpkg-query -W docker-ce; then
     apt-get install -y nvidia-docker2
     pkill -SIGHUP dockerd
 
-    gcloud auth configure-docker
     gcloud auth print-access-token | docker login \
         -u oauth2accesstoken \
         --password-stdin \
