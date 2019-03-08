@@ -125,6 +125,8 @@ function Deploy()
         --zone ${LOCATION}                         \
         --machine-type n1-standard-1               \
         --accelerator type=nvidia-tesla-p4,count=1 \
+        --custom-cpu 4                             \
+        --custom-memory 32GB                       \
         --maintenance-policy TERMINATE             \
         --restart-on-failure                       \
         --image-family ubuntu-1804-lts             \
