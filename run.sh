@@ -52,7 +52,7 @@ if ! [ -z "$__qi_gpu" ]; then
     dockerfile=$(dirname ${BASH_SOURCE[0]})/dockerfile
     sed \
         -r \
-        "s~{% APPLICATION %}~$__qi_application_name~g" \
+        "s/\{% APPLICATION %\}/$__qi_application_name/g;" \
         ${dockerfile}.template > $dockerfile
 
     __qi_application_name=${__qi_application_name}-gpu
