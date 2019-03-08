@@ -1,4 +1,4 @@
-FROM nvidia/cuda:9.0-cudnn7-runtime as GPU_BASE
+FROM nvidia/cuda:10.0-cudnn7-runtime as GPU_BASE
 FROM {% APPLICATION %}
 
 COPY --from=GPU_BASE /usr/local/cuda-9.0/ /usr/local/cuda-9.0/
