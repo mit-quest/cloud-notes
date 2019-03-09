@@ -15,22 +15,27 @@ nohup gsutil -m cp -r gs://$__qi_application_bucket/* /mnt/data/ &>/dev/null &
 echo "Checking for CUDA and installing."
 # Check for CUDA and try to install.
 if ! dpkg-query -W cuda-10-0; then
-    _nvidia_dev_compute=developer.download.nvidia.com/compute
-    _cuda_repo=cuda/repos/ubuntu1804/x86_64
-    _cuda_deb=cuda-repo-ubuntu1804_10.0.130-1_amd64.deb
-    curl -O http://$_nvidia_dev_compute/$_cuda_repo/$_cuda_deb
-    dpkg -i ./$_cuda_deb
-    apt-key adv --fetch-keys https://$_nvidia_dev_compute/$_cuda_repo/7fa2af80.pub
+    _nvidia_dev_compute="developer.download.nvidia.com/compute"
+    _cuda_repo="cuda/repos/ubuntu1804/x86_64"
+    _cuda_deb="cuda-repo-ubuntu1804_10.0.130-1_amd64.deb"
+    curl -O "http://$_nvidia_dev_compute/$_cuda_repo/$_cuda_deb"
+    dpkg -i "./$_cuda_deb"
+    apt-key adv --fetch-keys "https://$_nvidia_dev_compute/$_cuda_repo/7fa2af80.pub"
+
     apt-get update
+    apt-get install -y cuda-10-0
+fi
 
-    _ml_repo=machine-learning/repos/ubuntu1804/x86_64
-    _ml_deb=nvidia-machine-learning-repo-ubuntu1804_1.0.0-1_amd64.deb
-    curl -O http://$_nvidia_dev_compute/$_ml_repo/$_ml_deb
-    apt install ./$_ml_deb
+echo "Checking for libcudnn7 and installing"
+if ! dpkg-query -W libcudnn7; then
+    _ml_repo="machine-learning/repos/ubuntu1804/x86_64"
+    _ml_deb="nvidia-machine-learning-repo-ubuntu1804_1.0.0-1_amd64.deb"
+    curl -O "http://$_nvidia_dev_compute/$_ml_repo/$_ml_deb"
+    apt install "./$_ml_deb"
 
+    apt-get update
     apt-get install --no-install-recommends -y \
         nvidia-driver-410 \
-        cuda-10-0 \
         libcudnn7 \
         libcudnn7-dev
 fi
