@@ -84,6 +84,7 @@ function Build()
         jupyter/repo2docker:${tag} \
         jupyter-repo2docker"
 
+    set -e
     # Use repo2docker to build the workspace folder.
     $R2D \
         --no-run \
@@ -93,4 +94,5 @@ function Build()
         --user-id $(id -ur) \
         --target-repo-dir /workspace \
         /build
+    set +e
 }
