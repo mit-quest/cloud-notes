@@ -64,7 +64,7 @@ function GetBuilder()
 function Build()
 {
     if ! [ $# = 2 ]; then
-        echo "USE: FUNCNAME[0] <WORKSPACE> <APPLICATION_NAME>" 1>&2
+        echo "USE: ${FUNCNAME[0]} <WORKSPACE> <APPLICATION_NAME>" 1>&2
     fi
 
     local _workspace="$1"
