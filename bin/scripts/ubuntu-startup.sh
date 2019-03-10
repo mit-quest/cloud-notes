@@ -33,11 +33,12 @@ if ! dpkg-query -W libcudnn7; then
     curl -O "http://$_nvidia_dev_compute/$_ml_repo/$_ml_deb"
     apt install "./$_ml_deb"
 
+    _cudnn_version"7.4.1.5-1+cuda10.0"
     apt-get update
     apt-get install --no-install-recommends -y \
         nvidia-driver-410 \
-        libcudnn7 \
-        libcudnn7-dev
+        libcudnn7=$_cudnn_version \
+        libcudnn7-dev=$_cudnn_verison
 fi
 
 # Enable persistence mode
