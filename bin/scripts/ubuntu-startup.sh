@@ -41,11 +41,14 @@ if ! dpkg-query -W libcudnn7; then
         libcudnn7-dev=$_cudnn_verison
 fi
 
+# Setup paths
+export CUDA_HOME="/usr/local/cuda"
+export PATH="${CUDA_HOME}/bin:${PATH}"
+export LD_LIBRARY_PATH="${CUDA_HOME}/lib64:${LD_LIBRARY_PATH}"
+export LD_LIBRARY_PATH="${CUDA_HOME}/compat:${LD_LIBRARY_PATH}"
+
 # Enable persistence mode
 nvidia-smi -pm 1
-
-# TODO:
-# Install cudnn >= 7.0
 
 echo Checking for Docker and installing
 # Check for docker and try to install it along with nvidia-docker2 to run
@@ -92,5 +95,4 @@ if ! dpkg-query -W docker-ce; then
         --mount type=bind,source=/mnt/data,target=/workspace/data
         --runtime nvidia \
         $__qi_container_name
-
 fi
