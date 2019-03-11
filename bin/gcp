@@ -116,9 +116,6 @@ function Deploy()
     $GCLOUD compute addresses create ${_address} \
         --region us-east4
 
-    # TODO:
-    # Parameterize the startup-script
-    # Callback on startup-script completion?
     # Automatically stop this resource (GPU cost is high).
     $GCLOUD compute instances create \
         $APPLICATION                               \
@@ -141,15 +138,14 @@ function Deploy()
         --allow tcp:8888 --target-tags ${_compute_tag}
 
     # TODO:
-    # Attach/Mount data to VM and share the mount with the container
-    # being deployed above.
+    # Use Cloud Function to create a callback on startup-script
+    # completion?
 
     JUPYTER_SERVER=$($GCLOUD \
         compute addresses describe \
         ${_address} \
         --region us-east4 \
         --format "table[no-heading](address)")
-
 }
 
 Deploy
