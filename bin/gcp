@@ -144,7 +144,11 @@ function Deploy()
     # Attach/Mount data to VM and share the mount with the container
     # being deployed above.
 
-    JUPYTER_SERVER="${_address}"
+    JUPYTER_SERVER=$($GCLOUD \
+        compute addresses describe \
+        ${_address} \
+        --region us-east4 \
+        --format "table[no-heading](address)")
 
 }
 
