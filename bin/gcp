@@ -20,11 +20,14 @@ GetPlatformContainer
 #
 function Login()
 {
+    local _container_name=$1
+    local _config_mount=$2
+
     docker run \
         -it \
-        --name ${CONTAINER_NAME} \
-        -e KUBECONFIG=${CONFIG_MOUNT}/kube_config \
-        --mount type=volume,target=${CONFIG_MOUNT} \
+        --name ${_container_name} \
+        -e KUBECONFIG=${_config_mount}/kube_config \
+        --mount type=volume,target=${_config_mount} \
         --mount type=bind,source="$(dirname `GetAbsPath ${BASH_SOURCE[0]}`)/scripts",target=/mnt/startup \
         google/cloud-sdk \
         gcloud auth login
