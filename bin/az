@@ -32,11 +32,14 @@ GetPlatformContainer
 #
 function Login()
 {
+    local _container_name=$1
+    local _config_mount=$2
+
     docker run \
         -it \
-        --name ${CONTAINER_NAME} \
-        -e AZURE_CONFIG_DIR=${CONFIG_MOUNT} \
-        --mount type=volume,target=${CONFIG_MOUNT} \
+        --name ${_container_name} \
+        -e AZURE_CONFIG_DIR=${_config_mount} \
+        --mount type=volume,target=${_config_mount} \
         microsoft/azure-cli \
         az login
 }
