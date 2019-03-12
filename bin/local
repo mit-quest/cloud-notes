@@ -9,5 +9,6 @@ function ConnectToServer()
         -i \
         -p 8888:8888 \
         --mount type=bind,source="${__qi_workspace}",target="/workspace" \
+        --mount type=bind,source="${__qi_datasource}",target="/workspace/data" \
         ${__qi_application_name} 2>&1)
 }

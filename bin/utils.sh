@@ -35,7 +35,7 @@ function GetAbsPath()
 # Valid Platforms/Providers
 readonly PROVIDERS=(aws gcp az ibm local)
 
-# Checks for a value givrn the contents of an Array
+# Checks for a value given the contents of an Array
 #
 # ARGUMENTS:
 #   _VALUE    - The value to look for in an array

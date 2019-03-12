@@ -26,6 +26,10 @@ CheckDataSource "$__qi_datasource" "$__qi_workspace"
 __qi_provider=$3
 CheckProvider "$__qi_provider"
 
+# TODO:
+# Add GPU parameter/flag to specify the need for a vm with GPUs
+__qi_gpu=1
+
 __qi_application_name=$(GetContainerName "cloud-notes" "$__qi_provider")
 
 function finish()
@@ -43,7 +47,27 @@ trap finish EXIT
 GetBuilder
 Build "$__qi_workspace" "$__qi_application_name"
 
-. $(dirname ${BASH_SOURCE[0]})/bin/deploy ${__qi_application_name} ${__qi_provider}
+if ! [ -z "$__qi_gpu" ]; then
+    # replace the templated application name
+    _source=$(dirname ${BASH_SOURCE[0]})
+    template=$_source/templates/dockerfile.template
+    dockerfile=$_source/dockerfile
+    sed \
+        -r \
+        "s/\{% APPLICATION %\}/$__qi_application_name/g;" \
+        ${template} > $dockerfile
+
+    __qi_application_name=${__qi_application_name}-gpu
+
+    docker build $(dirname ${dockerfile}) \
+        -f ${dockerfile} \
+        -t ${__qi_application_name}
+fi
+
+. $(dirname ${BASH_SOURCE[0]})/bin/deploy \
+    ${__qi_application_name} \
+    ${__qi_provider} \
+    ${__qi_datasource}
 
 if ! typeset -f ConnectToServer >/dev/null; then
     echo "An error occurred during deployment and no Jupyter server was found." >&2

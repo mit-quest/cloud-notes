@@ -56,13 +56,15 @@ function GetBuilder()
     tag=$(git ls-remote $repo2docker_remote HEAD | awk '{ print $1 }')
     tag=${tag: 0: 8}
 
+    set -e
     docker pull jupyter/repo2docker:${tag}
+    set +e
 }
 
 function Build()
 {
     if ! [ $# = 2 ]; then
-        echo "USE: FUNCNAME[0] <WORKSPACE> <APPLICATION_NAME>" 1>&2
+        echo "USE: ${FUNCNAME[0]} <WORKSPACE> <APPLICATION_NAME>" 1>&2
     fi
 
     local _workspace="$1"
@@ -82,6 +84,7 @@ function Build()
         jupyter/repo2docker:${tag} \
         jupyter-repo2docker"
 
+    set -e
     # Use repo2docker to build the workspace folder.
     $R2D \
         --no-run \
@@ -91,4 +94,5 @@ function Build()
         --user-id $(id -ur) \
         --target-repo-dir /workspace \
         /build
+    set +e
 }

@@ -25,6 +25,7 @@ function Login()
         --name ${CONTAINER_NAME} \
         -e KUBECONFIG=${CONFIG_MOUNT}/kube_config \
         --mount type=volume,target=${CONFIG_MOUNT} \
+        --mount type=bind,source="$(dirname `GetAbsPath ${BASH_SOURCE[0]}`)/scripts",target=/mnt/startup \
         google/cloud-sdk \
         gcloud auth login
 }
@@ -97,9 +98,6 @@ Provision
 
 function PrepareDocker()
 {
-    # Add authentication information for docker to login to gcr.io
-    $GCLOUD auth configure-docker --project $RESOURCES
-
     # Login to gcr.io
     $GCLOUD auth print-access-token | docker login \
         -u oauth2accesstoken \
@@ -112,72 +110,42 @@ REMOTE_IMAGE=$(PushToRemote ${APPLICATION} ${REG_SERVER})
 
 function Deploy()
 {
-    # Create a cluster to run the container
-    $GCLOUD container clusters create $CLUSTER \
-        --num-nodes 1 \
-        --enable-basic-auth \
-        --no-enable-ip-alias \
-        --metadata disable-legacy-endpoints=true \
-        --network "default" \
-        --issue-client-certificate \
-        --scopes \
-            compute-rw,storage-ro
+    local _address="${APPLICATION}-${RESOURCES}"
+    local _compute_tag="cloud-notes-server"
 
-    $GCLOUD container clusters get-credentials $CLUSTER --zone ${LOCATION}
+    $GCLOUD compute addresses create ${_address} \
+        --region us-east4
 
-    K8S_ENDPOINT=$($GCLOUD container clusters describe $CLUSTER \
-        --format="table[no-heading](endpoint)")
+    # Automatically stop this resource (GPU cost is high).
+    $GCLOUD compute instances create \
+        $APPLICATION                               \
+        --zone ${LOCATION}                         \
+        --accelerator type=nvidia-tesla-p4,count=1 \
+        --custom-cpu 8                             \
+        --custom-memory 32GB                       \
+        --maintenance-policy TERMINATE             \
+        --restart-on-failure                       \
+        --image-family ubuntu-1804-lts             \
+        --image-project ubuntu-os-cloud            \
+        --boot-disk-size 200GB                     \
+        --address ${_address}                      \
+        --tags ${_compute_tag}                     \
+        --metadata \
+        __qi_container_name="$REMOTE_IMAGE",__qi_app_bucket=<DATA_SOURCE> \
+        --metadata-from-file startup-script=/mnt/startup/ubuntu-startup.sh
+ 
+    $GCLOUD compute firewall-rules create allow-cn-server \
+        --allow tcp:8888 --target-tags ${_compute_tag}
 
-    DEPLOYMENT=${APPLICATION}-deployment
-    APPSERVICE=${APPLICATION}-service
+    # TODO:
+    # Use Cloud Function to create a callback on startup-script
+    # completion?
 
-    $KUBECTL run \
-        $DEPLOYMENT \
-        --image=${REMOTE_IMAGE} \
-        --server=${K8S_SERVER} \
-        --port 8888
-
-    $KUBECTL expose deployment \
-        ${DEPLOYMENT} \
-        --name ${APPSERVICE} \
-        --type=LoadBalancer \
-        --server=${K8S_SERVER} \
-        --port 8888 \
-        --target-port 8888
-
-    # Get the IP Address of the exposed Jupyter notebook service running
-    # in the kubernetes cluster using an exponential backoff technique
-    let backoff=2
-    let attempts=0
-    while [ -z "$JUPYTER_SERVER" ]; do
-        JUPYTER_SERVER=$($KUBECTL \
-            get services $APPSERVICE \
-            -o=custom-columns=EXTERNAL-IP:.status.loadBalancer.ingress..ip \
-            --no-headers)
-
-        # Querying for the external IP immediately after setting up a service
-        # in Kubernetes will sometimes result in the external IP not being set
-        # and the query will return "<none>". When this happens, we should
-        # backoff and try again.
-        #
-        if [[ "<none>" = "$JUPYTER_SERVER" ||  ! $? = 0 ]]; then
-            let attempts+=1
-            JUPYTER_SERVER=
-
-            echo "Failed to connect to GKE to retrieve server IP."
-            echo "Retrying in: $backoff seconds."
-            sleep $backoff
-
-            let backoff*=2
-            if [ $backoff -ge 128 ]; then
-                echo "Failed to retrieve server IP after $attempts attempts." >&2
-                echo "Stopping further execution" >&2
-                exit 1
-            fi
-        else
-            echo "Jupyter Server running at $JUPYTER_SERVER"
-        fi
-    done
+    JUPYTER_SERVER=$($GCLOUD \
+        compute addresses describe \
+        ${_address} \
+        --region us-east4 \
+        --format "table[no-heading](address)")
 }
 
 Deploy
