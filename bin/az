@@ -21,8 +21,6 @@ function GetPlatformContainer()
     docker pull microsoft/azure-cli
 }
 
-GetPlatformContainer
-
 # The Azure CLI container does not provide an automatic mount point
 # for it's credentials. Thes requires a little extra manual work through
 # docker but the persisted login credentials are still accesible across
@@ -43,8 +41,6 @@ function Login()
         microsoft/azure-cli \
         az login
 }
-
-Login
 
 # Reusable AZ command to mask the use of docker.
 AZ="docker run --rm -it -e AZURE_CONFIG_DIR=${CONFIG_MOUNT} --volumes-from ${CONTAINER_NAME} microsoft/azure-cli az"

@@ -11,8 +11,6 @@ function GetPlatformContainer()
     docker pull google/cloud-sdk
 }
 
-GetPlatformContainer
-
 # Login with the container. This currently requires user interaction
 # at the browser to complete. The below command creates a volume
 # at the ${CONFIG_MOUNT} location in order to persist kubernetes
@@ -32,8 +30,6 @@ function Login()
         google/cloud-sdk \
         gcloud auth login
 }
-
-Login
 
 # Common docker command component for gcloud and kubectl commands inside
 # of the google/cloud-sdk container.

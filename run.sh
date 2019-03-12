@@ -26,6 +26,9 @@ CheckDataSource "$__qi_datasource" "$__qi_workspace"
 __qi_provider=$3
 CheckProvider "$__qi_provider"
 
+. $(dirname ${BASH_SOURCE[0]})/bin/deploy ${__qi_provider}
+
+
 # TODO:
 # Add GPU parameter/flag to specify the need for a vm with GPUs
 __qi_gpu=1
@@ -64,10 +67,8 @@ if ! [ -z "$__qi_gpu" ]; then
         -t ${__qi_application_name}
 fi
 
-. $(dirname ${BASH_SOURCE[0]})/bin/deploy \
-    ${__qi_application_name} \
-    ${__qi_provider} \
-    ${__qi_datasource}
+GetPlatformContainer
+Login ${__qi_provider}-config ./persistent_data
 
 if ! typeset -f ConnectToServer >/dev/null; then
     echo "An error occurred during deployment and no Jupyter server was found." >&2
