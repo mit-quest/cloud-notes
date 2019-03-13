@@ -1,6 +1,10 @@
 #!/bin/bash
 
 APPLICATION=$1
+CONTAINER_NAME=$2
+CONFIG_MOUNT=$3
+RESOURCES=$4
+
 LOCATION="us-east4-a"
 CLUSTER=qitransientcluster
 REG_SERVER=gcr.io/${RESOURCES}
@@ -10,6 +14,8 @@ function GetPlatformContainer()
     # Use the Prebuilt gcloud sdk container provided by Google.
     docker pull google/cloud-sdk
 }
+
+GetPlatformContainer
 
 # Login with the container. This currently requires user interaction
 # at the browser to complete. The below command creates a volume
@@ -30,6 +36,8 @@ function Login()
         google/cloud-sdk \
         gcloud auth login
 }
+
+Login $CONTAINER_NAME $CONFIG_MOUNT
 
 # Common docker command component for gcloud and kubectl commands inside
 # of the google/cloud-sdk container.

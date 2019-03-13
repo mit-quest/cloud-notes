@@ -40,8 +40,12 @@ function PushToRemote()
 
 export -f PushToRemote
 
-export CONFIG_MOUNT=/.persistant_data
-export RESOURCES="$(id -un $RUID)-transient-resources"
-export CONTAINER_NAME="${PROVIDER}-config"
+__qi_container_mount=/.persistant_data
+__qi_container_name="${PROVIDER}-config"
+__qi_cloud_resources="$(id -un $RUID)-transient-resources"
 
-. $(dirname ${BASH_SOURCE[0]})/${PROVIDER} $__qi_application_name
+. $(dirname ${BASH_SOURCE[0]})/${PROVIDER} \
+    $__qi_application_name \
+    $__qi_container_name \
+    $__qi_container_mount \
+    $__qi_cloud_resources
