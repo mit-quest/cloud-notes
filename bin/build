@@ -96,4 +96,21 @@ function Build()
         --target-repo-dir /workspace \
         /build
     set +e
+
+    if [ "$_use_gpu" = 1 ]; then
+        # replace the templated application name
+        _source=$(dirname ${BASH_SOURCE[1]})
+        template=$_source/templates/dockerfile.template
+        dockerfile=$_source/dockerfile
+        sed \
+            -r \
+            "s/\{% APPLICATION %\}/$__qi_application_name/g;" \
+            ${template} > $dockerfile
+
+        __qi_application_name=${__qi_application_name}-gpu
+
+        docker build $(dirname ${dockerfile}) \
+            -f ${dockerfile} \
+            -t ${__qi_application_name}
+    fi
 }

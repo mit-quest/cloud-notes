@@ -45,24 +45,7 @@ function finish()
 trap finish EXIT
 
 GetBuilder
-Build "$__qi_workspace" "$__qi_application_name"
-
-if ! [ -z "$__qi_gpu" ]; then
-    # replace the templated application name
-    _source=$(dirname ${BASH_SOURCE[0]})
-    template=$_source/templates/dockerfile.template
-    dockerfile=$_source/dockerfile
-    sed \
-        -r \
-        "s/\{% APPLICATION %\}/$__qi_application_name/g;" \
-        ${template} > $dockerfile
-
-    __qi_application_name=${__qi_application_name}-gpu
-
-    docker build $(dirname ${dockerfile}) \
-        -f ${dockerfile} \
-        -t ${__qi_application_name}
-fi
+Build "$__qi_workspace" "$__qi_application_name" "$__qi_gpu"
 
 . $(dirname ${BASH_SOURCE[0]})/bin/deploy \
     ${__qi_application_name} \
