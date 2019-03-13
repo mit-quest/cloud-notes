@@ -5,18 +5,20 @@
 RequireDocker
 PermissionsCheck
 
-__qi_application_name=$1
-
-function CheckProviderArgument()
+function CheckDeployArguments()
 {
-    if ! [ $# = 1 ]; then
-        echo "USE: $0 <PROVIDER>" 1>&2
+    if ! [ $# = 3 ]; then
+        echo $@
+        echo "USE: ${BASH_SOURCE[0]} <APPLICATION_NAME> <PROVIDER> <DATA_SOURCE>" 1>&2
         exit 1
     fi
 }
 
-PROVIDER=$2
-CheckProviderArgument $PROVIDER
+CheckDeployArguments $@
+
+__qi_application_name=$1
+__qi_provider=$2
+__qi_datasource=$3
 
 # Tags and pushes an image to a remote registry.
 # ARGUMENTS:
