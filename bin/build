@@ -63,12 +63,13 @@ function GetBuilder()
 
 function Build()
 {
-    if ! [ $# = 2 ]; then
-        echo "USE: ${FUNCNAME[0]} <WORKSPACE> <APPLICATION_NAME>" 1>&2
+    if ! [ $# = 3 ]; then
+        echo "USE: ${FUNCNAME[0]} <WORKSPACE> <APPLICATION_NAME> <CUDA_ENABLED>" 1>&2
     fi
 
     local _workspace="$1"
     local _application="$2"
+    local _use_gpu="$3"
 
     # The Docker Socket needs to be mounted to the
     # repo2docker image when issuing a docker run
