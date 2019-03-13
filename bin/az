@@ -55,9 +55,12 @@ AZ="docker run --rm -it -e AZURE_CONFIG_DIR=${CONFIG_MOUNT} --volumes-from ${CON
 
 function Provision()
 {
+    local _resources=$1
+    local _location=$2
+
     # Create a resource group to host transient resoureces.
-    $AZ group create --name $RESOURCES --location $LOCATION
-    $AZ acr create --resource-group $RESOURCES --name $REGISTRY --sku Basic
+    $AZ group create --name $_resources --location $_location
+    $AZ acr create --resource-group $_resources --name $REGISTRY --sku Basic
 
     # Can't use `az acr login` from docker container. This command requires
     # an installation of docker to exist as it calls `docker ps` internally
@@ -67,7 +70,7 @@ function Provision()
     $AZ acr update --name $REGISTRY --admin-enabled true
 }
 
-Provision
+Provision $RESOURCES $LOCATION
 
 function PrepareDocker()
 {
