@@ -68,9 +68,6 @@ function GetBuilder()
 #   $3 - GPU/CUDA build option indicating whether or not to use
 #        CUDA libraries in container build.
 #
-# RETURNS:
-#   string - The name used to build the application.
-#
 function Build()
 {
     if ! [ $# = 3 ]; then
@@ -125,6 +122,4 @@ function Build()
             -t ${_application}
         set +e
     fi
-
-    echo "$_application"
 }

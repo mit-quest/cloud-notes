@@ -46,10 +46,14 @@ trap finish EXIT
 
 GetBuilder
 
-__qi_application_name=$(Build \
+Build \
     "$__qi_workspace" \
     "$__qi_application_name" \
-    "$__qi_gpu")
+    "$__qi_gpu"
+
+if [ "$__qi_gpu" = 1 ]; then
+    __qi_application_name=${__qi_application_name}-gpu
+fi
 
 . $(dirname ${BASH_SOURCE[0]})/bin/deploy \
     ${__qi_application_name} \
