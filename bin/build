@@ -61,6 +61,16 @@ function GetBuilder()
     set +e
 }
 
+# Builds the specified application
+# ARGUMENTS:
+#   $1 - Workspace location used to build application.
+#   $2 - Base application name to build.
+#   $3 - GPU/CUDA build option indicating whether or not to use
+#        CUDA libraries in container build.
+#
+# RETURNS:
+#   string - The name used to build the application.
+#
 function Build()
 {
     if ! [ $# = 3 ]; then
