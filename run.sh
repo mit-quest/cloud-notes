@@ -26,9 +26,8 @@ CheckDataSource "$__qi_datasource" "$__qi_workspace"
 __qi_provider=$3
 CheckProvider "$__qi_provider"
 
-# TODO:
-# Add GPU parameter/flag to specify the need for a vm with GPUs
-__qi_gpu=1
+# TODO(stshrive): Add parameter for template dockerfiles.
+__qi_template=$(GetAbsPath "./templates/dockerfile.cuda")
 
 __qi_application_name=$(GetContainerName "cloud-notes" "$__qi_provider")
 
@@ -49,10 +48,10 @@ GetBuilder
 Build \
     "$__qi_workspace" \
     "$__qi_application_name" \
-    "$__qi_gpu"
+    "$__qi_template"
 
-if [ "$__qi_gpu" = 1 ]; then
-    __qi_application_name=${__qi_application_name}-gpu
+if ! [ -z "$__qi_template" ]; then
+    __qi_application_name=${__qi_application_name}-${__qi_template##*.}
 fi
 
 . $(dirname ${BASH_SOURCE[0]})/bin/deploy \
