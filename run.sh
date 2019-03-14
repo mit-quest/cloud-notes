@@ -45,7 +45,11 @@ function finish()
 trap finish EXIT
 
 GetBuilder
-Build "$__qi_workspace" "$__qi_application_name" "$__qi_gpu"
+
+__qi_application_name=$(Build \
+    "$__qi_workspace" \
+    "$__qi_application_name" \
+    "$__qi_gpu")
 
 . $(dirname ${BASH_SOURCE[0]})/bin/deploy \
     ${__qi_application_name} \

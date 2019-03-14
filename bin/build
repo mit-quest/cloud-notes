@@ -104,13 +104,15 @@ function Build()
         dockerfile=$_source/dockerfile
         sed \
             -r \
-            "s/\{% APPLICATION %\}/$__qi_application_name/g;" \
+            "s/\{% APPLICATION %\}/$_application/g;" \
             ${template} > $dockerfile
 
-        __qi_application_name=${__qi_application_name}-gpu
+        _application=${_application}-gpu
 
         docker build $(dirname ${dockerfile}) \
             -f ${dockerfile} \
-            -t ${__qi_application_name}
+            -t ${_application}
     fi
+
+    echo "$_application"
 }
