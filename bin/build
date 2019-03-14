@@ -119,9 +119,11 @@ function Build()
 
         _application=${_application}-gpu
 
+        set -e
         docker build $(dirname ${dockerfile}) \
             -f ${dockerfile} \
             -t ${_application}
+        set +e
     fi
 
     echo "$_application"
