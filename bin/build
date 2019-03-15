@@ -61,15 +61,23 @@ function GetBuilder()
     set +e
 }
 
+# Builds the specified application
+# ARGUMENTS:
+#   $1 - Workspace location used to build application.
+#   $2 - Base application name to build.
+#   $3 - GPU/CUDA build option indicating whether or not to use
+#        CUDA libraries in container build.
+#
 function Build()
 {
     if ! [ $# = 3 ]; then
-        echo "USE: ${FUNCNAME[0]} <WORKSPACE> <APPLICATION_NAME> <CUDA_ENABLED>" 1>&2
+        echo "USE: ${FUNCNAME[0]} <WORKSPACE> <APPLICATION_NAME> <TEMPLATE>" 1>&2
+        return 1
     fi
 
     local _workspace="$1"
     local _application="$2"
-    local _use_gpu="$3"
+    local _template="$3"
 
     # The Docker Socket needs to be mounted to the
     # repo2docker image when issuing a docker run
@@ -97,20 +105,22 @@ function Build()
         /build
     set +e
 
-    if [ "$_use_gpu" = 1 ]; then
-        # replace the templated application name
-        _source=$(dirname ${BASH_SOURCE[1]})
-        template=$_source/templates/dockerfile.template
-        dockerfile=$_source/dockerfile
+    if ! [ -z "$_template" ]; then
+        # replace the _templated application name
+        _dockerfile=$(dirname ${BASH_SOURCE[0]})/dockerfile
+        _application_ext=$(basename $_template)
+
         sed \
             -r \
-            "s/\{% APPLICATION %\}/$__qi_application_name/g;" \
-            ${template} > $dockerfile
+            "s/\{% APPLICATION %\}/$_application/g;" \
+            ${_template} > $_dockerfile
 
-        __qi_application_name=${__qi_application_name}-gpu
+        set -e
+        docker build $(dirname $_dockerfile)\
+            -f $_dockerfile \
+            -t "${_application}-${_application_ext##*.}"
+        set +e
 
-        docker build $(dirname ${dockerfile}) \
-            -f ${dockerfile} \
-            -t ${__qi_application_name}
+        rm $_dockerfile
     fi
 }
