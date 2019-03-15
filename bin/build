@@ -108,6 +108,7 @@ function Build()
     if ! [ -z "$_template" ]; then
         # replace the _templated application name
         _dockerfile=$(dirname ${BASH_SOURCE[0]})/dockerfile
+        _application_ext=$(basename $_template)
 
         sed \
             -r \
@@ -117,7 +118,7 @@ function Build()
         set -e
         docker build $(dirname $_dockerfile)\
             -f $_dockerfile \
-            -t "${_application}-${_template##*.}"
+            -t "${_application}-${_application_ext##*.}"
         set +e
 
         rm dockerfile
