@@ -16,7 +16,7 @@ function CheckDeployArguments()
 
 CheckDeployArguments $@
 
-__qi_application_name=$1
+__qi_app_name=$1
 __qi_provider=$2
 __qi_datasource=$3
 
@@ -47,7 +47,8 @@ __qi_container_name="${__qi_provider}-config"
 __qi_cloud_resources="$(id -un $RUID)-transient-resources"
 
 . $(dirname ${BASH_SOURCE[0]})/${__qi_provider} \
-    $__qi_application_name \
-    $__qi_container_name \
-    $__qi_container_mount \
-    $__qi_cloud_resources
+    $__qi_config_name \
+    $__qi_config_mount \
+    $__qi_app_name \
+    $__qi_resource_name \
+    $__qi_datasource
