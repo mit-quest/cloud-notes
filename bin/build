@@ -72,6 +72,7 @@ function Build()
 {
     if ! [ $# = 3 ]; then
         echo "USE: ${FUNCNAME[0]} <WORKSPACE> <APPLICATION_NAME> <TEMPLATE>" 1>&2
+        return 1
     fi
 
     local _workspace="$1"
