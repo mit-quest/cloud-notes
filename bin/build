@@ -61,14 +61,23 @@ function GetBuilder()
     set +e
 }
 
+# Builds the specified application
+# ARGUMENTS:
+#   $1 - Workspace location used to build application.
+#   $2 - Base application name to build.
+#   $3 - GPU/CUDA build option indicating whether or not to use
+#        CUDA libraries in container build.
+#
 function Build()
 {
-    if ! [ $# = 2 ]; then
-        echo "USE: ${FUNCNAME[0]} <WORKSPACE> <APPLICATION_NAME>" 1>&2
+    if ! [ $# = 3 ]; then
+        echo "USE: ${FUNCNAME[0]} <WORKSPACE> <APPLICATION_NAME> <TEMPLATE>" 1>&2
+        return 1
     fi
 
     local _workspace="$1"
     local _application="$2"
+    local _template="$3"
 
     # The Docker Socket needs to be mounted to the
     # repo2docker image when issuing a docker run
@@ -95,4 +104,23 @@ function Build()
         --target-repo-dir /workspace \
         /build
     set +e
+
+    if ! [ -z "$_template" ]; then
+        # replace the _templated application name
+        _dockerfile=$(dirname ${BASH_SOURCE[0]})/dockerfile
+        _application_ext=$(basename $_template)
+
+        sed \
+            -r \
+            "s/\{% APPLICATION %\}/$_application/g;" \
+            ${_template} > $_dockerfile
+
+        set -e
+        docker build $(dirname $_dockerfile)\
+            -f $_dockerfile \
+            -t "${_application}-${_application_ext##*.}"
+        set +e
+
+        rm $_dockerfile
+    fi
 }

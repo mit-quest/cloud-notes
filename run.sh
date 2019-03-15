@@ -26,9 +26,8 @@ CheckDataSource "$__qi_datasource" "$__qi_workspace"
 __qi_provider=$3
 CheckProvider "$__qi_provider"
 
-# TODO:
-# Add GPU parameter/flag to specify the need for a vm with GPUs
-__qi_gpu=1
+# TODO(stshrive): Add parameter for template dockerfiles.
+__qi_template=$(GetAbsPath "./templates/dockerfile.cuda")
 
 __qi_application_name=$(GetContainerName "cloud-notes" "$__qi_provider")
 
@@ -45,23 +44,14 @@ function finish()
 trap finish EXIT
 
 GetBuilder
-Build "$__qi_workspace" "$__qi_application_name"
 
-if ! [ -z "$__qi_gpu" ]; then
-    # replace the templated application name
-    _source=$(dirname ${BASH_SOURCE[0]})
-    template=$_source/templates/dockerfile.template
-    dockerfile=$_source/dockerfile
-    sed \
-        -r \
-        "s/\{% APPLICATION %\}/$__qi_application_name/g;" \
-        ${template} > $dockerfile
+Build \
+    "$__qi_workspace" \
+    "$__qi_application_name" \
+    "$__qi_template"
 
-    __qi_application_name=${__qi_application_name}-gpu
-
-    docker build $(dirname ${dockerfile}) \
-        -f ${dockerfile} \
-        -t ${__qi_application_name}
+if ! [ -z "$__qi_template" ]; then
+    __qi_application_name=${__qi_application_name}-${__qi_template##*.}
 fi
 
 . $(dirname ${BASH_SOURCE[0]})/bin/deploy \
