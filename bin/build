@@ -121,6 +121,6 @@ function Build()
             -t "${_application}-${_application_ext##*.}"
         set +e
 
-        rm dockerfile
+        rm $_dockerfile
     fi
 }
