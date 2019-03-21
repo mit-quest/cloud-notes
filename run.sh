@@ -29,7 +29,7 @@ CheckProvider "$__qi_provider"
 # TODO(stshrive): Add parameter for template dockerfiles.
 __qi_template=$(GetAbsPath "./templates/dockerfile.cuda")
 
-__qi_application_name=$(GetContainerName "cloud-notes" "$__qi_provider")
+__qi_application_name=$(GetContainerName "qi-c" "$__qi_provider")
 
 function finish()
 {

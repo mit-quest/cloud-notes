@@ -122,7 +122,7 @@ REMOTE_IMAGE=$(PushToRemote ${APPLICATION} ${REG_SERVER})
 
 function Deploy()
 {
-    local _address="${APPLICATION}-${RESOURCES}"
+    local _address="${RESOURCES}"
     local _compute_tag="cloud-notes-server"
 
     $GCLOUD compute addresses create ${_address} \
