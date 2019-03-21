@@ -31,6 +31,7 @@ function Login()
     docker run \
         -it \
         --name ${_container_name} \
+        --label qi_container_type=login-config \
         -e KUBECONFIG=${_config_mount}/kube_config \
         --mount type=volume,target=${_config_mount} \
         --mount type=bind,source="$(dirname `GetAbsPath ${BASH_SOURCE[0]}`)/scripts",target=/mnt/startup \
