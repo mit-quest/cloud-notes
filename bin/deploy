@@ -16,7 +16,7 @@ function CheckDeployArguments()
 
 CheckDeployArguments $@
 
-__qi_application_name=$1
+__qi_app_name=$1
 __qi_provider=$2
 __qi_datasource=$3
 
@@ -42,8 +42,13 @@ function PushToRemote()
 
 export -f PushToRemote
 
-export CONFIG_MOUNT=/.persistant_data
-export RESOURCES="$(id -un $RUID)-transient-resources"
-export CONTAINER_NAME="${__qi_provider}-config"
+__qi_container_mount=/.persistant_data
+__qi_container_name="${__qi_provider}-config"
+__qi_cloud_resources="$(id -un $RUID)-transient-resources"
 
-. $(dirname ${BASH_SOURCE[0]})/${__qi_provider} ${__qi_application_name}
+. $(dirname ${BASH_SOURCE[0]})/${__qi_provider} \
+    $__qi_config_name \
+    $__qi_config_mount \
+    $__qi_app_name \
+    $__qi_resource_name \
+    $__qi_datasource

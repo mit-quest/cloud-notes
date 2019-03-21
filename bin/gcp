@@ -1,6 +1,11 @@
 #!/bin/bash
 
-APPLICATION=$1
+CONTAINER_NAME=$1
+CONFIG_MOUNT=$2
+APPLICATION=$3
+RESOURCES=$4
+DATASOURCE=$5
+
 LOCATION="us-east4-a"
 CLUSTER=qitransientcluster
 REG_SERVER=gcr.io/${RESOURCES}
@@ -20,17 +25,20 @@ GetPlatformContainer
 #
 function Login()
 {
+    local _container_name=$1
+    local _config_mount=$2
+
     docker run \
         -it \
-        --name ${CONTAINER_NAME} \
-        -e KUBECONFIG=${CONFIG_MOUNT}/kube_config \
-        --mount type=volume,target=${CONFIG_MOUNT} \
+        --name ${_container_name} \
+        -e KUBECONFIG=${_config_mount}/kube_config \
+        --mount type=volume,target=${_config_mount} \
         --mount type=bind,source="$(dirname `GetAbsPath ${BASH_SOURCE[0]}`)/scripts",target=/mnt/startup \
         google/cloud-sdk \
         gcloud auth login
 }
 
-Login
+Login $CONTAINER_NAME $CONFIG_MOUNT
 
 # Common docker command component for gcloud and kubectl commands inside
 # of the google/cloud-sdk container.
@@ -46,18 +54,21 @@ KUBECTL="$PREFIX kubectl"
 
 function Provision()
 {
-    # Create a hosting project for transient resources.
-    $GCLOUD projects create $RESOURCES
+    local _resources=$1
+    local _location=$2
 
-    $GCLOUD config set project $RESOURCES
-    $GCLOUD config set compute/zone $LOCATION
+    # Create a hosting project for transient resources.
+    $GCLOUD projects create $_resources
+
+    $GCLOUD config set project $_resources
+    $GCLOUD config set compute/zone $_location
 
     # GCP requires setting up billing on a project before certain services
     # can be used. GCP does not automatically create a link to billing
     # as the billing structure of GCP allows for many billing accounts within
     # an organization.
     echo
-    echo CHOOSE A BILLING ACCOUNT TO LINK WITH "\"${RESOURCES}\""
+    echo CHOOSE A BILLING ACCOUNT TO LINK WITH "\"${_resources}\""
 
     # Create a menu for billing account options.
     let option_id=0
@@ -87,14 +98,14 @@ function Provision()
 
     let CHOICE--
 
-    $GCLOUD alpha billing projects link $RESOURCES --billing-account ${accounts[CHOICE]}
+    $GCLOUD alpha billing projects link $_resources --billing-account ${accounts[CHOICE]}
 
     # Enable the use of the container and the container registry APIs for project
     $GCLOUD services enable containerregistry.googleapis.com
     $GCLOUD services enable container.googleapis.com
 }
 
-Provision
+Provision $RESOURCES $LOCATION
 
 function PrepareDocker()
 {
