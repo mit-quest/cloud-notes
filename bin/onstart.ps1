@@ -4,6 +4,5 @@ $UtilsScript = [System.IO.Path]::GetFullPath((Join-Path $ScriptPath ".\win_utils
 # Import functions from win_utils.ps1
 . $UtilsScript
 
-Write-Host "Restarted!!"
-Write-Host -NoNewLine "Press any key to continue..."
-$null = $Host.UI.RawUI.ReadKey("NoEcho,IncludeKeyDown")
+Write-Host "Installing Ubuntu WSL Distribution"
+__QI_WSLInstall

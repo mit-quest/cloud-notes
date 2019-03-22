@@ -17,6 +17,7 @@ choco install docker-desktop -y
 Write-Host "Turning on optional features for container execution and WSL"
 if (__QI_ActivateOptionalWindowsSettings)
 {
+  Write-Host "Installing Ubuntu WSL Distribution"
   __QI_WSLInstall
 }
 else
