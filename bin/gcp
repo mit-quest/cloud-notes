@@ -52,6 +52,7 @@ PREFIX="docker run \
 
 GCLOUD="$PREFIX gcloud"
 KUBECTL="$PREFIX kubectl"
+GSUTIL="$PREFIX gsutil"
 
 function Provision()
 {
@@ -105,6 +106,9 @@ function Provision()
     # Enable the use of the container and the container registry APIs for project
     $GCLOUD services enable containerregistry.googleapis.com
     $GCLOUD services enable container.googleapis.com
+
+    # Provision dat bucket
+    $GSUTIL mb -c regional -l $_location gs://$(GetId "$_datasource")
 }
 
 Provision $RESOURCES $LOCATION $DATASOURCE
