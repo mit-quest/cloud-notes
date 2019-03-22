@@ -118,6 +118,11 @@ function ToLower()
     echo "$1" | awk '{print tolower($0)}'
 }
 
+function GetId()
+{
+    $(echo $1 | cksum | awk '{ print $1 }')
+}
+
 # If effective user id is 0 (a root user), then print the provided
 # error message to stderr.
 #
