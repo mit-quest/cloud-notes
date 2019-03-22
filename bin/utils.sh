@@ -125,7 +125,7 @@ function GetId()
 
 function BackgroundTask()
 {
-    nohup $@ &>/dev/null &
+    nohup $($@) &>/dev/null &
 }
 
 # If effective user id is 0 (a root user), then print the provided
