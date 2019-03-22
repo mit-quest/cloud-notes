@@ -57,6 +57,7 @@ function Provision()
 {
     local _resources=$1
     local _location=$2
+    local _datasource=$3
 
     # Create a hosting project for transient resources.
     $GCLOUD projects create $_resources
@@ -106,7 +107,7 @@ function Provision()
     $GCLOUD services enable container.googleapis.com
 }
 
-Provision $RESOURCES $LOCATION
+Provision $RESOURCES $LOCATION $DATASOURCE
 
 function PrepareDocker()
 {
