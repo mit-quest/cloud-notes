@@ -123,8 +123,10 @@ REMOTE_IMAGE=$(PushToRemote ${APPLICATION} ${REG_SERVER})
 
 function Deploy()
 {
-    local _address="${RESOURCES}"
-    local _compute_tag="cloud-notes-server"
+
+    local _address=$1
+    local _compute_tag=$2
+    local _datasource="$3"
 
     $GCLOUD compute addresses create ${_address} \
         --region us-east4
@@ -161,7 +163,7 @@ function Deploy()
         --format "table[no-heading](address)")
 }
 
-Deploy
+Deploy ${RESOURCES} ${APPLICATION} ${DATASOURCE}
 
 function ConnectToServer()
 {
