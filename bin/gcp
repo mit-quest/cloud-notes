@@ -130,7 +130,7 @@ function Provision()
     $GCLOUD services enable container.googleapis.com
 
     # Provision dat bucket
-    $GSUTIL mb -c regional -l $_location gs://$(GetId "$_datasource")
+    $GSUTIL mb -c regional -l ${_location: 0:-2} gs://$(GetId "$_datasource")
 }
 
 Provision $RESOURCES $LOCATION $DATASOURCE
