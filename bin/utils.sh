@@ -120,7 +120,7 @@ function ToLower()
 
 function GetId()
 {
-    $(echo $1 | cksum | awk '{ print $1 }')
+    echo $1 | cksum | awk '{ print $1 }'
 }
 
 function BackgroundTask()
