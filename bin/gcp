@@ -154,8 +154,12 @@ function Deploy()
     local _compute_tag="$2"
     local _datasource="$3"
 
+    local _bucket_name=$(GetId "$_datasource")
+
     $GCLOUD compute addresses create ${_address} \
         --region us-east4
+
+    BackgroundTask CopyData $_datasource $_bucket_name $CONTAINER_NAME
 
     # Automatically stop this resource (GPU cost is high).
     $GCLOUD compute instances create \

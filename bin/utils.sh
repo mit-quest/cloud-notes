@@ -123,6 +123,11 @@ function GetId()
     $(echo $1 | cksum | awk '{ print $1 }')
 }
 
+function BackgroundTask()
+{
+    nohup $@ &>/dev/null &
+}
+
 # If effective user id is 0 (a root user), then print the provided
 # error message to stderr.
 #
