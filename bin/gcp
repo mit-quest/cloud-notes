@@ -10,6 +10,28 @@ LOCATION="us-east4-a"
 CLUSTER=qitransientcluster
 REG_SERVER=gcr.io/${RESOURCES}
 
+# Given a source directory, copies its contents to a GCP bucket
+#
+# ARGUMENTS:
+#   _SOURCE_DIR  - The local machine source to copy
+#   _BUCKET_NAME - The GCP Data Bucket to upload data
+#   _AUTH_CONFIG - The pre-authenticated config container
+#
+function CopyData()
+{
+    _SOURCE_DIR=$1
+    _BUCKET_NAME=$2
+    _AUTH_CONFIG=$3
+
+    docker run \
+        --rm \
+        --mount type=bind,source="${_SOURCE_DIR}",target=/mnt/data \
+        --volumes-from ${_AUTH_CONFIG} \
+        google/cloud-sdk \
+        gsutil -m \
+            cp -r /mnt/data/* gs://${_BUCKET_NAME}
+}
+
 function GetPlatformContainer()
 {
     # Use the Prebuilt gcloud sdk container provided by Google.
@@ -31,6 +53,7 @@ function Login()
     docker run \
         -it \
         --name ${_container_name} \
+        --label qi_container_type=login-config \
         -e KUBECONFIG=${_config_mount}/kube_config \
         --mount type=volume,target=${_config_mount} \
         --mount type=bind,source="$(dirname `GetAbsPath ${BASH_SOURCE[0]}`)/scripts",target=/mnt/startup \
@@ -51,11 +74,13 @@ PREFIX="docker run \
 
 GCLOUD="$PREFIX gcloud"
 KUBECTL="$PREFIX kubectl"
+GSUTIL="$PREFIX gsutil"
 
 function Provision()
 {
     local _resources=$1
     local _location=$2
+    local _datasource=$3
 
     # Create a hosting project for transient resources.
     $GCLOUD projects create $_resources
@@ -103,9 +128,12 @@ function Provision()
     # Enable the use of the container and the container registry APIs for project
     $GCLOUD services enable containerregistry.googleapis.com
     $GCLOUD services enable container.googleapis.com
+
+    # Provision dat bucket
+    $GSUTIL mb -c regional -l ${_location: 0:-2} gs://$(GetId "$_datasource")
 }
 
-Provision $RESOURCES $LOCATION
+Provision $RESOURCES $LOCATION $DATASOURCE
 
 function PrepareDocker()
 {
@@ -121,11 +149,17 @@ REMOTE_IMAGE=$(PushToRemote ${APPLICATION} ${REG_SERVER})
 
 function Deploy()
 {
-    local _address="${APPLICATION}-${RESOURCES}"
-    local _compute_tag="cloud-notes-server"
+
+    local _address="$1"
+    local _compute_tag="$2"
+    local _datasource="$3"
+
+    local _bucket_name=$(GetId "$_datasource")
 
     $GCLOUD compute addresses create ${_address} \
         --region us-east4
+
+    BackgroundTask CopyData $_datasource $_bucket_name $CONTAINER_NAME
 
     # Automatically stop this resource (GPU cost is high).
     $GCLOUD compute instances create \
@@ -142,7 +176,7 @@ function Deploy()
         --address ${_address}                      \
         --tags ${_compute_tag}                     \
         --metadata \
-        __qi_container_name="$REMOTE_IMAGE",__qi_app_bucket=<DATA_SOURCE> \
+        __qi_container_name="$REMOTE_IMAGE",__qi_app_bucket=$_bucket_name \
         --metadata-from-file startup-script=/mnt/startup/ubuntu-startup.sh
  
     $GCLOUD compute firewall-rules create allow-cn-server \
@@ -159,7 +193,7 @@ function Deploy()
         --format "table[no-heading](address)")
 }
 
-Deploy
+Deploy ${RESOURCES} ${APPLICATION} ${DATASOURCE}
 
 function ConnectToServer()
 {
@@ -169,26 +203,4 @@ function ConnectToServer()
         --no-headers)
 
     $KUBECTL logs -f $JUPYTER_POD
-}
-
-# Given a source directory, copies its contents to a GCP bucket
-#
-# ARGUMENTS:
-#   _SOURCE_DIR  - The local machine source to copy
-#   _BUCKET_NAME - The GCP Data Bucket to upload data
-#   _AUTH_CONFIG - The pre-authenticated config container
-#
-function CopyData()
-{
-    _SOURCE_DIR=$1
-    _BUCKET_NAME=$2
-    _AUTH_CONFIG=$3
-
-    docker run \
-        --rm \
-        --mount type=bind,source="${_SOURCE_DIR}",target=/mnt/data \
-        --volumes-from ${_AUTH_CONFIG} \
-        google/cloud-sdk \
-        gsutil -m \
-            cp -r /mnt/data/* gs://${_BUCKET_NAME}
 }
