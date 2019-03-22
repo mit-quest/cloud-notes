@@ -25,4 +25,5 @@ else
   # registry path.
   $RunOnce = "HKCU:\Software\Microsoft\Windows\CurrentVersion\RunOnce"
   Set-ItemProperty $RunOnce "NextRun" ("C:\Windows\System32\WindowsPowerShell\v1.0\Powershell.exe -executionPolicy Unrestricted -File $RestartScript")
+  Restart-Computer
 }
