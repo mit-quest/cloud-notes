@@ -1,12 +1,12 @@
-FROM nvidia/cuda:10.0-cudnn7-runtime as GPU_BASE
+FROM nvidia/cuda:10.0-cudnn7-runtime as CUDA
 FROM {% APPLICATION %}
 
-COPY --from=GPU_BASE /usr/local/cuda-10.0/ /usr/local/cuda-10.0/
-COPY --from=GPU_BASE /usr/lib/x86_64-linux-gnu/libcudnn* /usr/lib/x86_64-linux-gnu/
-COPY --from=GPU_BASE /var/lib/dpkg/info/cuda* /var/lib/dpkg/info/
-COPY --from=GPU_BASE /var/lib/dpkg/info/libcudnn* /var/lib/dpkg/info/
-COPY --from=GPU_BASE /etc/apt/sources.list.d/cuda.list /etc/apt/sources.list.d/cuda.list
-COPY --from=GPU_BASE /etc/ld.so.conf.d/cuda-10-0.conf /etc/ld.so.conf.d/cuda-9-0.conf
+COPY --from=CUDA /usr/local/cuda-10.0/ /usr/local/cuda-10.0/
+COPY --from=CUDA /usr/lib/x86_64-linux-gnu/libcudnn* /usr/lib/x86_64-linux-gnu/
+COPY --from=CUDA /var/lib/dpkg/info/cuda* /var/lib/dpkg/info/
+COPY --from=CUDA /var/lib/dpkg/info/libcudnn* /var/lib/dpkg/info/
+COPY --from=CUDA /etc/apt/sources.list.d/cuda.list /etc/apt/sources.list.d/cuda.list
+COPY --from=CUDA /etc/ld.so.conf.d/cuda-10-0.conf /etc/ld.so.conf.d/cuda-9-0.conf
 
 ENV NB_USER=$USER
 USER root
