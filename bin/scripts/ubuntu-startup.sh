@@ -55,7 +55,7 @@ echo Checking for Docker and installing
 # Nvidia Container runtime.
 if ! dpkg-query -W docker-ce; then
     apt-get update
-    apt-get install \
+    apt-get install -y \
         apt-transport-https \
         ca-certificates \
         gnupg-agent \
@@ -84,17 +84,15 @@ if ! dpkg-query -W docker-ce; then
     apt-get install -y nvidia-docker2
     pkill -SIGHUP dockerd
 
-    sleep 5s
-
     gcloud auth print-access-token | docker login \
         -u oauth2accesstoken \
         --password-stdin \
         gcr.io
 
-    docker run \
-        --restart always \
-        -p 8888:8888 \
-        --mount type=bind,source=/mnt/data,target=/workspace/data \
+    nvidia-docker run \
         --runtime nvidia \
-        $__qi_container_name
+        --restart always \
+        --mount type=bind,source=/mnt/data,target=/workspace/data \
+        -p 8888:8888 \
+        -d $__qi_container_name
 fi
