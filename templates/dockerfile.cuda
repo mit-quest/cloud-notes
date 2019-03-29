@@ -1,8 +1,8 @@
 FROM nvidia/cuda:10.0-cudnn7-runtime as CUDA
 
 ENV SAVE_FILE /cuda_env
-COPY env_saver.sh .
-RUN ./env_saver "CUDA\|NCCL\|NVIDIA\|CUDNN" $SAVE_FILE
+COPY /scripts/env_saver.sh .
+RUN ./env_saver.sh "CUDA\|NCCL\|NVIDIA\|CUDNN" $SAVE_FILE
 
 FROM {% APPLICATION %}
 ENV SAVE_FILE /cuda_env
