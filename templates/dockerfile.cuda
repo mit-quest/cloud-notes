@@ -1,5 +1,11 @@
 FROM nvidia/cuda:10.0-cudnn7-runtime as CUDA
+
+ENV SAVE_FILE /cuda_env
+COPY env_saver.sh .
+RUN ./env_saver "CUDA\|NCCL\|NVIDIA\|CUDNN" $SAVE_FILE
+
 FROM {% APPLICATION %}
+ENV SAVE_FILE /cuda_env
 
 COPY --from=CUDA /usr/local/cuda-10.0/ /usr/local/cuda-10.0/
 COPY --from=CUDA /usr/lib/x86_64-linux-gnu/libcudnn* /usr/lib/x86_64-linux-gnu/
@@ -7,6 +13,9 @@ COPY --from=CUDA /var/lib/dpkg/info/cuda* /var/lib/dpkg/info/
 COPY --from=CUDA /var/lib/dpkg/info/libcudnn* /var/lib/dpkg/info/
 COPY --from=CUDA /etc/apt/sources.list.d/cuda.list /etc/apt/sources.list.d/cuda.list
 COPY --from=CUDA /etc/ld.so.conf.d/cuda-10-0.conf /etc/ld.so.conf.d/cuda-9-0.conf
+
+COPY --from=CUDA $SAVE_FILE $SAVE_FILE
+RUN source $SAVE_FILE
 
 ENV NB_USER=$USER
 USER root
