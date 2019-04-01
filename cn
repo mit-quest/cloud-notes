@@ -9,25 +9,42 @@ trap UnsetUtils EXIT
 RequireDocker
 PermissionsCheck
 
-if ! [ $# = 3 ]; then
-    echo "USE: ${BASH_SOURCE[0]} <WORKSPACE> <DATA> <PROVIDER>" 1>&2
-    exit 1
-fi
+_QI_POSITIONALS=()
+while [[ $# -gt 0 ]]; do
+    __qi_arg="$1"
+    case $__qi_arg in
+        -w|--workspace)
+            __qi_workspace=$(GetAbsPath "$2")
+            shift; shift
+        ;;
+        -d|--datasource)
+            __qi_datasource=$(GetAbsPath "$2")
+            shift; shift
+        ;;
+        -p|--provider)
+            __qi_provider="$2"
+            CheckProvider "$__qi_provider"
+            shift; shift
+        ;;
+        -t|--template)
+            __qi_template=$(GetAbsPath "$2")
+            shift; shift
+        ;;
+        *) # Unkown options
+            _QI_POSITIONALS+=("$1")
+            shift
+        ;;
+    esac
+done
+set -- _QI_POSITIONALS
 
-# The repository or directory location of the AI workflow
-__qi_workspace=$(GetAbsPath "$1")
 CheckWorkspace "$__qi_workspace"
-
-# The data location of the associated workflow
-__qi_datasource=$(GetAbsPath "$2")
 CheckDataSource "$__qi_datasource" "$__qi_workspace"
 
-# The cloud platform provider
-__qi_provider=$3
-CheckProvider "$__qi_provider"
-
-# TODO(stshrive): Add parameter for template dockerfiles.
-__qi_template=$(GetAbsPath "./templates/dockerfile.cuda")
+if ! [ $# -ge 3 ]; then
+    echo "USE: ${BASH_SOURCE[0]} <WORKSPACE> <DATA> <PROVIDER> [TEMPLATE]" 1>&2
+    exit 1
+fi
 
 __qi_application_name=$(GetContainerName "qi-c" "$__qi_provider")
 
