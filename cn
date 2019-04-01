@@ -9,6 +9,24 @@ trap UnsetUtils EXIT
 RequireDocker
 PermissionsCheck
 
+function CNHelp()
+{
+cat << EOF
+usage: ${BASH_SOURCE[0]} [options] workspace datasource provider
+    --workspace,  -w  <WORKSPACE>  : The workspace to deploy to a cloud resource.
+    --datasource, -d  <DATASOURCE> : A data source to deploy to a cloud resource.
+    --provider,   -p  <PROVIDER>   : The cloud resource provider
+
+    options:
+    --template,   -t  <TEMPLATE>   : A Dockerfile used to modify the default workspace environment.
+                      This is a post-build step which will be applied after dependency management.
+                      An example use case for templates is GPU support for the application within
+                      workspace. A template will acquire the docker build context of the template's
+                      location. A provided GPU teplate is provided for CUDA development support.
+EOF
+exit 1
+}
+
 _QI_POSITIONALS=()
 while [[ $# -gt 0 ]]; do
     __qi_arg="$1"
@@ -29,6 +47,9 @@ while [[ $# -gt 0 ]]; do
         -t|--template)
             __qi_template=$(GetAbsPath "$2")
             shift; shift
+        ;;
+        -h|--help)
+            CNHelp
         ;;
         *) # Unkown options
             _QI_POSITIONALS+=("$1")
