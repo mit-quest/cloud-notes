@@ -57,7 +57,7 @@ while [[ $# -gt 0 ]]; do
         ;;
     esac
 done
-set -- _QI_POSITIONALS
+set -- "${_QI_POSITIONALS[@]}"
 
 CheckWorkspace "$__qi_workspace"
 CheckDataSource "$__qi_datasource" "$__qi_workspace"
