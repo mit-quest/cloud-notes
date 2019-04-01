@@ -32,10 +32,11 @@ echo "Checking for libcudnn7 and installing"
 if ! dpkg-query -W libcudnn7; then
     _ml_repo="machine-learning/repos/ubuntu1804/x86_64"
     _ml_deb="nvidia-machine-learning-repo-ubuntu1804_1.0.0-1_amd64.deb"
+
     curl -O "http://$_nvidia_dev_compute/$_ml_repo/$_ml_deb"
     apt install "./$_ml_deb"
 
-    _cudnn_version"7.4.1.5-1+cuda10.0"
+    _cudnn_version="7.5.0.56-1+cuda10.0"
     apt-get update
     apt-get install --no-install-recommends -y \
         nvidia-driver-410 \
