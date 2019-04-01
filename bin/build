@@ -106,8 +106,11 @@ function Build()
     set +e
 
     if ! [ -z "$_template" ]; then
+        pushd $(dirname $_template) >/dev/null
+        trap 'popd >/dev/null' EXIT
+
         # replace the _templated application name
-        _dockerfile=$(dirname ${BASH_SOURCE[0]})/dockerfile
+        _dockerfile=./dockerfile
         _application_ext=$(basename $_template)
 
         sed \
@@ -122,5 +125,7 @@ function Build()
         set +e
 
         rm $_dockerfile
+        trap - EXIT
+        popd >/dev/null
     fi
 }
