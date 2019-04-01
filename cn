@@ -41,7 +41,6 @@ while [[ $# -gt 0 ]]; do
         ;;
         -p|--provider)
             __qi_provider="$2"
-            CheckProvider "$__qi_provider"
             shift; shift
         ;;
         -t|--template)
@@ -59,27 +58,18 @@ while [[ $# -gt 0 ]]; do
 done
 set -- "${_QI_POSITIONALS[@]}"
 
-CheckWorkspace "$__qi_workspace"
-CheckDataSource "$__qi_datasource" "$__qi_workspace"
-
-if ! [ $# -ge 3 ]; then
-    echo "USE: ${BASH_SOURCE[0]} <WORKSPACE> <DATA> <PROVIDER> [TEMPLATE]" 1>&2
-    exit 1
+if [[ -n "$1" ]]; then
+    echo "unknown flag: $1"
+    echo See \'${BASHSOURCE[0]} --help\'
+    echo
+    CNHelp
 fi
 
+CheckWorkspace "$__qi_workspace"
+CheckDataSource "$__qi_datasource" "$__qi_workspace"
+CheckProvider "$__qi_provider"
+
 __qi_application_name=$(GetContainerName "qi-c" "$__qi_provider")
-
-function finish()
-{
-    unset __qi_application_name
-    unset __qi_datasource
-    unset __qi_provider
-    unset __qi_workspace
-
-    unset -f finish
-}
-
-trap finish EXIT
 
 GetBuilder
 
