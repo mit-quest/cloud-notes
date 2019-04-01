@@ -13,16 +13,18 @@ mkdir -m 1777 /mnt/data
 nohup gsutil -m cp -r gs://$__qi_application_bucket/* /mnt/data/ &>/dev/null &
 
 echo "Checking for CUDA and installing."
+_nvidia_dev_compute="developer.download.nvidia.com/compute"
+
 # Check for CUDA and try to install.
 if ! dpkg-query -W cuda-10-0; then
-    _nvidia_dev_compute="developer.download.nvidia.com/compute"
     _cuda_repo="cuda/repos/ubuntu1804/x86_64"
     _cuda_deb="cuda-repo-ubuntu1804_10.0.130-1_amd64.deb"
+
     curl -O "http://$_nvidia_dev_compute/$_cuda_repo/$_cuda_deb"
     dpkg -i "./$_cuda_deb"
     apt-key adv --fetch-keys "https://$_nvidia_dev_compute/$_cuda_repo/7fa2af80.pub"
-
     apt-get update
+
     apt-get install -y cuda-10-0
 fi
 
@@ -30,10 +32,11 @@ echo "Checking for libcudnn7 and installing"
 if ! dpkg-query -W libcudnn7; then
     _ml_repo="machine-learning/repos/ubuntu1804/x86_64"
     _ml_deb="nvidia-machine-learning-repo-ubuntu1804_1.0.0-1_amd64.deb"
+
     curl -O "http://$_nvidia_dev_compute/$_ml_repo/$_ml_deb"
     apt install "./$_ml_deb"
 
-    _cudnn_version"7.4.1.5-1+cuda10.0"
+    _cudnn_version="7.5.0.56-1+cuda10.0"
     apt-get update
     apt-get install --no-install-recommends -y \
         nvidia-driver-410 \
@@ -55,7 +58,7 @@ echo Checking for Docker and installing
 # Nvidia Container runtime.
 if ! dpkg-query -W docker-ce; then
     apt-get update
-    apt-get install \
+    apt-get install -y \
         apt-transport-https \
         ca-certificates \
         gnupg-agent \
@@ -84,17 +87,15 @@ if ! dpkg-query -W docker-ce; then
     apt-get install -y nvidia-docker2
     pkill -SIGHUP dockerd
 
-    sleep 5s
-
     gcloud auth print-access-token | docker login \
         -u oauth2accesstoken \
         --password-stdin \
         gcr.io
 
-    docker run \
-        --restart always \
-        -p 8888:8888 \
-        --mount type=bind,source=/mnt/data,target=/workspace/data \
+    nvidia-docker run \
         --runtime nvidia \
-        $__qi_container_name
+        --restart always \
+        --mount type=bind,source=/mnt/data,target=/workspace/data \
+        -p 8888:8888 \
+        -d $__qi_container_name
 fi

@@ -1,20 +1,26 @@
-FROM nvidia/cuda:10.0-cudnn7-runtime as GPU_BASE
-FROM {% APPLICATION %}
+ARG DEFAULT_ENV_DUMP="/qi_env_dump"
 
-COPY --from=GPU_BASE /usr/local/cuda-10.0/ /usr/local/cuda-10.0/
-COPY --from=GPU_BASE /usr/lib/x86_64-linux-gnu/libcudnn* /usr/lib/x86_64-linux-gnu/
-COPY --from=GPU_BASE /var/lib/dpkg/info/cuda* /var/lib/dpkg/info/
-COPY --from=GPU_BASE /var/lib/dpkg/info/libcudnn* /var/lib/dpkg/info/
-COPY --from=GPU_BASE /etc/apt/sources.list.d/cuda.list /etc/apt/sources.list.d/cuda.list
-COPY --from=GPU_BASE /etc/ld.so.conf.d/cuda-10-0.conf /etc/ld.so.conf.d/cuda-9-0.conf
+FROM {% APPLICATION %} as APP
 
-ENV NB_USER=$USER
+ARG DEFAULT_ENV_DUMP
+ENV SAVED_ENVIRONMENT=${DEFAULT_ENV_DUMP}
+
 USER root
-RUN ln -s -T /usr/local/cuda-10.0 /usr/local/cuda
-USER ${NB_USER}
+COPY /scripts/env_saver.sh .
+RUN chmod +x ./env_saver.sh \
+    && ./env_saver.sh "*" $SAVED_ENVIRONMENT \
+    && rm ./env_saver.sh
 
-ENV CUDA_HOME /usr/local/cuda
-ENV PATH ${CUDA_HOME}/bin:${PATH}
+FROM nvidia/cuda:10.0-cudnn7-devel-ubuntu18.04
 
-ENV LD_LIBRARY_PATH ${CUDA_HOME}/lib64:${LD_LIBRARY_PATH}
-ENV LD_LIBRARY_PATH ${CUDA_HOME}/compat:${LD_LIBRARY_PATH}
+ARG DEFAULT_ENV_DUMP
+ENV SAVED_ENVIRONMENT=$DEFAULT_ENV_DUMP
+
+COPY --from=APP / /
+WORKDIR /workspace
+
+COPY /scripts/env_loader.sh .
+RUN chmod +x ./env_loader.sh
+RUN chmod 777 $SAVED_ENVIRONMENT
+ENTRYPOINT ["./env_loader.sh"]
+CMD ["jupyter", "notebook", "--ip", "0.0.0.0", "--allow-root"]
