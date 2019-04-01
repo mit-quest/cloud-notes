@@ -1,7 +1,13 @@
 #!/bin/bash
 
-_ENV_SEARCH=$1
-_SAVE_FILE=$2
+_ENV_SEARCH="$1"
+_SAVE_FILE="$2"
+
+if [[ "$_ENV_SEARCH" = "*" ]]; then
+    while  IFS= read -r line; do
+        _ENV_SEARCH="${line/=*/}\\|"
+    done < <(printenv)
+fi
 
 while IFS= read -r line; do
     _value=${line#*=}
