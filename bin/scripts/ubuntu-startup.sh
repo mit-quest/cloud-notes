@@ -13,9 +13,10 @@ mkdir -m 1777 /mnt/data
 nohup gsutil -m cp -r gs://$__qi_application_bucket/* /mnt/data/ &>/dev/null &
 
 echo "Checking for CUDA and installing."
+_nvidia_dev_compute="developer.download.nvidia.com/compute"
+
 # Check for CUDA and try to install.
 if ! dpkg-query -W cuda-10-0; then
-    _nvidia_dev_compute="developer.download.nvidia.com/compute"
     _cuda_repo="cuda/repos/ubuntu1804/x86_64"
     _cuda_deb="cuda-repo-ubuntu1804_10.0.130-1_amd64.deb"
     curl -O "http://$_nvidia_dev_compute/$_cuda_repo/$_cuda_deb"
