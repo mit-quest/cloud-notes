@@ -10,8 +10,12 @@ if [[ "$_ENV_SEARCH" = "*" ]]; then
 fi
 
 while IFS= read -r line; do
+    _variable=${line/=*/}
     _value=${line#*=}
-    _value_length=${#_value}
-    _variable=${line:0:-$_value_length}
-    echo "export ${_variable}\"$_value\"" >> $_SAVE_FILE; \
-done < <(printenv | grep "$_ENV_SEARCH")
+
+    if [[ $_value == *":"* || $_variable == *"PATH"* ]]; then
+        echo "export ${_variable}=\"$_value:\$${_variable}\"" >> $_SAVE_FILE;
+    else
+        echo "export ${_variable}=\"$_value\"" >> $_SAVE_FILE;
+    fi
+done < <(printenv | grep $_ENV_SEARCH)
