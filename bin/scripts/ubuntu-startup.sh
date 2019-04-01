@@ -19,11 +19,12 @@ _nvidia_dev_compute="developer.download.nvidia.com/compute"
 if ! dpkg-query -W cuda-10-0; then
     _cuda_repo="cuda/repos/ubuntu1804/x86_64"
     _cuda_deb="cuda-repo-ubuntu1804_10.0.130-1_amd64.deb"
+
     curl -O "http://$_nvidia_dev_compute/$_cuda_repo/$_cuda_deb"
     dpkg -i "./$_cuda_deb"
     apt-key adv --fetch-keys "https://$_nvidia_dev_compute/$_cuda_repo/7fa2af80.pub"
-
     apt-get update
+
     apt-get install -y cuda-10-0
 fi
 
