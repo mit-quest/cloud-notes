@@ -1,0 +1,107 @@
+#!/bin/bash
+
+# Import our utility functions
+. $(dirname ${BASH_SOURCE[0]})/bin/utils.sh
+. $(dirname ${BASH_SOURCE[0]})/bin/build
+
+trap UnsetUtils EXIT
+
+RequireDocker
+PermissionsCheck
+
+function CNHelp()
+{
+cat << EOF
+usage: ${BASH_SOURCE[0]} [options] workspace datasource provider
+    --workspace,  -w  <WORKSPACE>  : The workspace to deploy to a cloud resource.
+    --datasource, -d  <DATASOURCE> : A data source to deploy to a cloud resource.
+    --provider,   -p  <PROVIDER>   : The cloud resource provider
+
+    options:
+    --template,   -t  <TEMPLATE>   : A Dockerfile used to modify the default workspace environment.
+                      This is a post-build step which will be applied after dependency management.
+                      An example use case for templates is GPU support for the application within
+                      workspace. A template will acquire the docker build context of the template's
+                      location. A provided GPU teplate is provided for CUDA development support.
+EOF
+exit 1
+}
+
+_QI_POSITIONALS=()
+while [[ $# -gt 0 ]]; do
+    __qi_arg="$1"
+    case $__qi_arg in
+        -w|--workspace)
+            __qi_workspace=$(GetAbsPath "$2")
+            shift; shift
+        ;;
+        -d|--datasource)
+            __qi_datasource=$(GetAbsPath "$2")
+            shift; shift
+        ;;
+        -p|--provider)
+            __qi_provider="$2"
+            shift; shift
+        ;;
+        -t|--template)
+            __qi_template=$(GetAbsPath "$2")
+            shift; shift
+        ;;
+        -h|--help)
+            CNHelp
+        ;;
+        *) # Unkown options
+            _QI_POSITIONALS+=("$1")
+            shift
+        ;;
+    esac
+done
+set -- "${_QI_POSITIONALS[@]}"
+
+if [[ -n "$1" ]]; then
+    echo "unknown flag: $1"
+    echo See \'${BASHSOURCE[0]} --help\'
+    echo
+    CNHelp
+fi
+
+CheckWorkspace "$__qi_workspace"
+CheckDataSource "$__qi_datasource" "$__qi_workspace"
+CheckProvider "$__qi_provider"
+
+__qi_application_name=$(GetContainerName "qi-c" "$__qi_provider")
+
+GetBuilder
+
+Build \
+    "$__qi_workspace" \
+    "$__qi_application_name" \
+    "$__qi_template"
+
+if ! [ -z "$__qi_template" ]; then
+    __qi_application_name=${__qi_application_name}-${__qi_template##*.}
+fi
+
+. $(dirname ${BASH_SOURCE[0]})/bin/deploy \
+    ${__qi_application_name} \
+    ${__qi_provider} \
+    ${__qi_datasource}
+
+if ! typeset -f ConnectToServer >/dev/null; then
+    echo "An error occurred during deployment and no Jupyter server was found." >&2
+    exit 1
+fi
+
+if [ ! -z ${__qi_provider/local/} ]; then
+    echo
+    echo "*** USE THE FOLLOWING URL TO CONNECT TO YOUR JUPYTER SERVER ***"
+    echo ${JUPYTER_SERVER}:8888
+    echo
+    read -n 1 -p "PRESS ENTER TO CONTINUE AND RETRIEVE YOUR TOKEN" input
+    echo
+
+    trap \
+        'echo "\nTerminating connection to host. Server will continue running remotely"' SIGINT
+fi
+
+ConnectToServer
