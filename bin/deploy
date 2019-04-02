@@ -42,11 +42,9 @@ function PushToRemote()
 
 export -f PushToRemote
 
-__qi_resource_data="$__qi_app_name++$__qi_provider++$__qi_datasource++$(id -urn $RUID)"
-
 __qi_config_name="${__qi_provider}-config"
 __qi_config_mount=/.persistant_data
-__qi_resource_name="${__qi_app_name}-$(GetId $__qi_resource_data)"
+__qi_resource_name="${__qi_app_name}"
 echo $__qi_resource_name
 
 . $(dirname ${BASH_SOURCE[0]})/${__qi_provider} \

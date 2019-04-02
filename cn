@@ -76,7 +76,10 @@ CheckDataSource "$__qi_datasource" "$__qi_workspace"
 CheckProvider "$__qi_provider"
 
 __qi_base_name=${__qi_base_name:="$(basename $__qi_workspace)"}
-__qi_application_name=$(GetContainerName "$__qi_base_name" "$__qi_provider")
+__qi_application_name=$(GetContainerName \
+    "$__qi_base_name" \
+    "$__qi_provider" \
+    "$__qi_datasource")
 
 GetBuilder
 
