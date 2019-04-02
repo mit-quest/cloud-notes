@@ -64,7 +64,7 @@ The System _MUST_ meet the following specifications:
 ##### Automated Install script
 Provided in this repository is powershell script intended to install all the necessary components
 for windows development called `win-setup.ps1`. To execute the script, run the following command
-from the source directory. You willstill need to share the correct drives within docker desktop
+from the source directory. You will still need to share the correct drives within docker desktop
 and add a wsl.conf file in the wsl distribution.
 ```
 Set-ExecutionPolicy Bypass -Scope Process -Force; iex (win-setup.ps1)
