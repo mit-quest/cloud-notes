@@ -18,6 +18,8 @@ usage: ${BASH_SOURCE[0]} [options] workspace datasource provider
     --provider,   -p  <PROVIDER>   : The cloud resource provider
 
     options:
+    --name,       -n  <NAME>       : The base name of the application once deployed. If not set,
+                      The name will be determined based on the provided workspace.
     --template,   -t  <TEMPLATE>   : A Dockerfile used to modify the default workspace environment.
                       This is a post-build step which will be applied after dependency management.
                       An example use case for templates is GPU support for the application within
@@ -47,6 +49,10 @@ while [[ $# -gt 0 ]]; do
             __qi_template=$(GetAbsPath "$2")
             shift; shift
         ;;
+        -n|--name)
+            __qi_base_name="$2"
+            shift; shift
+        ;;
         -h|--help)
             CNHelp
         ;;
@@ -69,7 +75,11 @@ CheckWorkspace "$__qi_workspace"
 CheckDataSource "$__qi_datasource" "$__qi_workspace"
 CheckProvider "$__qi_provider"
 
-__qi_application_name=$(GetContainerName "qi-c" "$__qi_provider")
+__qi_base_name=${__qi_base_name:="$(basename $__qi_workspace)"}
+__qi_application_name=$(GetContainerName \
+    "$__qi_base_name" \
+    "$__qi_provider" \
+    "$__qi_datasource")
 
 GetBuilder
 

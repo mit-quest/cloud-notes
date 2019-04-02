@@ -120,7 +120,7 @@ function ToLower()
 
 function GetId()
 {
-    echo $1 | cksum | awk '{ print $1 }'
+    echo "$@" | cksum | awk '{ print $1 }'
 }
 
 function BackgroundTask()
@@ -169,12 +169,17 @@ function GetContainerName()
 {
     local _prefix=$1
     local _provider=$2
+    shift; shift;
+
+    local _postfix_data="$@"
 
     CheckProvider $_provider
 
-    _postfix=
+    local _postfix=
     if [ -z "${_provider/local/}" ]; then
-        _postfix="-$(hostname)"
+        local _postfix="-$(hostname)"
+    else
+        local _postfix="-$(GetId $_postfix_data)"
     fi
 
     _container_name=$(ToLower "${_prefix}${_postfix}")
