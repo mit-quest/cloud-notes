@@ -154,7 +154,8 @@ function Deploy()
     local _compute_tag="$2"
     local _datasource="$3"
 
-    local _bucket_name="${2}.qi_databucket"
+    local _bucket_name=$(GetId "$_datasource")
+    local _bucket_name="${_bucket_name}.qi.data_upload"
 
     $GCLOUD compute addresses create ${_address} \
         --region us-east4
