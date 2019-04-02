@@ -18,6 +18,7 @@ usage: ${BASH_SOURCE[0]} [options] workspace datasource provider
     --provider,   -p  <PROVIDER>   : The cloud resource provider
 
     options:
+    --help,       -h               : Print this help message.
     --name,       -n  <NAME>       : The base name of the application once deployed. If not set,
                       The name will be determined based on the provided workspace.
     --template,   -t  <TEMPLATE>   : A Dockerfile used to modify the default workspace environment.
