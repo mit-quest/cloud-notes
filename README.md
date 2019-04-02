@@ -20,7 +20,7 @@ mechanism that utilizes dockerfiles.
 
 ## Getting Started
 ### Prerequisites
-1. Access to a web browser on the local machine. This is used to complete login steps associated with each platform as well as viewing the notebboks in the Jupyter server once it is deployed either locally or in the cloud.
+1. Access to a web browser on the local machine. This is used to complete login steps associated withe each platform as well as viewing the notebboks in the Jupyter server once it is deployed either locally or in the cloud.
 2. An active subscription in one of the supported Cloud Platforms [below](#supported-platforms).
 
 #### Linux
@@ -62,9 +62,10 @@ The System _MUST_ meet the following specifications:
    ```
 
 ##### Automated Install script
-Provided in this repository is powershell script intended to install all th necessary components
+Provided in this repository is powershell script intended to install all the necessary components
 for windows development called `win-setup.ps1`. To execute the script, run the following command
-from the source directory.
+from the source directory. You willstill need to share the correct drives within docker desktop
+and add a wsl.conf file in the wsl distribution.
 ```
 Set-ExecutionPolicy Bypass -Scope Process -Force; iex (win-setup.ps1)
 ```
@@ -102,6 +103,6 @@ usage: ./cn [options] workspace datasource provider
 
 ### Notes
 
-**__LOCAL__**: Any changes you make in the locally running container should be reflected on the local machine. You can also add more files to the workspace without the need to restart the container and the server should reflect those changes. Use this feature to ensure the container is capable of running th application before running the deploy.sh script to run the service in the cloud.
+**__LOCAL__**: Any changes you make in the locally running container should be reflected on the local machine. You can also add more files to the workspace without the need to restart the container and the server should reflect those changes. Use this feature to ensure the container is capable of running the application before running the deploy.sh script to run the service in the cloud.
 
 **__REMOTE__**: Getting the login key on from the server currently requires accessing the remote URL and then reading through the console output to find a string that indicates what the ogin token is. The token will appear in the following form `:8888/?token=XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX`
