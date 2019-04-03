@@ -198,10 +198,5 @@ Deploy ${RESOURCES} ${APPLICATION} ${DATASOURCE}
 
 function ConnectToServer()
 {
-    JUPYTER_POD=$($KUBECTL \
-        get pods \
-        -o=custom-columns=NAME:.metadata.name \
-        --no-headers)
-
-    $KUBECTL logs -f $JUPYTER_POD
+    echo Password: $APPLICATION
 }
