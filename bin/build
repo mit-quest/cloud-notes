@@ -61,6 +61,28 @@ function GetBuilder()
     set +e
 }
 
+function MakePostBuild()
+{
+    local _workspace=$1
+    local _password=$2
+
+    local _config="postBuild"
+    local _files=($(EnumerateFolderContents $_workspace))
+    if ! [ $(Contains $_config ${_files[@]}) ]; then
+        cat > $_workspace/$_config << EOF
+#!/bin/bash
+
+mkdir -p ~/.jupyter
+
+python3 -c \
+"from notebook.auth import passwd
+p=passwd('$_password')
+print('c.NotebookApp.password = \"{}\"'.format(p))" \
+>> ~/.jupyter/jupyter_notebook_config.py
+EOF
+    fi
+}
+
 # Builds the specified application
 # ARGUMENTS:
 #   $1 - Workspace location used to build application.
@@ -84,6 +106,8 @@ function Build()
     # command as docker is a dependency of repo2docker
     #
     local C_DOCKER_SOCKET=/var/run/docker.sock
+
+    MakePostBuild "$_workspace" "$_application"
 
     # Alias the jupyter-repo2docker command
     R2D="docker run \
