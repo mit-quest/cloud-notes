@@ -195,9 +195,13 @@ function GetContainerName()
 function EnumerateFolderContents()
 {
     local _FOLDER=$1
-    local _BLACK_LIST=$2
 
-    find "$_FOLDER" -name "*" | sed 's|'$_FOLDER/'||' | grep -vf $_BLACKLIST
+    if [ $# -gt 1 ]; then
+        local _BLACK_LIST=$2
+        find "$_FOLDER" -name "*" | sed 's|'$_FOLDER/'||' | grep -vf $_BLACKLIST
+    else
+        find "$_FOLDER" -name "*" | sed 's|'$_FOLDER/'||'
+    fi
 }
 
 # Unset a readonly variable.

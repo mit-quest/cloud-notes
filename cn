@@ -89,8 +89,10 @@ Build \
     "$__qi_application_name" \
     "$__qi_template"
 
+__qi_jupyter_password="${__qi_application_name}"
+
 if ! [ -z "$__qi_template" ]; then
-    __qi_application_name=${__qi_application_name}-${__qi_template##*.}
+    __qi_application_name="${__qi_application_name}-${__qi_template##*.}"
 fi
 
 . $(dirname ${BASH_SOURCE[0]})/bin/deploy \
@@ -107,8 +109,9 @@ if [ ! -z ${__qi_provider/local/} ]; then
     echo
     echo "*** USE THE FOLLOWING URL TO CONNECT TO YOUR JUPYTER SERVER ***"
     echo ${JUPYTER_SERVER}:8888
+    echo "PASSWORD: ${__qi_jupyter_password}"
     echo
-    read -n 1 -p "PRESS ENTER TO CONTINUE AND RETRIEVE YOUR TOKEN" input
+    read -n 1 -p "PRESS ANY KEY TO CONTINUE" input
     echo
 
     trap \

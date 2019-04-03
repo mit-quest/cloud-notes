@@ -82,6 +82,9 @@ function Provision()
     local _location=$2
     local _datasource=$3
 
+    local _bucket_name=$(GetId "$_datasource")
+    local _bucket_name="${_bucket_name}-qi-data-upload"
+
     # Create a hosting project for transient resources.
     $GCLOUD projects create $_resources
 
@@ -130,7 +133,7 @@ function Provision()
     $GCLOUD services enable container.googleapis.com
 
     # Provision dat bucket
-    $GSUTIL mb -c regional -l ${_location: 0:-2} gs://$(GetId "$_datasource")
+    $GSUTIL mb -c regional -l ${_location: 0:-2} gs://$_bucket_name
 }
 
 Provision $RESOURCES $LOCATION $DATASOURCE
@@ -155,7 +158,7 @@ function Deploy()
     local _datasource="$3"
 
     local _bucket_name=$(GetId "$_datasource")
-    local _bucket_name="${_bucket_name}.qi.data_upload"
+    local _bucket_name="${_bucket_name}-qi-data-upload"
 
     $GCLOUD compute addresses create ${_address} \
         --region us-east4
@@ -198,10 +201,5 @@ Deploy ${RESOURCES} ${APPLICATION} ${DATASOURCE}
 
 function ConnectToServer()
 {
-    JUPYTER_POD=$($KUBECTL \
-        get pods \
-        -o=custom-columns=NAME:.metadata.name \
-        --no-headers)
-
-    $KUBECTL logs -f $JUPYTER_POD
+    :
 }
