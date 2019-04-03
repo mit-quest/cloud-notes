@@ -201,4 +201,5 @@ Deploy ${RESOURCES} ${APPLICATION} ${DATASOURCE}
 
 function ConnectToServer()
 {
+    :
 }
