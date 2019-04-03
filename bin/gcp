@@ -198,5 +198,4 @@ Deploy ${RESOURCES} ${APPLICATION} ${DATASOURCE}
 
 function ConnectToServer()
 {
-    echo Password: $APPLICATION
 }

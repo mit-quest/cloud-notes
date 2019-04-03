@@ -107,8 +107,9 @@ if [ ! -z ${__qi_provider/local/} ]; then
     echo
     echo "*** USE THE FOLLOWING URL TO CONNECT TO YOUR JUPYTER SERVER ***"
     echo ${JUPYTER_SERVER}:8888
+    echo "PASSWORD: ${__qi_application_name}"
     echo
-    read -n 1 -p "PRESS ENTER TO CONTINUE AND RETRIEVE YOUR TOKEN" input
+    read -n 1 -p "PRESS ANY KEY TO CONTINUE" input
     echo
 
     trap \
