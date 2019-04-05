@@ -1,8 +1,8 @@
 # Cloud Notes
 This aplication acts as a cloud platform provisioning, deployment, and congiguration service.
-It is mainly intended for Python Notebook execution and development intended for developers
-and researchers to get up and running in the cloud without previous cloud provisioning knowledge
-or the time to learn the skills needed to setup a cloud environment.
+It is mainly intended for Python Notebook execution and development. Use is primarily targeted
+for developers and researchers who would like to get up and running in the cloud without previous
+cloud provisioning knowledge or the time to learn the skills needed to setup a cloud environment.
 
 ## Project Status
 ![Azure Pipelines Status](https://dev.azure.com/MITQuest/cloud-notes/_apis/build/status/Cloud%20Notes%20%28GCP%29?branchname=master)
@@ -20,7 +20,9 @@ mechanism that utilizes dockerfiles.
 
 ## Getting Started
 ### Prerequisites
-1. Access to a web browser on the local machine. This is used to complete login steps associated withe each platform as well as viewing the notebboks in the Jupyter server once it is deployed either locally or in the cloud.
+1. Access to a web browser on the local machine. This is used to complete login steps associated with
+   each platform as well as viewing the notebboks in the Jupyter server once it is deployed either
+   locally or in the cloud.
 2. An active subscription in one of the supported Cloud Platforms [below](#supported-platforms).
 
 #### Linux
@@ -33,7 +35,8 @@ Docker inside WSL following the Linux instructions above.
 
 ## Deployment
 
-Simply run `cn` and provide the required arguments listed below. At any time to preview this message, run `cn --help`
+Simply run `cn` and provide the required arguments listed below. At any time to preview this
+message, run `cn --help`
 
 ```
 usage: ./cn [options] workspace datasource provider
