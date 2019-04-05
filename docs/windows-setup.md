@@ -1,5 +1,8 @@
 # Windows Setup
 
+1. [Manual Installation Process](#manual)
+2. [Automated Installation](#automated) (not fully supported)
+
 **NOTE**:  
 According to the official docker documentation, in order for Windows to work with docker,
 The System _MUST_ meet the following specifications:
@@ -11,6 +14,7 @@ The System _MUST_ meet the following specifications:
 > - CPU SLAT-capable feature.
 > - At least 4GB of RAM.
 
+<a href="" id="manual"></a>
 ##### Manual Installation
 1. Turn on optional features using the optional features tool here:  
    "C:\Windows\System32\OptionalFeatures.exe"
@@ -33,6 +37,7 @@ The System _MUST_ meet the following specifications:
    options = "metadata"
    ```
 
+<a href="" id="automated"></a>
 ##### Automated Install script
 Provided in this repository is powershell script intended to install all the necessary components
 for windows development called `win-setup.ps1`. To execute the script, run the following command
