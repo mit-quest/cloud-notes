@@ -22,9 +22,9 @@ The System _MUST_ meet the following specifications:
 
 2. [Install Docker for Windows](https://docs.docker.com/docker-for-windows/install/).
 3. Expose Docker daemon on tcp://localhost:2375
-   ![Image of Docker Settings for TCP](./docs/_static/docker-tcp.png)
+   ![Image of Docker Settings for TCP](./_static/docker-tcp.png)
 4. Give docker drive access
-   ![Image of Docker Drive Share Settings](./docs/_static/docker-sharing.png)
+   ![Image of Docker Drive Share Settings](./_static/docker-sharing.png)
 5. Add a WSL configuration file `/etc/wsl.conf` to change the auto mount settings in WSL:
 
    ```
