@@ -64,9 +64,3 @@ usage: ./cn [options] workspace datasource provider
 | [Microsoft Azure](https://azure.microsoft.com)    | az       | *Minimal Support*       |
 
 ---
-
-### Notes
-
-**__LOCAL__**: Any changes you make in the locally running container should be reflected on the local machine. You can also add more files to the workspace without the need to restart the container and the server should reflect those changes. Use this feature to ensure the container is capable of running the application before running the deploy.sh script to run the service in the cloud.
-
-**__REMOTE__**: Getting the login key on from the server currently requires accessing the remote URL and then reading through the console output to find a string that indicates what the ogin token is. The token will appear in the following form `:8888/?token=XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX`
