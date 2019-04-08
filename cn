@@ -102,13 +102,25 @@ fi
 # END BUILD STEPS
 
 # TODO (stshrive): Move deploy steps from deploy interface to function.
+# Prepare variables needed for deployment steps.
+__qi_auth_config="${__qi_provider}-config"
+__qi_auth_volume=/.persistant_data
+__qi_resources="${__qi_app_name}"
+__qi_resource_location=$(GetLocation)
 
 GetPlatformContainer
-Login $CONTAINER_NAME $CONFIG_MOUNT
-Provision $RESOURCES $LOCATION $DATASOURCE
+Login ${__qi_auth_config} ${__qi_auth_volume}
+Provision ${__qi_resources} ${__qi_resource_location} ${__qi_datasource}
 PrepareDocker
-REMOTE_IMAGE=$(PushToRemote ${APPLICATION} ${REG_SERVER})
-Deploy ${RESOURCES} ${APPLICATION} ${DATASOURCE}
+
+__qi_remote_image=$(PushToRemote ${__qi_application_name} `GetRegistry $__qi_application_name`)
+Deploy \
+    ${__qi_application_name} \
+    ${__qi_datasource} \
+    ${__qi_remote_image} \
+    ${__qi_resource_location} \
+    ${__qi_auth_config}
+# END DEPLOY STEPS
 
 if ! typeset -f ConnectToServer >/dev/null; then
     echo "An error occurred during deployment and no Jupyter server was found." >&2
