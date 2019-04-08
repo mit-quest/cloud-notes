@@ -1,5 +1,16 @@
 #!/bin/bash
 
+function GetLocation()
+{
+    echo "us-east4-a"
+}
+
+function GetRegistry()
+{
+    local _resources="$1"
+    echo "gcr.io/${_resources}"
+}
+
 # Given a source directory, copies its contents to a GCP bucket
 #
 # ARGUMENTS:
