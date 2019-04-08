@@ -1,15 +1,5 @@
 #!/bin/bash
 
-CONTAINER_NAME=$1
-CONFIG_MOUNT=$2
-APPLICATION=$3
-RESOURCES=$4
-DATASOURCE=$5
-
-LOCATION="us-east4-a"
-CLUSTER=qitransientcluster
-REG_SERVER=gcr.io/${RESOURCES}
-
 # Given a source directory, copies its contents to a GCP bucket
 #
 # ARGUMENTS:
