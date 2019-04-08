@@ -38,8 +38,6 @@ function GetPlatformContainer()
     docker pull google/cloud-sdk
 }
 
-GetPlatformContainer
-
 # Login with the container. This currently requires user interaction
 # at the browser to complete. The below command creates a volume
 # at the ${CONFIG_MOUNT} location in order to persist kubernetes
@@ -60,8 +58,6 @@ function Login()
         google/cloud-sdk \
         gcloud auth login
 }
-
-Login $CONTAINER_NAME $CONFIG_MOUNT
 
 # Common docker command component for gcloud and kubectl commands inside
 # of the google/cloud-sdk container.
@@ -136,8 +132,6 @@ function Provision()
     $GSUTIL mb -c regional -l ${_location: 0:-2} gs://$_bucket_name
 }
 
-Provision $RESOURCES $LOCATION $DATASOURCE
-
 function PrepareDocker()
 {
     # Login to gcr.io
@@ -196,8 +190,6 @@ function Deploy()
         --region us-east4 \
         --format "table[no-heading](address)")
 }
-
-Deploy ${RESOURCES} ${APPLICATION} ${DATASOURCE}
 
 function ConnectToServer()
 {
