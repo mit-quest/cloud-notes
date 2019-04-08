@@ -15,7 +15,9 @@ function CheckDeployArguments()
 }
 
 CheckDeployArguments $@
+
 __qi_provider=$1
+CheckProvider "$__qi_provider"
 
 # Tags and pushes an image to a remote registry.
 # ARGUMENTS:
@@ -38,15 +40,4 @@ function PushToRemote()
 }
 
 export -f PushToRemote
-
-__qi_config_name="${__qi_provider}-config"
-__qi_config_mount=/.persistant_data
-__qi_resource_name="${__qi_app_name}"
-echo $__qi_resource_name
-
-. $(dirname ${BASH_SOURCE[0]})/${__qi_provider} \
-    $__qi_config_name \
-    $__qi_config_mount \
-    $__qi_app_name \
-    $__qi_resource_name \
-    $__qi_datasource
+. $(dirname ${BASH_SOURCE[0]})/${__qi_provider}
