@@ -3,15 +3,18 @@
 # Import utils.h
 . $(dirname ${BASH_SOURCE[0]})/utils.sh
 
-CONTAINER_NAME=$1
-CONFIG_MOUNT=$2
-APPLICATION=$3
-RESOURCES=$4
-DATASOURCE=$5
+function GetLocation()
+{
+    echo "eastus"
+}
 
-LOCATION=eastus
-REGISTRY=qitransientregistry
-REG_SERVER=${REGISTRY}.azurecr.io
+function GetRegistry()
+{
+    local _resources="$1"
+    REGISTRY=$_resources
+    REG_SERVER=${_resources}.azurecr.io
+    echo "${REG_SERVER}"
+}
 
 # Cleanup function to remove trailing characters in Azure CLI's
 # --query output
