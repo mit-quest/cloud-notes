@@ -88,6 +88,7 @@ function Provision()
 {
     local _resources=$1
     local _location=$2
+    local _datasource=$3
 
     # Create a resource group to host transient resoureces.
     $AZ group create --name $_resources --location $_location
