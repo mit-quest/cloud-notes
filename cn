@@ -12,7 +12,7 @@ PermissionsCheck
 function CNHelp()
 {
 cat << EOF
-usage: ${BASH_SOURCE[0]} [options] workspace datasource provider
+usage: ${BASH_SOURCE[0]} [options] --workspace <WORKSPACE> --datasource <DATASOURCE> --provider <PROVIDER>
     --workspace,  -w  <WORKSPACE>  : The workspace to deploy to a cloud resource.
     --datasource, -d  <DATASOURCE> : A data source to deploy to a cloud resource.
     --provider,   -p  <PROVIDER>   : The cloud resource provider
