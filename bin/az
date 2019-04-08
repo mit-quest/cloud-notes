@@ -55,8 +55,6 @@ function GetPlatformContainer()
     docker pull microsoft/azure-cli
 }
 
-GetPlatformContainer
-
 # The Azure CLI container does not provide an automatic mount point
 # for it's credentials. Thes requires a little extra manual work through
 # docker but the persisted login credentials are still accesible across
@@ -78,8 +76,6 @@ function Login()
         az login
 }
 
-Login $CONTAINER_NAME $CONFIG_MOUNT
-
 # Reusable AZ command to mask the use of docker.
 AZ="docker run --rm -it -e AZURE_CONFIG_DIR=${CONFIG_MOUNT} --volumes-from ${CONTAINER_NAME} microsoft/azure-cli az"
 
@@ -100,8 +96,6 @@ function Provision()
     $AZ acr update --name $REGISTRY --admin-enabled true
 }
 
-Provision $RESOURCES $LOCATION
-
 function PrepareDocker()
 {
     # Get the admin username and password from the Azure Container Registry
@@ -113,10 +107,6 @@ function PrepareDocker()
     # Login to the privte Azure Container Registry with Docker.
     echo $ACR_PASSWORD | docker login -u $ACR_USERNAME --password-stdin https://${REG_SERVER}
 }
-
-PrepareDocker
-
-REMOTE_IMAGE=$(PushToRemote ${APPLICATION} ${REG_SERVER})
 
 function Deploy()
 {
