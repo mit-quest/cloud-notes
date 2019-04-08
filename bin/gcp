@@ -140,9 +140,6 @@ function PrepareDocker()
         --password-stdin https://gcr.io
 }
 
-PrepareDocker
-
-REMOTE_IMAGE=$(PushToRemote ${APPLICATION} ${REG_SERVER})
 
 function Deploy()
 {
