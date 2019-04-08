@@ -1,0 +1,37 @@
+#!/bin/bash
+
+function GetPlatformContainer
+{
+    :
+}
+
+function Login
+{
+    :
+}
+
+function Provision
+{
+    :
+}
+
+function PrepareDocker
+{
+    :
+}
+
+function Deploy
+{
+    :
+}
+
+function ConnectToServer
+{
+    :
+}
+
+function CopyData
+{
+    :
+}
+
