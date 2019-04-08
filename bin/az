@@ -74,10 +74,15 @@ function Login()
         --mount type=volume,target=${_config_mount} \
         microsoft/azure-cli \
         az login
-}
 
-# Reusable AZ command to mask the use of docker.
-AZ="docker run --rm -it -e AZURE_CONFIG_DIR=${CONFIG_MOUNT} --volumes-from ${CONTAINER_NAME} microsoft/azure-cli az"
+    # Reusable AZ command to mask the use of docker.
+    AZ="docker run \
+        --rm \
+        -it \
+        -e AZURE_CONFIG_DIR=${_config_mount} \
+        --volumes-from ${_container_name} \
+        microsoft/azure-cli az"
+}
 
 function Provision()
 {
