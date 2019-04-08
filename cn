@@ -30,6 +30,8 @@ EOF
 exit 1
 }
 
+# TODO (stshrive): Add flags to control build and deploy
+# steps independently if desired.
 _QI_POSITIONALS=()
 while [[ $# -gt 0 ]]; do
     __qi_arg="$1"
@@ -79,6 +81,8 @@ CheckProvider "$__qi_provider"
 # Import the correct deployment implementation using the specified provider name.
 . $(dirname ${BASH_SOURCE[0]})/bin/deploy ${__qi_provider}
 
+# TODO (stshrive): Move build steps from build interface to function.
+# Prepare variables needed for Build steps.
 __qi_base_name=${__qi_base_name:="$(basename $__qi_workspace)"}
 __qi_application_name=$(GetContainerName \
     "$__qi_base_name" \
@@ -96,6 +100,9 @@ __qi_jupyter_password="${__qi_application_name}"
 if ! [ -z "$__qi_template" ]; then
     __qi_application_name="${__qi_application_name}-${__qi_template##*.}"
 fi
+# END BUILD STEPS
+
+# TODO (stshrive): Move deploy steps from deploy interface to function.
 
 GetPlatformContainer
 Login $CONTAINER_NAME $CONFIG_MOUNT
