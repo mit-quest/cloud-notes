@@ -98,12 +98,7 @@ function Provision()
     # Lists all of the available billing accounts for the current user
     # formatted to list the account number and the display name.
     #
-    done < <(docker run \
-        --rm \
-        -e KUBECONFIG=${CONFIG_MOUNT}/kube_config \
-        --volumes-from ${CONTAINER_NAME} \
-        google/cloud-sdk \
-        gcloud beta billing accounts list \
+    done < <($GCLOUD beta billing accounts list \
         --format "table[no-heading](name,displayName)")
 
     echo
