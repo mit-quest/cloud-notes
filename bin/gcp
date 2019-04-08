@@ -129,22 +129,27 @@ function PrepareDocker()
 function Deploy()
 {
 
-    local _address="$1"
-    local _compute_tag="$2"
-    local _datasource="$3"
+    local _application="$1"
+    local _compute_tag="$_application"
+    local _datasource="$2"
+    local _image="$3"
+    local _location="$4"
+    local _auth_config="$5"
 
     local _bucket_name=$(GetId "$_datasource")
     local _bucket_name="${_bucket_name}-qi-data-upload"
 
-    $GCLOUD compute addresses create ${_address} \
+    # Use the application name as the address name used to
+    # connect to the application.
+    $GCLOUD compute addresses create ${_application} \
         --region us-east4
 
-    BackgroundTask CopyData $_datasource $_bucket_name $CONTAINER_NAME
+    BackgroundTask CopyData $_datasource $_bucket_name $_auth_config
 
     # Automatically stop this resource (GPU cost is high).
     $GCLOUD compute instances create \
-        $APPLICATION                               \
-        --zone ${LOCATION}                         \
+        $_application                              \
+        --zone ${_location}                        \
         --accelerator type=nvidia-tesla-p4,count=1 \
         --custom-cpu 8                             \
         --custom-memory 32GB                       \
@@ -153,10 +158,10 @@ function Deploy()
         --image-family ubuntu-1804-lts             \
         --image-project ubuntu-os-cloud            \
         --boot-disk-size 200GB                     \
-        --address ${_address}                      \
+        --address ${_application}                  \
         --tags ${_compute_tag}                     \
         --metadata \
-        __qi_container_name="$REMOTE_IMAGE",__qi_app_bucket=$_bucket_name \
+        __qi_container_name="$_image",__qi_app_bucket=$_bucket_name \
         --metadata-from-file startup-script=/mnt/startup/ubuntu-startup.sh
  
     $GCLOUD compute firewall-rules create allow-cn-server \
@@ -168,7 +173,7 @@ function Deploy()
 
     JUPYTER_SERVER=$($GCLOUD \
         compute addresses describe \
-        ${_address} \
+        ${_application} \
         --region us-east4 \
         --format "table[no-heading](address)")
 }
