@@ -16,6 +16,32 @@ function GetRegistry()
     echo "${REG_SERVER}"
 }
 
+# Given a source directory, copies its contents to a GCP bucket
+#
+# ARGUMENTS:
+#   _SOURCE_DIR  - The local machine source to copy
+#   _BUCKET_NAME - The GCP Data Bucket to upload data
+#   _AUTH_CONFIG - The pre-authenticated config container
+#
+function CopyData()
+{
+    _SOURCE_DIR=$1
+    _BUCKET_NAME=$2
+    _AUTH_CONFIG=$3
+
+    while IFS= read -r file_entry; do
+        docker run \
+            --rm \
+            --mount type=bind,source="${_SOURCE_DIR}",target=/mnt/data \
+            --volumes-from ${_AUTH_CONFIG} \
+            microsoft/azure-cli \
+            az storage blob upload \
+                --container-name $_BUCKET_NAME \
+                --file $_SOURCE_DIR/$file_entry
+                --name $file_entry
+   done < <(EnumerateFolderContents "$_SOURCE_DIR" "$_SOURCE_DIR/blacklist.txt")
+}
+
 # Cleanup function to remove trailing characters in Azure CLI's
 # --query output
 TrimQuery() {
@@ -111,35 +137,7 @@ function Deploy()
         "$($AZ container show --resource-group $RESOURCES --name $APPLICATION --query ipAddress.fqdn)")
 }
 
-Deploy
-
 function ConnectToServer()
 {
     $AZ container attach --resource-group $RESOURCES --name $APPLICATION
-}
-
-# Given a source directory, copies its contents to a GCP bucket
-#
-# ARGUMENTS:
-#   _SOURCE_DIR  - The local machine source to copy
-#   _BUCKET_NAME - The GCP Data Bucket to upload data
-#   _AUTH_CONFIG - The pre-authenticated config container
-#
-function CopyData()
-{
-    _SOURCE_DIR=$1
-    _BUCKET_NAME=$2
-    _AUTH_CONFIG=$3
-
-    while IFS= read -r file_entry; do
-        docker run \
-            --rm \
-            --mount type=bind,source="${_SOURCE_DIR}",target=/mnt/data \
-            --volumes-from ${_AUTH_CONFIG} \
-            microsoft/azure-cli \
-            az storage blob upload \
-                --container-name $_BUCKET_NAME \
-                --file $_SOURCE_DIR/$file_entry
-                --name $file_entry
-   done < <(EnumerateFolderContents "$_SOURCE_DIR" "$_SOURCE_DIR/blacklist.txt")
 }
