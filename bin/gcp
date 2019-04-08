@@ -47,20 +47,20 @@ function Login()
         --mount type=bind,source="$(dirname `GetAbsPath ${BASH_SOURCE[0]}`)/scripts",target=/mnt/startup \
         google/cloud-sdk \
         gcloud auth login
+
+    # Common docker command component for gcloud and kubectl commands inside
+    # of the google/cloud-sdk container.
+    #
+    PREFIX="docker run \
+        --rm \
+        -e KUBECONFIG=${_config_mount}/kube_config \
+        --volumes-from ${_container_name} \
+        google/cloud-sdk"
+
+    GCLOUD="$PREFIX gcloud"
+    KUBECTL="$PREFIX kubectl"
+    GSUTIL="$PREFIX gsutil"
 }
-
-# Common docker command component for gcloud and kubectl commands inside
-# of the google/cloud-sdk container.
-#
-PREFIX="docker run \
-    --rm \
-    -e KUBECONFIG=${CONFIG_MOUNT}/kube_config \
-    --volumes-from ${CONTAINER_NAME} \
-    google/cloud-sdk"
-
-GCLOUD="$PREFIX gcloud"
-KUBECTL="$PREFIX kubectl"
-GSUTIL="$PREFIX gsutil"
 
 function Provision()
 {
