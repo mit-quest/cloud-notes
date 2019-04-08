@@ -76,7 +76,6 @@ fi
 
 CheckWorkspace "$__qi_workspace"
 CheckDataSource "$__qi_datasource" "$__qi_workspace"
-CheckProvider "$__qi_provider"
 
 # Import the correct deployment implementation using the specified provider name.
 . $(dirname ${BASH_SOURCE[0]})/bin/deploy ${__qi_provider}
