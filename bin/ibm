@@ -1,5 +1,10 @@
 #!/bin/bash
 
+function CopyData
+{
+    :
+}
+
 function GetPlatformContainer
 {
     :
@@ -29,9 +34,3 @@ function ConnectToServer
 {
     :
 }
-
-function CopyData
-{
-    :
-}
-
