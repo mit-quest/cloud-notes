@@ -89,17 +89,18 @@ function Provision()
     local _resources=$1
     local _location=$2
     local _datasource=$3
+    local _registry=$(GetRegistry $_resources)
 
     # Create a resource group to host transient resoureces.
     $AZ group create --name $_resources --location $_location
-    $AZ acr create --resource-group $_resources --name $REGISTRY --sku Basic
+    $AZ acr create --resource-group $_resources --name ${_registry} --sku Basic
 
     # Can't use `az acr login` from docker container. This command requires
     # an installation of docker to exist as it calls `docker ps` internally
     # and then issues a `docker login` command. Instead setting admin enabled
     # to login with the ACR admin credential.
     #
-    $AZ acr update --name $REGISTRY --admin-enabled true
+    $AZ acr update --name ${_registry} --admin-enabled true
 }
 
 function PrepareDocker()
@@ -116,24 +117,32 @@ function PrepareDocker()
 
 function Deploy()
 {
+    local _application="$1"
+    local _compute_tag="$_application"
+    local _datasource="$2"
+    local _image="$3"
+    local _location="$4"
+    local _auth_config="$5"
+
     # Create and deploy a container instance in Azure.
-    DNS_NAME_LABEL=${APPLICATION}-${RANDOM}${RANDOM}
+    DNS_NAME_LABEL=${_application}-${RANDOM}${RANDOM}
+
     $AZ container create \
-        --name ${APPLICATION} \
-        --resource-group $RESOURCES \
-        --image ${REMOTE_IMAGE} \
-        --registry-login-server ${REG_SERVER} \
-        --registry-username $ACR_USERNAME \
-        --registry-password $ACR_PASSWORD \
+        --name ${_application} \
+        --resource-group ${_application} \
+        --image ${_image} \
+        --registry-login-server $(GetRegistry $_application) \
+        --registry-username ${ACR_USERNAME} \
+        --registry-password ${ACR_PASSWORD} \
         --ip-address public \
         --ports 8888\
         --dns-name ${DNS_NAME_LABEL}
 
     JUPYTER_SERVER=$(TrimQuery \
-        "$($AZ container show --resource-group $RESOURCES --name $APPLICATION --query ipAddress.fqdn)")
+        "$($AZ container show --resource-group ${_application} --name ${_application} --query ipAddress.fqdn)")
 }
 
 function ConnectToServer()
 {
-    $AZ container attach --resource-group $RESOURCES --name $APPLICATION
+    $AZ container attach --resource-group $RESOURCES --name $RESOURCES
 }
