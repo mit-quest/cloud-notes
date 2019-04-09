@@ -1,14 +1,15 @@
 #!/bin/bash
 
-CONTAINER_NAME=$1
-CONFIG_MOUNT=$2
-APPLICATION=$3
-RESOURCES=$4
-DATASOURCE=$5
+function GetLocation()
+{
+    echo "us-east4-a"
+}
 
-LOCATION="us-east4-a"
-CLUSTER=qitransientcluster
-REG_SERVER=gcr.io/${RESOURCES}
+function GetRegistry()
+{
+    local _resources="$1"
+    echo "gcr.io/${_resources}"
+}
 
 # Given a source directory, copies its contents to a GCP bucket
 #
@@ -38,8 +39,6 @@ function GetPlatformContainer()
     docker pull google/cloud-sdk
 }
 
-GetPlatformContainer
-
 # Login with the container. This currently requires user interaction
 # at the browser to complete. The below command creates a volume
 # at the ${CONFIG_MOUNT} location in order to persist kubernetes
@@ -59,22 +58,20 @@ function Login()
         --mount type=bind,source="$(dirname `GetAbsPath ${BASH_SOURCE[0]}`)/scripts",target=/mnt/startup \
         google/cloud-sdk \
         gcloud auth login
+
+    # Common docker command component for gcloud and kubectl commands inside
+    # of the google/cloud-sdk container.
+    #
+    PREFIX="docker run \
+        --rm \
+        -e KUBECONFIG=${_config_mount}/kube_config \
+        --volumes-from ${_container_name} \
+        google/cloud-sdk"
+
+    GCLOUD="$PREFIX gcloud"
+    KUBECTL="$PREFIX kubectl"
+    GSUTIL="$PREFIX gsutil"
 }
-
-Login $CONTAINER_NAME $CONFIG_MOUNT
-
-# Common docker command component for gcloud and kubectl commands inside
-# of the google/cloud-sdk container.
-#
-PREFIX="docker run \
-    --rm \
-    -e KUBECONFIG=${CONFIG_MOUNT}/kube_config \
-    --volumes-from ${CONTAINER_NAME} \
-    google/cloud-sdk"
-
-GCLOUD="$PREFIX gcloud"
-KUBECTL="$PREFIX kubectl"
-GSUTIL="$PREFIX gsutil"
 
 function Provision()
 {
@@ -112,12 +109,7 @@ function Provision()
     # Lists all of the available billing accounts for the current user
     # formatted to list the account number and the display name.
     #
-    done < <(docker run \
-        --rm \
-        -e KUBECONFIG=${CONFIG_MOUNT}/kube_config \
-        --volumes-from ${CONTAINER_NAME} \
-        google/cloud-sdk \
-        gcloud beta billing accounts list \
+    done < <($GCLOUD beta billing accounts list \
         --format "table[no-heading](name,displayName)")
 
     echo
@@ -136,8 +128,6 @@ function Provision()
     $GSUTIL mb -c regional -l ${_location: 0:-2} gs://$_bucket_name
 }
 
-Provision $RESOURCES $LOCATION $DATASOURCE
-
 function PrepareDocker()
 {
     # Login to gcr.io
@@ -146,29 +136,31 @@ function PrepareDocker()
         --password-stdin https://gcr.io
 }
 
-PrepareDocker
-
-REMOTE_IMAGE=$(PushToRemote ${APPLICATION} ${REG_SERVER})
 
 function Deploy()
 {
 
-    local _address="$1"
-    local _compute_tag="$2"
-    local _datasource="$3"
+    local _application="$1"
+    local _compute_tag="$_application"
+    local _datasource="$2"
+    local _image="$3"
+    local _location="$4"
+    local _auth_config="$5"
 
     local _bucket_name=$(GetId "$_datasource")
     local _bucket_name="${_bucket_name}-qi-data-upload"
 
-    $GCLOUD compute addresses create ${_address} \
+    # Use the application name as the address name used to
+    # connect to the application.
+    $GCLOUD compute addresses create ${_application} \
         --region us-east4
 
-    BackgroundTask CopyData $_datasource $_bucket_name $CONTAINER_NAME
+    BackgroundTask CopyData $_datasource $_bucket_name $_auth_config
 
     # Automatically stop this resource (GPU cost is high).
     $GCLOUD compute instances create \
-        $APPLICATION                               \
-        --zone ${LOCATION}                         \
+        $_application                              \
+        --zone ${_location}                        \
         --accelerator type=nvidia-tesla-p4,count=1 \
         --custom-cpu 8                             \
         --custom-memory 32GB                       \
@@ -177,10 +169,10 @@ function Deploy()
         --image-family ubuntu-1804-lts             \
         --image-project ubuntu-os-cloud            \
         --boot-disk-size 200GB                     \
-        --address ${_address}                      \
+        --address ${_application}                  \
         --tags ${_compute_tag}                     \
         --metadata \
-        __qi_container_name="$REMOTE_IMAGE",__qi_app_bucket=$_bucket_name \
+        __qi_container_name="$_image",__qi_app_bucket=$_bucket_name \
         --metadata-from-file startup-script=/mnt/startup/ubuntu-startup.sh
  
     $GCLOUD compute firewall-rules create allow-cn-server \
@@ -192,12 +184,10 @@ function Deploy()
 
     JUPYTER_SERVER=$($GCLOUD \
         compute addresses describe \
-        ${_address} \
+        ${_application} \
         --region us-east4 \
         --format "table[no-heading](address)")
 }
-
-Deploy ${RESOURCES} ${APPLICATION} ${DATASOURCE}
 
 function ConnectToServer()
 {

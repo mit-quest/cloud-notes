@@ -12,7 +12,7 @@ PermissionsCheck
 function CNHelp()
 {
 cat << EOF
-usage: ${BASH_SOURCE[0]} [options] workspace datasource provider
+usage: ${BASH_SOURCE[0]} [options] --workspace <WORKSPACE> --datasource <DATASOURCE> --provider <PROVIDER>
     --workspace,  -w  <WORKSPACE>  : The workspace to deploy to a cloud resource.
     --datasource, -d  <DATASOURCE> : A data source to deploy to a cloud resource.
     --provider,   -p  <PROVIDER>   : The cloud resource provider
@@ -30,6 +30,8 @@ EOF
 exit 1
 }
 
+# TODO (stshrive): Add flags to control build and deploy
+# steps independently if desired.
 _QI_POSITIONALS=()
 while [[ $# -gt 0 ]]; do
     __qi_arg="$1"
@@ -74,8 +76,12 @@ fi
 
 CheckWorkspace "$__qi_workspace"
 CheckDataSource "$__qi_datasource" "$__qi_workspace"
-CheckProvider "$__qi_provider"
 
+# Import the correct deployment implementation using the specified provider name.
+. $(dirname ${BASH_SOURCE[0]})/bin/deploy ${__qi_provider}
+
+# TODO (stshrive): Move build steps from build interface to function.
+# Prepare variables needed for Build steps.
 __qi_base_name=${__qi_base_name:="$(basename $__qi_workspace)"}
 __qi_application_name=$(GetContainerName \
     "$__qi_base_name" \
@@ -83,7 +89,6 @@ __qi_application_name=$(GetContainerName \
     "$__qi_datasource")
 
 GetBuilder
-
 Build \
     "$__qi_workspace" \
     "$__qi_application_name" \
@@ -94,11 +99,28 @@ __qi_jupyter_password="${__qi_application_name}"
 if ! [ -z "$__qi_template" ]; then
     __qi_application_name="${__qi_application_name}-${__qi_template##*.}"
 fi
+# END BUILD STEPS
 
-. $(dirname ${BASH_SOURCE[0]})/bin/deploy \
+# TODO (stshrive): Move deploy steps from deploy interface to function.
+# Prepare variables needed for deployment steps.
+__qi_auth_config="${__qi_provider}-config"
+__qi_auth_volume=/.persistant_data
+__qi_resources="${__qi_app_name}"
+__qi_resource_location=$(GetLocation)
+
+GetPlatformContainer
+Login ${__qi_auth_config} ${__qi_auth_volume}
+Provision ${__qi_resources} ${__qi_resource_location} ${__qi_datasource}
+PrepareDocker
+
+__qi_remote_image=$(PushToRemote ${__qi_application_name} `GetRegistry $__qi_application_name`)
+Deploy \
     ${__qi_application_name} \
-    ${__qi_provider} \
-    ${__qi_datasource}
+    ${__qi_datasource} \
+    ${__qi_remote_image} \
+    ${__qi_resource_location} \
+    ${__qi_auth_config}
+# END DEPLOY STEPS
 
 if ! typeset -f ConnectToServer >/dev/null; then
     echo "An error occurred during deployment and no Jupyter server was found." >&2
