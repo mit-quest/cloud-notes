@@ -1,5 +1,15 @@
 #!/bin/bash
 
+function GetLocation()
+{
+    :
+}
+
+function GetRegistry()
+{
+    :
+}
+
 function CopyData
 {
     :
