@@ -15,9 +15,10 @@ function CopyData
     :
 }
 
-function GetPlatformContainer
+function GetPlatformContainer()
 {
-    :
+    docker pull ibmcom/ibm-cloud-developer-tools-amd64
+
 }
 
 function Login
