@@ -21,9 +21,27 @@ function GetPlatformContainer()
 
 }
 
-function Login
+function Login()
 {
-    :
+    local _container_name=$1
+    local _container_mount=$2
+
+    docker run \
+        -it \
+        -e IBMCLOUD_CONFIG_HOME=${_container_mount} \
+        --name $_container_name \
+        --label qi_container_type=login-config \
+        --mount type=volume,target=${_container_mount} \
+        ibmcom/ibm-cloud-developer-tools-amd64 \
+            ibmcloud login --sso
+
+    local _cmd_prefix="docker run \
+        -e IBMCLOUD_CONFIG_HOME=${_container_mount} \
+        --rm \
+        --volumes-from ${_container_name} \
+        ibmcom/ibm-cloud-developer-tools-amd64"
+
+    IBMCLOUD="${_cmd_prefix} ibmcloud"
 }
 
 function Provision
