@@ -57,7 +57,11 @@ function PrepareDocker
 
 function Deploy
 {
-    :
+    local _application="$1"
+    local _datasource="$2"
+    local _image="$3"
+    local _location="$4"
+    local _auth_config="$5"
 }
 
 function ConnectToServer
