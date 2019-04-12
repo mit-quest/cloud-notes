@@ -47,7 +47,12 @@ function Login()
 
 function Provision
 {
-    :
+    local _resources=$1
+    local _location=$2
+    local _datasource=$3
+
+    # Setup Container Registry
+    $IBMCLOUD cr namespace-add $_resources
 }
 
 function PrepareDocker
