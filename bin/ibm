@@ -19,13 +19,6 @@ function CopyData
 function GetPlatformContainer()
 {
     docker pull ibmcom/ibm-cloud-developer-tools-amd64
-
-    # Provide a shareable docker command for platform container.
-    _docker_cmd="docker run \
-        -e IBMCLOUD_CONFIG_HOME=${_container_mount} \
-        --rm \
-        --volumes-from ${_container_name} \
-        ibmcom/ibm-cloud-developer-tools-amd64"
 }
 
 function Login()
@@ -44,7 +37,14 @@ function Login()
 
     _IBMCLOUD_KEY="${_container_mount}/cn.key"
 
-    IBMCLOUD="${_cmd_prefix} ibmcloud"
+    # Provide a shareable docker command for platform container.
+    _docker_cmd="docker run \
+        -e IBMCLOUD_CONFIG_HOME=${_container_mount} \
+        --rm \
+        --volumes-from ${_container_name} \
+        ibmcom/ibm-cloud-developer-tools-amd64"
+
+    IBMCLOUD="${_docker_cmd} ibmcloud"
 }
 
 function Provision
