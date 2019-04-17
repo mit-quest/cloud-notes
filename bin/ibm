@@ -42,6 +42,7 @@ function Login()
         ibmcom/ibm-cloud-developer-tools-amd64 \
             ibmcloud login --sso
 
+    _IBMCLOUD_KEY="${_container_mount}/cn.key"
 
     IBMCLOUD="${_cmd_prefix} ibmcloud"
 }
