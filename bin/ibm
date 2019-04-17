@@ -20,6 +20,12 @@ function GetPlatformContainer()
 {
     docker pull ibmcom/ibm-cloud-developer-tools-amd64
 
+    # Provide a shareable docker command for platform container.
+    _docker_cmd="docker run \
+        -e IBMCLOUD_CONFIG_HOME=${_container_mount} \
+        --rm \
+        --volumes-from ${_container_name} \
+        ibmcom/ibm-cloud-developer-tools-amd64"
 }
 
 function Login()
@@ -36,11 +42,6 @@ function Login()
         ibmcom/ibm-cloud-developer-tools-amd64 \
             ibmcloud login --sso
 
-    local _cmd_prefix="docker run \
-        -e IBMCLOUD_CONFIG_HOME=${_container_mount} \
-        --rm \
-        --volumes-from ${_container_name} \
-        ibmcom/ibm-cloud-developer-tools-amd64"
 
     IBMCLOUD="${_cmd_prefix} ibmcloud"
 }
