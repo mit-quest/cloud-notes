@@ -53,18 +53,19 @@ function Provision
     local _location=$2
     local _datasource=$3
 
-    _IBMCLOUD_KEY='$IBMCLOUD_CONFIG_HOME/cn.key'
-
     # Setup Container Registry
+    $IBMCLOUD plugin install container-registry
     $IBMCLOUD cr namespace-add $_resources
     $IBMCLOUD iam api-key-create cn-key -d "CN-generated key" --file "$_IBMCLOUD_KEY"
 }
 
 function PrepareDocker
 {
-    $_docker_cmd cat $_IBMCLOUD_KEY | \
-        jq '{apikey}["apikey"]}' |\
-        docker login -u iamapikey --password-stdin us.icr.io
+    $_docker_cmd cat $_IBMCLOUD_KEY | jq '{apikey}["apikey"]' |\
+        docker login \
+        -u iamapikey \
+        --password-stdin \
+        us.icr.io
 }
 
 function Deploy
