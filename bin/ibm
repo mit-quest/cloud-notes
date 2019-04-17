@@ -2,7 +2,7 @@
 
 function GetLocation()
 {
-    :
+    echo "us-east"
 }
 
 function GetRegistry()
