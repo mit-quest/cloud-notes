@@ -104,7 +104,7 @@ fi
 # TODO (stshrive): Move deploy steps from deploy interface to function.
 # Prepare variables needed for deployment steps.
 __qi_auth_config="${__qi_provider}-config"
-__qi_auth_volume=/.persistant_data
+__qi_auth_volume=/.persistent_data
 __qi_resources="${__qi_app_name}"
 __qi_resource_location=$(GetLocation)
 
