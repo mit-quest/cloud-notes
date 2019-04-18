@@ -25,9 +25,9 @@ function GetRegistry()
 #
 function CopyData()
 {
-    _SOURCE_DIR=$1
-    _BUCKET_NAME=$2
-    _AUTH_CONFIG=$3
+    local _SOURCE_DIR=$1
+    local _BUCKET_NAME=$2
+    local _AUTH_CONFIG=$3
 
     while IFS= read -r file_entry; do
         docker run \
@@ -45,7 +45,7 @@ function CopyData()
 # Cleanup function to remove trailing characters in Azure CLI's
 # --query output
 TrimQuery() {
-    INPUT=$1
+    local INPUT=$1
     echo ${INPUT: 1: -2}
 }
 
@@ -125,7 +125,7 @@ function Deploy()
     local _auth_config="$5"
 
     # Create and deploy a container instance in Azure.
-    DNS_NAME_LABEL=${_application}-${RANDOM}${RANDOM}
+    local DNS_NAME_LABEL=${_application}-${RANDOM}${RANDOM}
 
     $AZ container create \
         --name ${_application} \
