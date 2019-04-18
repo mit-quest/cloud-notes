@@ -25,7 +25,7 @@ usage: ${BASH_SOURCE[0]} [options] --workspace <WORKSPACE> --datasource <DATASOU
                       This is a post-build step which will be applied after dependency management.
                       An example use case for templates is GPU support for the application within
                       workspace. A template will acquire the docker build context of the template's
-                      location. A provided GPU teplate is provided for CUDA development support.
+                      location. A GPU template is provided for CUDA development support.
 EOF
 exit 1
 }
@@ -104,7 +104,7 @@ fi
 # TODO (stshrive): Move deploy steps from deploy interface to function.
 # Prepare variables needed for deployment steps.
 __qi_auth_config="${__qi_provider}-config"
-__qi_auth_volume=/.persistant_data
+__qi_auth_volume=/.persistent_data
 __qi_resources="${__qi_app_name}"
 __qi_resource_location=$(GetLocation)
 
