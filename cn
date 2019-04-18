@@ -25,7 +25,7 @@ usage: ${BASH_SOURCE[0]} [options] --workspace <WORKSPACE> --datasource <DATASOU
                       This is a post-build step which will be applied after dependency management.
                       An example use case for templates is GPU support for the application within
                       workspace. A template will acquire the docker build context of the template's
-                      location. A provided GPU teplate is provided for CUDA development support.
+                      location. A GPU template is provided for CUDA development support.
 EOF
 exit 1
 }
