@@ -41,7 +41,7 @@ if ! dpkg-query -W libcudnn7; then
     apt-get install --no-install-recommends -y \
         nvidia-driver-410 \
         libcudnn7=$_cudnn_version \
-        libcudnn7-dev=$_cudnn_verison
+        libcudnn7-dev=$_cudnn_version
 fi
 
 # Setup paths
